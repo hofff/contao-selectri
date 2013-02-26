@@ -1,0 +1,50 @@
+<fieldset class="striWidget striAuto <?php if($this->strClass) echo ' ', $this->strClass;
+if($this->isOpen()) echo ' striOpen'; ?>" id="<?php echo $this->strId; ?>"
+data-stri-name="<?php echo $this->getInputName(); ?>">
+
+<ol class="striSelection">
+<?php foreach($this->getData()->getSelectionIterator() as $node): ?>
+<li class="striNode" data-stri-key="<?php echo specialchars($node->getKey()); ?>">
+  <input type="hidden" name="<?php echo $this->getInputName(); ?>"
+      value="<?php echo specialchars($node->getKey()); ?>" />
+<?php if($node->hasPath()): ?>
+  <ol class="striPath">
+<?php foreach($node->getPathIterator() as $pathNode): ?>
+    <li class="striNode" data-stri-key="<?php echo specialchars($pathNode->getKey()); ?>">
+      <div class="striLabel" data-stri-icon="<?php echo specialchars($pathNode->getIcon()); ?>"
+	    ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggle']; ?>"
+	      ><?php echo specialchars($pathNode->getLabel());
+	    ?></a
+	  ></div>
+	</li>
+<?php endforeach; ?>
+  </ol>
+<?php endif; ?>
+  <div class="striLabel" data-stri-icon="<?php echo specialchars($node->getIcon()); ?>"
+    ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggle']; ?>"
+      ><?php echo specialchars($node->getLabel());
+    ?></a
+  ></div>
+  <div class="striDelete"
+    ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['delete']; ?>"
+      ><?php echo $GLOBALS['TL_LANG']['stri']['delete'];
+    ?></a
+  ></div>
+</li>
+<?php endforeach; ?>
+</ol>
+
+<?php if($this->getData()->hasSelectableNodes()): ?>
+<div class="striTools">
+  <div class="striSearch"><input type="text" placeholder="<?php echo $GLOBALS['TL_LANG']['stri']['search']; ?>" /></div>
+  <div class="striToggle"><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['selectTitle']; ?>"><?php echo $GLOBALS['TL_LANG']['stri']['select']; ?></a></div>
+</div>
+
+<div class="striTree" style="height: <?php echo $this->getHeight(); ?>;">
+</div>
+
+<?php else: ?>
+<p class="striEmpty"><?php echo $GLOBALS['TL_LANG']['stri']['empty']; ?></p>
+
+<?php endif; ?>
+</fieldset>

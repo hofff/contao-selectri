@@ -1,0 +1,60 @@
+<ol>
+<?php foreach($level as $node): ?>
+<li class="<?php // echo $objNode->getCSSClasses(); ?>">
+
+  <div class="striNode" data-stri-key="<?php echo specialchars($node->getKey()); ?>">
+    <input type="hidden" value="<?php echo specialchars($node->getKey()); ?>" />
+<?php if($node->hasPath()): ?>
+    <ol class="striPath">
+<?php foreach($node->getPathIterator() as $pathNode): ?>
+      <li class="striNode" data-stri-key="<?php echo specialchars($pathNode->getKey()); ?>">
+        <div class="striLabel" data-stri-icon="<?php echo specialchars($pathNode->getIcon()); ?>"
+	      ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggle']; ?>"
+	        ><?php echo specialchars($pathNode->getLabel());
+	      ?></a
+	    ></div>
+	  </li>
+<?php endforeach; ?>
+    </ol>
+<?php endif; ?>
+    <div class="striLabel" data-stri-icon="<?php echo specialchars($node->getIcon()); ?>"
+      ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggle']; ?>"
+        ><?php echo specialchars($node->getLabel());
+      ?></a
+    ></div>
+    <div class="striDelete"
+      ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['delete']; ?>"
+        ><?php echo $GLOBALS['TL_LANG']['stri']['delete'];
+      ?></a
+    ></div>
+  </div>
+  
+<?php if($node->hasItems()): ?>
+  <ol class="tblt_items">
+<?php foreach($objNode->getItemIterator() as $objItem): ?>
+  <li>
+    <div class="tblt_node">
+      <div class="tblt_inner">
+        <div class="tblt_label" style="margin-left: <?php echo ($objNode->getDepth() + 1) * $intSpacing, $strSpacingUnit; ?>;">
+          <label for="<?php echo $objItem->getInputID(); ?>"
+              style="background-image: url(<?php echo $objItem->getIcon(); ?>);"
+            ><?php echo $objItem->getLabel(); ?></label>
+        </div>
+        <div class="tblt_select">
+          <input type="<?php echo $objItem->getInputType(); ?>"
+              name="<?php echo $objItem->getInputName(); ?>"
+              id="<?php echo $objItem->getInputID(); ?>"
+              value="<?php echo specialchars($objItem->getKey()); ?>"
+              <?php echo $objItem->getCheckedAttribute(); ?> />
+        </div>
+      </div>
+    </div>
+  </li>
+<?php endforeach; ?>
+  </ol>
+<?php endif; ?>
+
+  <div class="striChildren"></div>
+</li>
+<?php endforeach; ?>
+</ol>
