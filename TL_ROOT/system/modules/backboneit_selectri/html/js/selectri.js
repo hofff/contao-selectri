@@ -23,7 +23,7 @@ Selectri.Implements = [ Options, Class.Occlude ];
 Selectri.options = {};
 
 Selectri.initialize = function(container, options, detached) {
-	var self = this, occluded = undef, url, loading;
+	var self = this, occluded = undef, url;
 	
 	self.container = container = $(container);
 	if(!container) return undef;
@@ -79,6 +79,8 @@ Selectri.onResultDeselectClick		= function(event, target) { this.deselect(target
 Selectri.onTreeLabelClick			= function(event, target) { this.toggleNode(target); };
 Selectri.onTreeSelectClick			= function(event, target) { this.select(target, TRUE); };
 Selectri.onTreeDeselectClick		= function(event, target) { this.deselect(target, TRUE); };
+Selectri.onClearSearchClick			= function(event, target) { this.clearSearch(); };
+Selectri.onClearSelectionClick		= function(event, target) { if(event.shift) this.deselectAll(); };
 Selectri.onToggleClick				= function(event, target) { this.toggleTree(); };
 Selectri.onSearchKeyDown			= function(event, target) { this.requestSearch(target.get("value")); };
 Selectri.onSortStart				= function() { this.container.addClass("striSorting"); };
@@ -132,7 +134,9 @@ events = {
 	"click:relay(.striTree .striLabel > .striHandle)":			"onTreeLabelClick",
 	"click:relay(.striTree .striSelect > .striHandle)":			"onTreeSelectClick",
 	"click:relay(.striTree .striDeselect > .striHandle)":		"onTreeDeselectClick",
-	"click:relay(.striTools .striToggle)":						"onToggleClick",
+	"click:relay(.striClearSearch > .striHandle)":				"onClearSearchClick",
+	"click:relay(.striClearSelection > .striHandle)":			"onClearSelectionClick",
+	"click:relay(.striToggle > .striHandle)":					"onToggleClick",
 	"keydown:relay(.striTools .striSearch input):pause(250)":	"onSearchKeyDown"
 };
 
@@ -158,7 +162,9 @@ Selectri.select = function(node, adjustScroll) {
 	var self = this, scroll;
 	if(self.isSelected(node)) return;
 	
-	node = self.getTreeNode(node);
+	treeNode = self.getTreeNode(node);
+	resultNode = self.getResultNode(node);
+	node = treeNode || resultNode;
 	if(!node) return;
 	
 	scroll = window.getScroll();
@@ -166,7 +172,8 @@ Selectri.select = function(node, adjustScroll) {
 
 	if(self.options.max == 1) self.deselect(self.selection.getFirst());
 	
-	node.addClass(".striSelected");
+	treeNode.addClass("striSelected");
+	resultNode.addClass("striSelected");
 	node = new Element("li").grab(node.clone()).inject(self.selection);
 	node.getElement("input").set("name", self.options.name);
 	node.getElement(".striSelect").destroy();
@@ -193,6 +200,11 @@ Selectri.deselect = function(node, adjustScroll) {
 	
 	scroll.y += self.selection.getSize().y;
 	if(adjustScroll) window.scrollTo(scroll.x, scroll.y);
+};
+
+Selectri.deselectAll = function() {
+	var self = this;
+	self.selection.getChildren().each(self.deselect, self);
 };
 
 Selectri.isSelected = function(key) {
