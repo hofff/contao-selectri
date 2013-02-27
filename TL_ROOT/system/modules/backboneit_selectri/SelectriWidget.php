@@ -259,7 +259,7 @@ class SelectriWidget extends Widget {
 	
 	public function generateLevels($level, $start = null) {
 		if(!$level) {
-			return null;
+			return array('empty' => $GLOBALS['TL_LANG']['stri']['empty']);
 		}
 		
 		if($start) {

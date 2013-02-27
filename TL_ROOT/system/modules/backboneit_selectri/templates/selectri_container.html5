@@ -34,7 +34,6 @@ data-stri-options="<?php echo specialchars(json_encode($options)); ?>">
 <?php endforeach; ?>
 </ol>
 
-<?php if($this->getData()->hasSelectableNodes()): ?>
 <div class="striTools">
   <div class="striSearch"><input type="text" placeholder="<?php echo $GLOBALS['TL_LANG']['stri']['search']; ?>" /></div>
   <div class="striClearSearch"><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['clearSearchTitle']; ?>"><?php echo $GLOBALS['TL_LANG']['stri']['clearSearch']; ?></a></div>
@@ -42,14 +41,12 @@ data-stri-options="<?php echo specialchars(json_encode($options)); ?>">
   <div class="striToggle"><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['treeTitle']; ?>"><?php echo $GLOBALS['TL_LANG']['stri']['tree']; ?></a></div>
 </div>
 
+<p class="striMessage"></p>
+
 <div class="striResult">
 </div>
 
 <div class="striTree" style="height: <?php echo $this->getHeight(); ?>;">
 </div>
 
-<?php else: ?>
-<p class="striEmpty"><?php echo $GLOBALS['TL_LANG']['stri']['empty']; ?></p>
-
-<?php endif; ?>
 </fieldset>

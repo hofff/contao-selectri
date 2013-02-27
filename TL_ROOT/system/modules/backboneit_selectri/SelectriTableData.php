@@ -154,6 +154,10 @@ class SelectriTableData extends SelectriAbstractData {
 			$tree->nodes[$key] = $node;
 		}
 		
+		if(!$tree->nodes) {
+			return;
+		}
+		
 		// remove existing children arrays for fetched nodes (to maintain order)
 		foreach($tree->nodes as $node) {
 			unset($tree->children[strval($node['parentKey'])]);
@@ -216,10 +220,6 @@ class SelectriTableData extends SelectriAbstractData {
 		return $this->cfg;
 	}
 	
-	public function hasSelectableNodes() {
-		return true; // TODO
-	}
-	
 	public function getSelectionIterator(array $selection) {
 		if(!$selection) {
 			return new EmptyIterator();
@@ -278,6 +278,9 @@ class SelectriTableData extends SelectriAbstractData {
 		if(!$start) {
 			$rootStart = true;
 			$start = $this->getPreorder($roots, $tree->children, true);
+			if(!$start) {
+				return null;
+			}
 		} elseif(!array_intersect($start, $this->getDescendantsPreorder($roots, $tree->children))) {
 			return null;
 		}
@@ -527,23 +530,15 @@ class SelectriTableData extends SelectriAbstractData {
 			return array();
 		}
 		
-		$ids = array_unique(array_map('strval', $ids));
-		if(count($ids) < 2) {
-			return $ids;
-		}
-		
 		$root = strval($this->cfg->getTreeRootValue());
-		$ids = array_flip($ids);
+		$ids = array_flip(array_map('strval', $ids));
 		$preorder = array();
 		
 		if(isset($ids[$root])) {
-			if($unnest) {
-				return array($root);
-			} elseif(count($ids) < 3) {
-				unset($ids[$root]);
-				return array($root) + array_keys($ids);
-			}
 			$preorder[] = $root;
+			if($unnest) {
+				return $preorder;
+			}
 		}
 		
 		$helper = $unnest ? 'getPreorderHelperUnnest' : 'getPreorderHelper';

@@ -95,7 +95,15 @@ Selectri.onLevelsSuccess			= function(json) {
 	var self = this, node = undef;
 	if(!json) return;
 	
-	if(json.first && !self.tree.getChildren().length) self.tree.set("html", json.first);
+	if(!self.tree.getChildren().length) {
+		if(json.empty) {
+			self.container.getFirst(".striMessage").set("text", json.empty);
+			self.container.addClass("striEmpty");
+			return;
+		} else {
+			self.tree.set("html", json.first);
+		}
+	}
 	
 	if(json.levels) Object.each(json.levels, function(level, key) {
 		node = self.getChildrenContainer(key);
@@ -113,7 +121,7 @@ Selectri.onSearchRequest			= function() { this.container.addClass("striSearching
 Selectri.onSearchCancel				= function() { this.container.removeClass("striSearching"); };
 Selectri.onSearchException			= function() { this.container.removeClass("striSearching").addClass("striError"); };
 Selectri.onSearchComplete			= function() { this.container.removeClass("striSearching"); };
-Selectri.onSearchFailure			= function() { this.container.addClass("striEmpty"); };
+Selectri.onSearchFailure			= function() { this.container.addClass("striNotFound"); };
 Selectri.onSearchSuccess			= function(json) {
 	var self = this;
 	self.result.set("html", json ? json.result : "").addClass("striOpen");
@@ -137,7 +145,7 @@ events = {
 	"click:relay(.striClearSearch > .striHandle)":				"onClearSearchClick",
 	"click:relay(.striClearSelection > .striHandle)":			"onClearSelectionClick",
 	"click:relay(.striToggle > .striHandle)":					"onToggleClick",
-	"keydown:relay(.striTools .striSearch input):pause(250)":	"onSearchKeyDown"
+	"keydown:relay(.striSearch > input):pause(250)":			"onSearchKeyDown"
 };
 
 Selectri.attach = function() {
@@ -186,7 +194,7 @@ Selectri.select = function(node, adjustScroll) {
 };
 
 Selectri.deselect = function(node, adjustScroll) {
-	var self = this, scroll, treeNode;
+	var self = this, scroll;
 	
 	node = self.getSelectionNode(node);
 	if(!node) return;
@@ -322,14 +330,14 @@ Selectri.requestSearch = function(value) {
 	if(self.value == value) return;
 	self.value = value;
 	self.closeTree();
-	self.container.removeClass("striEmpty");
+	self.container.removeClass("striNotFound");
 	self.searchRequest.send({ data: { striSearch: value } });
 };
 
 Selectri.clearSearch = function() {
 	var self = this;
 	self.search.set("value");
-	self.container.removeClass("striEmpty");
+	self.container.removeClass("striNotFound");
 	self.result.removeClass("striOpen");
 };
 

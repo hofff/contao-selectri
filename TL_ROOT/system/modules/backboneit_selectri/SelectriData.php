@@ -12,6 +12,4 @@ interface SelectriData {
 	
 	public function getSearchIterator($query);
 	
-	public function hasSelectableNodes();
-	
 }
