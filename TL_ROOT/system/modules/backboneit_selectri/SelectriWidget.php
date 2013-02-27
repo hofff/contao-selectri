@@ -245,6 +245,7 @@ class SelectriWidget extends Widget {
 				$this->setUnfolded($unfolded);
 				break;
 		}
+		isset($_POST) && $response['token'] = REQUEST_TOKEN;
 		header('Content-Type: application/json');
 		echo json_encode($response);
 		exit;
@@ -312,7 +313,7 @@ class SelectriWidget extends Widget {
 	}
 	
 	public function isOpen() {
-		return false;
+		return $this->mandatory && !$this->varValue;
 	}
 	
 	public function getInputName() {
