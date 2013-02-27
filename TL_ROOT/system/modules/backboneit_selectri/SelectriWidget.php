@@ -201,8 +201,8 @@ class SelectriWidget extends Widget {
 		
 		static $blnScriptsInjected;
 		if(!$blnScriptsInjected) {
-			$GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/backboneit_selectri/html/selectri.js';
-			$GLOBALS['TL_CSS'][] = 'system/modules/backboneit_selectri/html/selectri.css';
+			$GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/backboneit_selectri/html/js/selectri.js';
+			$GLOBALS['TL_CSS'][] = 'system/modules/backboneit_selectri/html/css/selectri.css';
 		}
 		
 		$options = array(
