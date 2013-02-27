@@ -1,9 +1,11 @@
 <ol>
 <?php foreach($level as $node): ?>
-<li class="<?php // echo $objNode->getCSSClasses(); ?>">
+<li>
 
   <div class="striNode" data-stri-key="<?php echo specialchars($node->getKey()); ?>">
+<?php if($node->isSelectable()): ?>
     <input type="hidden" value="<?php echo specialchars($node->getKey()); ?>" />
+<?php endif; ?>
 <?php if($node->hasPath()): ?>
     <ol class="striPath">
 <?php foreach($node->getPathIterator() as $pathNode): ?>
@@ -22,9 +24,14 @@
         ><?php echo specialchars($node->getLabel());
       ?></a
     ></div>
-    <div class="striDelete"
-      ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['delete']; ?>"
-        ><?php echo $GLOBALS['TL_LANG']['stri']['delete'];
+    <div class="striSelect"
+      ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['selectTitle']; ?>"
+        ><?php echo $GLOBALS['TL_LANG']['stri']['select'];
+      ?></a
+    ></div>
+    <div class="striDeselect"
+      ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['deselectTitle']; ?>"
+        ><?php echo $GLOBALS['TL_LANG']['stri']['deselect'];
       ?></a
     ></div>
   </div>
@@ -54,7 +61,9 @@
   </ol>
 <?php endif; ?>
 
+<?php if($node->hasSelectableChildren()): ?>
   <div class="striChildren"></div>
+<?php endif; ?>
 </li>
 <?php endforeach; ?>
 </ol>

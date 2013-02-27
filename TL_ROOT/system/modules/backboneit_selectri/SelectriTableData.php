@@ -13,26 +13,27 @@ class SelectriTableData extends SelectriAbstractData {
 	}
 	
 	protected function getTreeSelectFieldsExpr(array &$groups = null) {
-		$columns['key'] = $this->cfg->getTreeKeyColumn();
-		$columns['parentKey'] = $this->cfg->getTreeParentKeyColumn();
-		$columns['label'] = $this->cfg->getTreeLabelColumns();
-		$columns['search'] = $this->cfg->getTreeSearchColumns();
-		$columns['addition'] = $this->cfg->getTreeAdditionalColumns();
-
 		$groups = array();
-		$offset = 0;
-		foreach($columns as $key => &$cnt) {
-			if(is_array($cnt)) {
-				$groups[$key] = array($offset, count($cnt));
-				$offset += count($cnt);
-			} else {
-				$cnt = array($cnt);
-				$groups[$key] = array($offset, 1, true);
-				$offset++;
-			}
-		}
 		
-		return implode(', ', call_user_func_array('array_merge', $columns));
+		$groups['key'] = array(count($columns), 1, 'single');
+		$columns[] = $this->cfg->getTreeKeyColumn();
+		
+		$groups['parentKey'] = array(count($columns), 1, 'single');
+		$columns[] = $this->cfg->getTreeParentKeyColumn();
+
+		$labelColumns = $this->cfg->getTreeLabelColumns();
+		$groups['label'] = array(count($columns), count($labelColumns));
+		$columns = array_merge($columns, $labelColumns);
+		
+// 		$searchColumns = $this->cfg->getTreeSearchColumns();
+// 		$groups['search'] = array(count($columns), count($searchColumns));
+// 		$columns = array_merge($columns, $searchColumns);
+
+		$additionalColumns = array_unique($this->cfg->getTreeAdditionalColumns());
+		$groups['additional'] = array(count($columns), count($additionalColumns), 'assoc', $additionalColumns);
+		$columns = array_merge($columns, $additionalColumns);
+
+		return implode(', ', $columns);
 	}
 	
 	protected function getItemSelectFieldsExpr(array &$groups = null) {
@@ -68,7 +69,7 @@ class SelectriTableData extends SelectriAbstractData {
 		return $expr;
 	}
 	
-	protected function getTreeNodeData(array $ids = null, $children = false, $order = false, $limit = PHP_INT_MAX) {
+	protected function fetchTreeNodes(array $ids = null, $children = false, $order = false, $limit = PHP_INT_MAX) {
 		if(!$ids) {
 			return array();
 		}
@@ -129,14 +130,41 @@ class SelectriTableData extends SelectriAbstractData {
 		while($row = $result->fetchRow()) {
 			$key = strval($row[0]);
 			foreach($groups as $group => $slice) {
-				$nodes[$key][$group] = $slice[2] ? $row[$slice[0]] : array_slice($row, $slice[0], $slice[1]);
+				list($offset, $length, $mode, $keys) = $slice;
+				if($mode == 'single') {
+					$nodes[$key][$group] = $row[$offset];
+					continue;
+				}
+				$slice = array_slice($row, $offset, $length);
+				if($mode == 'assoc' && $length) {
+					$slice = array_combine($keys, $slice);
+				}
+				$nodes[$key][$group] = $slice;
 			}
-			$offset = $slice[0] + $slice[1];
+			$offset += $length;
 			$nodes[$key]['hasChildren'] = $row[$offset];
 			$offset++;
 			$nodes[$key]['hasGrandChildren'] = $row[$offset];
 		}
 		return $nodes;
+	}
+	
+	protected function fetchLevels(stdClass $tree, array $parentKeys) {
+		foreach($this->fetchTreeNodes($parentKeys, true, true) as $key => $node) {
+			$tree->nodes[$key] = $node;
+		}
+		
+		// remove existing children arrays for fetched nodes (to maintain order)
+		foreach($tree->nodes as $node) {
+			unset($tree->children[strval($node['parentKey'])]);
+		}
+		// insert nodes into tree
+		foreach($tree->nodes as $node) {
+			$key = strval($node['key']);
+			$parentKey = strval($node['parentKey']);
+			$tree->children[$parentKey][$key] = true;
+			$tree->parents[$key] = $parentKey;
+		}
 	}
 	
 	public function validate() {
@@ -153,7 +181,7 @@ class SelectriTableData extends SelectriAbstractData {
 			return;
 		}
 		try {
-			$nodes = $this->getTreeNodeData(array($this->cfg->getTreeRootValue()), true, true, 1);
+			$nodes = $this->fetchTreeNodes(array($this->cfg->getTreeRootValue()), true, true, 1);
 		} catch(Exception $e) {
 			throw new Exception('invalid tree table configuration: ' . $e->getMessage());
 		}
@@ -192,28 +220,31 @@ class SelectriTableData extends SelectriAbstractData {
 		return true; // TODO
 	}
 	
-	public function getSelectionIterator() {
-		if(!$this->getSelection()) {
+	public function getSelectionIterator(array $selection) {
+		if(!$selection) {
 			return new EmptyIterator();
 		}
 		if($this->cfg->isTreeOnlyMode()) {
-			return $this->getTreeOnlyModeSelectionIterator();
+			return $this->getTreeOnlyModeSelectionIterator($selection);
 		}
 		if($this->cfg->isItemOnlyMode()) {
-			return $this->getItemOnlyModeSelectionIterator();
+			return $this->getItemOnlyModeSelectionIterator($selection);
 		}
-		return $this->getTreeItemModeSelectionIterator();
+		return $this->getTreeItemModeSelectionIterator($selection);
 	}
 	
-	protected function getTreeOnlyModeSelectionIterator() {
+	protected function getTreeOnlyModeSelectionIterator(array $selection) {
+		$roots = $this->cfg->getRoots();
 		$tree = new stdClass();
-		$tree->children = $this->getAncestorOrSelfTree($this->getSelection());
+		$tree->children = $this->getAncestorOrSelfTree(array_merge($roots, $selection));
 		$tree->parents = $this->getParentsFromTree($tree->children);
-		$tree->nodes = $this->getTreeNodeData(array_keys($tree->parents));
-		foreach($this->getSelection() as $key) {
-			$selection[] = new SelectriTableDataTreeNode($this, $tree, $key);
+		$tree->nodes = $this->fetchTreeNodes(array_keys($tree->parents));
+		$selection = array_intersect($selection, $this->getDescendantsPreorder($roots, $tree->children));
+		$nodes = array();
+		foreach($selection as $key) {
+			$nodes[] = new SelectriTableDataTreeNode($this, $tree, $key);
 		}
-		return new ArrayIterator($selection);
+		return new ArrayIterator($nodes);
 	}
 	
 	protected function getItemOnlyModeSelectionIterator() {
@@ -225,6 +256,7 @@ class SelectriTableData extends SelectriAbstractData {
 	}
 	
 	public function getTreeIterator($start = null) {
+		$start === $this->cfg->getTreeRootValue() && $start = null;
 		if($this->cfg->isTreeOnlyMode()) {
 			return $this->getTreeOnlyModeTreeIterator($start);
 		}
@@ -236,48 +268,48 @@ class SelectriTableData extends SelectriAbstractData {
 	
 	protected function getTreeOnlyModeTreeIterator($start = null) {
 		$start = $start === null ? array() : array($start);
-		$tree = new stdClass();
 		$roots = $this->cfg->getRoots();
 		
-		// filter start	
+		// start tree
+		$tree = new stdClass();
 		$tree->children = $this->getAncestorOrSelfTree(array_merge($roots, $start));
-		$roots = $this->getPreorder($roots, $tree->children, true);
+		
+		// filter start
 		if(!$start) {
-			$start = $roots;
-		} elseif(!array_intersect($start, $this->getDescendantsPreorder($roots, $tree->children, true))) {
-			return new EmptyIterator();
+			$rootStart = true;
+			$start = $this->getPreorder($roots, $tree->children, true);
+		} elseif(!array_intersect($start, $this->getDescendantsPreorder($roots, $tree->children))) {
+			return null;
 		}
 		
 		// add unfolded
 		$unfolded = $this->getWidget()->getUnfolded();
-		$unfolded = $this->getTreeNodeData($unfolded); // TODO performance? half wayne
+		$unfolded = $this->fetchTreeNodes($unfolded); // TODO performance? half wayne
 		$this->getWidget()->setUnfolded(array_keys($unfolded)); // cleaned out inexistant values to avoid longterm leaking...
-		foreach($unfolded as $node) $tree->children[strval($node['parentKey'])][strval($node['key'])] = true;
-		
-		// fetch node data
-		$render = $this->getDescendantsPreorder($start, $tree->children, true);
-		$tree->nodes = $this->getTreeNodeData($render, true, true);
-		
-		// remove existing children arrays for fetched nodes (to maintain order)
-		foreach($tree->nodes as $node) {
-			unset($tree->children[strval($node['parentKey'])]);
+		foreach($unfolded as $node) {
+			$tree->children[strval($node['parentKey'])][strval($node['key'])] = true;
 		}
-		// insert nodes into tree
-		foreach($tree->nodes as $node) {
-			$key = strval($node['key']);
-			$parentKey = strval($node['parentKey']);
-			$tree->children[$parentKey][$key] = true;
-			$tree->parents[$key] = $parentKey;
-		}
+		
+		$tree->parents = $this->getParentsFromTree($tree->children);
+		$this->fetchLevels($tree, $this->getDescendantsPreorder($start, $tree->children, true));
 		
 		// build first level
-		foreach($start as $startKey) {
-			foreach($tree->children[$startKey] as $key => $_) {
-				$first[] = new SelectriTableDataTreeNode($this, $tree, $key);
-			}
+		foreach($start as $startKey) foreach($tree->children[$startKey] as $key => $_) {
+			$first[] = new SelectriTableDataTreeNode($this, $tree, $key);
 		}
 		
-		return new ArrayIterator($first);
+		// get path node keys of first level
+		foreach($first as $node) foreach($node->getPathKeys() as $key) {
+			$pathKeys[$key] = true;
+		}
+		
+		// fetch data for path nodes
+		unset($pathKeys[$this->cfg->getTreeRootValue()]);
+		if($pathKeys) foreach($this->fetchTreeNodes(array_keys($pathKeys)) as $key => $node) {
+			$tree->nodes[$key] = $node;
+		}
+		
+		return array(new ArrayIterator($first), $rootStart ? null : $start[0]);
 	}
 	
 	protected function getItemOnlyModeTreeIterator() {
@@ -286,6 +318,131 @@ class SelectriTableData extends SelectriAbstractData {
 	
 	protected function getTreeItemModeTreeIterator() {
 		throw new Exception('tree and item mode not implemented');
+	}
+	
+	public function getPathIterator($key) {
+		if($this->cfg->isTreeOnlyMode()) {
+			return $this->getTreeOnlyModePathIterator($key);
+		}
+		if($this->cfg->isItemOnlyMode()) {
+			return $this->getItemOnlyModePathIterator();
+		}
+		return $this->getTreeItemModePathIterator();
+	}
+	
+	protected function getTreeOnlyModePathIterator($key) {
+		$roots = $this->cfg->getRoots();
+		
+		// start tree
+		$tree = new stdClass();
+		$tree->children = $this->getAncestorOrSelfTree(array_merge($roots, array($key)));
+		
+		// prepare roots
+		$roots = $this->getPreorder($roots, $tree->children, true);
+		if(!in_array($key, $this->getDescendantsPreorder($roots, $tree->children))) {
+			return null;
+		}
+		
+		$tree->parents = $this->getParentsFromTree($tree->children);
+		unset($tree->children[$tree->parents[$key]]);
+		$this->fetchLevels($tree, $this->getDescendantsPreorder($roots, $tree->children, true));
+		
+		// build first level
+		foreach($roots as $rootKey) foreach($tree->children[$rootKey] as $key => $_) {
+			$first[] = new SelectriTableDataTreeNode($this, $tree, $key);
+		}
+		
+		// get path node keys of first level
+		foreach($first as $node) foreach($node->getPathKeys() as $key) {
+			$pathKeys[] = $key;
+		}
+		// fetch data for path nodes
+		if($pathKeys) foreach($this->fetchTreeNodes($pathKeys) as $key => $node) {
+			$tree->nodes[$key] = $node;
+		}
+		
+		return new ArrayIterator($first);
+	}
+	
+	protected function getItemOnlyModePathIterator() {
+		throw new Exception('item mode not implemented');
+	}
+	
+	protected function getTreeItemModePathIterator() {
+		throw new Exception('tree and item mode not implemented');
+	}
+	
+	protected function prepareSearch($search) {
+		if(defined('PREG_BAD_UTF8_OFFSET')) {
+			return preg_split('/[^\pL\pN]+(?:[\pL\pN][^\pL\pN]+)?/iu', $search, null, PREG_SPLIT_NO_EMPTY);
+		} else {
+			return preg_split('/(?:^|[^\w]+)(?:[\w](?:$|[^\w]+))*/i', $search, null, PREG_SPLIT_NO_EMPTY);
+		}
+	}
+	
+	protected function getTreeSearchExpr($searchCnt, &$columnCnt) {
+		$columns = $this->cfg->getTreeSearchColumns();
+		$columns[] = $this->cfg->getTreeKeyColumn();
+		$columnCnt = count($columns);
+		
+		foreach($columns as $column) {
+			$condition[] = $column . ' LIKE CONCAT(\'%\', CONCAT(?, \'%\'))';
+		}
+		$condition = implode(' OR ', $condition);
+			
+		return '(' . implode(') AND (', array_fill(0, $searchCnt, $condition)) . ')';
+	}
+	
+	public function getSearchIterator($search) {
+		$search = $this->prepareSearch($search);
+		if(!$search) {
+			return new EmptyIterator();
+		}
+		if($this->cfg->isTreeOnlyMode()) {
+			$query = sprintf(
+				'SELECT 	%s AS id
+				FROM		%s AS tree
+				
+				LEFT JOIN	( SELECT %s AS _id, %s AS _pid FROM %s %s
+							) AS child ON child._pid = tree.%s
+				
+				WHERE		(%s)
+				%s
+				GROUP BY	%s
+				%s',
+					
+				// select & from
+				$this->cfg->getTreeKeyColumn(),
+				$this->cfg->getTreeTable(),
+					
+				// child join
+				$this->cfg->getTreeKeyColumn(),
+				$this->cfg->getTreeParentKeyColumn(),
+				$this->cfg->getTreeTable(),
+				$this->prepareConditionExpr($this->cfg->getTreeConditionExpr(), 'WHERE'),
+				$this->cfg->getTreeKeyColumn(),
+				
+				// where
+				$this->getTreeSearchExpr(count($search), $columnCnt),
+				$this->prepareConditionExpr($this->cfg->getTreeConditionExpr()),
+					
+				// group by
+				$this->cfg->getTreeKeyColumn(),
+				
+				// having
+				$this->getWidget()->getMode() == 'inner' ? 'HAVING COUNT(child._id) != 0' : ''
+			);
+			foreach($search as $word) {
+				$params[] = array_fill(0, $columnCnt, $word);
+			}
+			$params = call_user_func_array('array_merge', $params);
+			$found = $this->db->prepare($query)->limit(20)->execute($params)->fetchEach('id');
+			return $this->getSelectionIterator($found);
+		}
+		if($this->cfg->isItemOnlyMode()) {
+			return $this->getItemOnlyModePathIterator();
+		}
+		return $this->getTreeItemModePathIterator();
 	}
 	
 	protected function getAncestorOrSelfTree(array $ids) {

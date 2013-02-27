@@ -32,7 +32,7 @@ class SelectriContaoTableDataFactory extends SelectriTableDataFactory {
 	
 	public function setTreeTable($treeTable) {
 		if(!$this->db->tableExists($treeTable)) {
-			return;
+			return $this;
 		}
 
 		$cfg = $this->getConfig();
@@ -42,6 +42,7 @@ class SelectriContaoTableDataFactory extends SelectriTableDataFactory {
 		$labelFormat = $cfg->getTreeLabelFormat();
 		$orderByExpr = $cfg->getTreeOrderByExpr();
 		$icon = $cfg->getTreeIcon();
+		$additionalColumns = $cfg->getTreeAdditionalColumns();
 		
 		$this->getDefaultSettings(
 			$treeTable,
@@ -49,18 +50,22 @@ class SelectriContaoTableDataFactory extends SelectriTableDataFactory {
 			$labelColumns,
 			$labelFormat,
 			$orderByExpr,
-			$icon
+			$icon,
+			$additionalColumns
 		);
 
 		$cfg->setTreeLabelColumns($labelColumns);
 		$cfg->setTreeLabelFormat($labelFormat);	
 		$cfg->setTreeOrderByExpr($orderByExpr);
 		$cfg->setTreeIcon($icon);
+		$cfg->setTreeAdditionalColumns($additionalColumns);
+
+		return $this;
 	}
 	
 	public function setItemTable($itemTable) {
 		if(!$this->db->tableExists($itemTable)) {
-			return;
+			return $this;
 		}
 		
 		$cfg = $this->getConfig();
@@ -70,6 +75,7 @@ class SelectriContaoTableDataFactory extends SelectriTableDataFactory {
 		$labelFormat = $cfg->getItemLabelFormat();
 		$orderByExpr = $cfg->getItemOrderByExpr();
 		$icon = $cfg->getItemIcon();
+		$additionalColumns = $cfg->getItemAdditionalColumns();
 		
 		$this->getDefaultSettings(
 			$itemTable,
@@ -77,16 +83,20 @@ class SelectriContaoTableDataFactory extends SelectriTableDataFactory {
 			$labelColumns,
 			$labelFormat,
 			$orderByExpr,
-			$icon
+			$icon,
+			$additionalColumns
 		);
 		
 		$cfg->setItemLabelColumns($labelColumns);
 		$cfg->setItemLabelFormat($labelFormat);
 		$cfg->setItemOrderByExpr($orderByExpr);
 		$cfg->setItemIcon($icon);
+		$cfg->setItemAdditionalColumns($additionalColumns);
+		
+		return $this;
 	}
 	
-	protected function getDefaultSettings($table, $id, &$labelColumns, &$labelFormat, &$orderByExpr, &$icon) {
+	protected function getDefaultSettings($table, $id, &$labelColumns, &$labelFormat, &$orderByExpr, &$icon, &$additionalColumns) {
 		if(!$labelColumns) {
 			if($this->db->fieldExists('name', $table)) {
 				$labelColumns = array('name', $id);
@@ -114,45 +124,66 @@ class SelectriContaoTableDataFactory extends SelectriTableDataFactory {
 		}
 		
 		if(!$icon) {
-			$icon = self::getIcon($table);
+			$icon = self::getIcon($table, $iconColumns);
+			$iconColumns && $additionalColumns = array_merge((array) $additionalColumns, $iconColumns);
 		}
 	}
 	
-	public static function getIcon($table, array &$additionalColumns = null) {
-		switch($table) {
-			case 'tl_article':				return 'articles.gif'; break;
-			case 'tl_calendar':				return 'system/modules/calendar/html/icon.gif'; break;
-			case 'tl_faq_category':			return 'system/modules/faq/html/icon.gif'; break;
-			case 'tl_form':					return 'form.gif'; break;
-			case 'tl_layout':				return 'layout.gif'; break;
-			case 'tl_member':				return 'member.gif'; break;
-			case 'tl_member_group':			return 'mgroup.gif'; break;
-			case 'tl_module':				return 'modules.gif'; break;
-			case 'tl_news_archive':			return 'news.gif'; break;
-			case 'tl_newsletter_channel':	return 'system/modules/newsletter/html/icon.gif'; break;
-			case 'tl_newsletter_recipients':return 'member.gif'; break;
-			case 'tl_page':					return 'regular.gif'; break;
-// 			case 'tl_page':					return array(__CLASS__, 'getPageIcon'); break; // TODO
-			case 'tl_search':				return 'regular.gif'; break;
-			case 'tl_style':				return 'iconCSS.gif'; break;
-			case 'tl_style_sheet':			return 'css.gif'; break;
-			case 'tl_task':					return 'taskcenter.gif'; break;
-			case 'tl_user':					return 'user.gif'; break;
-			case 'tl_user_group':			return 'group.gif'; break;
-			default:
-				return isset(self::$icons[$table]) ? self::$icons[$table] : 'iconPLAIN.gif';
-				break;
-		}
-	}
+	protected static $icons = array(
+		'tl_article'				=> 'articles.gif',
+		'tl_calendar'				=> 'system/modules/calendar/html/icon.gif',
+		'tl_faq_category'			=> 'system/modules/faq/html/icon.gif',
+		'tl_form'					=> 'form.gif',
+		'tl_layout'					=> 'layout.gif',
+		'tl_member'					=> 'member.gif',
+		'tl_member_group'			=> 'mgroup.gif',
+		'tl_module'					=> 'modules.gif',
+		'tl_news_archive'			=> 'news.gif',
+		'tl_newsletter_channel'		=> 'system/modules/newsletter/html/icon.gif',
+		'tl_newsletter_recipients'	=> 'member.gif',
+		'tl_page'					=> array(__CLASS__, 'resolvePageIcon'),
+		'tl_search'					=> 'regular.gif',
+		'tl_style'					=> 'iconCSS.gif',
+		'tl_style_sheet'			=> 'css.gif',
+		'tl_task'					=> 'taskcenter.gif',
+		'tl_user'					=> 'user.gif',
+		'tl_user_group'				=> 'group.gif',
+	);
 	
-	protected static $icons = array();
+	protected static $iconColumns = array(
+		'tl_page'	=> array('type', 'published', 'start', 'stop', 'hide', 'protected'),
+	);
 	
-	public static function addIcon($table, $icon) {
+	public static function setIcon($table, $icon, array $iconColumns = null) {
 		self::$icons[$table] = $icon;
+		$iconColumns && self::$iconColumns[$table] = $iconColumns;
 	}
 	
-	public static function getIcons() {
+	public static function getIcon($table, array &$iconColumns = null) {
+		isset(self::$iconColumns[$table]) && $iconColumns = self::$iconColumns[$table];
+		return isset(self::$icons[$table]) ? self::$icons[$table] : 'iconPLAIN.gif';
+	}
+	
+	public static function getIcons(array &$iconColumns = null) {
+		$iconColumns = self::$iconColumns;
 		return self::$icons;
+	}
+	
+	public static function resolvePageIcon($node, $data, $cfg) {
+		$row = $node['additional'];
+		if(!$row['published'] || ($row['start'] && $row['start'] > time()) || ($row['stop'] && $row['stop'] < time())) {
+			$sub += 1;
+		}
+		
+		if($row['hide'] && !in_array($row['type'], array('redirect', 'forward', 'root', 'error_403', 'error_404'))) {
+			$sub += 2;
+		}
+		
+		if($row['protected'] && !in_array($row['type'], array('root', 'error_403', 'error_404'))) {
+			$sub += 4;
+		}
+		
+		return $sub ? $row['type'] . '_' . $sub . '.gif' : $row['type'].'.gif';
 	}
 	
 }

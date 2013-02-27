@@ -1,12 +1,5 @@
 <?php
 
-/**
- * Concept based on John Brands original code.
- * 
- * @copyright	backboneIT | Oliver Hoff 2012
- * @author		Oliver Hoff <oliver@hofff.com>
- * @license		LGPL v3
- */
 class SelectriWidget extends Widget {
 
 	protected $strTemplate = 'be_widget';
@@ -29,7 +22,7 @@ class SelectriWidget extends Widget {
 		switch($key) {
 			case 'value':
 				if($this->getMaxSelected() == 1) {
-					return count($values) ? reset($values) : null;
+					return count($this->varValue) ? reset($this->varValue) : null;
 				} elseif($this->findInSet) {
 					return implode(',', $this->varValue);
 				} else {
@@ -166,8 +159,9 @@ class SelectriWidget extends Widget {
 			}
 			$values = $values[$path[$i]];
 		} while(++$i < $n); }
-		
-		$values = $this->getData()->filter((array) $values);
+
+		$values = (array) $values;
+// 		$values = $this->getData()->filter((array) $values);
 		
 		if(count($values) < $this->getMinSelected()) {
 			if($this->getMinSelected() > 1) {
@@ -205,13 +199,17 @@ class SelectriWidget extends Widget {
 			return $this->generateAjax($action);
 		}
 		
-		$data->setSelection($this->varValue);
-		
 		static $blnScriptsInjected;
 		if(!$blnScriptsInjected) {
 			$GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/backboneit_selectri/html/selectri.js';
 			$GLOBALS['TL_CSS'][] = 'system/modules/backboneit_selectri/html/selectri.css';
 		}
+		
+		$options = array(
+			'name' => $this->getInputName(),
+			'min' => $this->getMinSelected(),
+			'max' => $this->getMaxSelected()
+		);
 		
 		ob_start();
 		include $this->getTemplate('selectri_container');
@@ -224,11 +222,27 @@ class SelectriWidget extends Widget {
 			case 'levels':
 				$start = $this->Input->get('striStart');
 				strlen($start) || $start = null;
-				$response = $this->generateLevels($start);
-				break;				
+				list($level, $start) = $this->getData()->getTreeIterator($start);
+				$response = $this->generateLevels($level, $start);
+				break;
+			case 'path':
+				$key = $this->Input->get('striKey');
+				$level = $this->getData()->getPathIterator($key);
+				$response = $this->generateLevels($level);
+				break;
 			case 'search':
 				$search = $this->Input->get('striSearch');
 				$response = $this->generateSearch($search);
+				break;
+			case 'toggle':
+				$key = $this->Input->post('striKey');
+				$unfolded = $this->getUnfolded();
+				if($this->Input->post('striOpen')) {
+					$unfolded[] = $key;
+				} else {
+					$unfolded = array_diff($unfolded, array($key));
+				}
+				$this->setUnfolded($unfolded);
 				break;
 		}
 		header('Content-Type: application/json');
@@ -236,21 +250,27 @@ class SelectriWidget extends Widget {
 		exit;
 	}
 	
-	public function generateLevels($start = null) {
-		$level = $this->getData()->getTreeIterator($start);
-		$level->rewind();
-		if(!$level->valid()) { // empty iterator
+	protected function renderChildren($level) {
+		ob_start();
+		include $this->getTemplate('selectri_children');
+		return ob_get_clean();
+	}
+	
+	public function generateLevels($level, $start = null) {
+		if(!$level) {
 			return null;
 		}
 		
+		if($start) {
+			$response['start'] = $start;
+			$insert = &$response['levels'][$start];
+		} else {
+			$insert = &$response['first'];
+		}
+
 		$iterators = array();
-		$start && $response['start'] = $start;
-		$insert = &$response['first'];
-		
 		for(;;) {
-			ob_start();
-			include $this->getTemplate('selectri_children');
-			$insert = ob_get_clean();
+			$insert = $this->renderChildren($level);
 			
 			// push levels onto stack
 			foreach($level as $node) if($node->hasChildren()) {
@@ -270,6 +290,17 @@ class SelectriWidget extends Widget {
 		}
 		
 		return $response;
+	}
+	
+	public function generateSearch($search) {
+		$search = $this->getData()->getSearchIterator($search);
+		$search->rewind();
+		if(!$search->valid()) {
+			return null;
+		}
+		ob_start();
+		include $this->getTemplate('selectri_search');
+		return array('result' => ob_get_clean());
 	}
 	
 	public function getData() {
@@ -372,22 +403,26 @@ class SelectriWidget extends Widget {
 		if(!$this->isDataContainerDriven()) {
 			return array();
 		}
-		$strSessionKey = sprintf('selectri$%s$%s',
-			$this->getDataContainerTable(),
-			$this->getDataContainerField()
-		);
-		return (array) $this->Session->get($strSessionKey);
+		return array_map('strval', array_keys((array) $this->Session->get($this->getSessionKey())));
 	}
 	
-	public function setUnfolded(array $arrUnfolded) {
+	public function setUnfolded(array $unfolded) {
 		if(!$this->isDataContainerDriven()) {
 			return;
 		}
-		$strSessionKey = sprintf('selectri$%s$%s',
+		$this->Session->set($this->getSessionKey(), array_flip(array_map('strval', array_values($unfolded))));
+	}
+	
+	public function getSessionKey() {
+		return sprintf('selectri$%s$%s',
 			$this->getDataContainerTable(),
 			$this->getDataContainerField()
 		);
-		$this->Session->set($strSessionKey, $arrUnfolded);
+	}
+	
+	// fuck contao...
+	public function getTheme() {
+		return parent::getTheme();
 	}
 	
 }

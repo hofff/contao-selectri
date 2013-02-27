@@ -21,13 +21,4 @@ abstract class SelectriAbstractData implements SelectriData {
 		return $this;
 	}
 	
-	public function getSelection() {
-		return $this->selection;
-	}
-	
-	public function setSelection(array $selection) {
-		$this->selection = $selection;
-		return $this;
-	}
-	
 }
