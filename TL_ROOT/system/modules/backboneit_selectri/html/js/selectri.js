@@ -106,7 +106,7 @@ Selectri.onLevelsSuccess			= function(json) {
 	
 	self.selection.getChildren().each(function(node) {
 		node = self.getTreeNode(node);
-		if(node) node.addClass("striSelected");
+		if(node) node.getParent("li").addClass("striSelected");
 	});
 };
 Selectri.onSearchRequest			= function() { this.container.addClass("striSearching"); };
@@ -119,7 +119,7 @@ Selectri.onSearchSuccess			= function(json) {
 	self.result.set("html", json ? json.result : "").addClass("striOpen");
 	self.selection.getChildren().each(function(node) {
 		node = self.getResultNode(node);
-		if(node) node.addClass("striSelected");
+		if(node) node.getParent("li").addClass("striSelected");
 	});
 };
 
@@ -172,8 +172,6 @@ Selectri.select = function(node, adjustScroll) {
 
 	if(self.options.max == 1) self.deselect(self.selection.getFirst());
 	
-	treeNode.addClass("striSelected");
-	resultNode.addClass("striSelected");
 	node = new Element("li").grab(node.clone()).inject(self.selection);
 	node.getElement("input").set("name", self.options.name);
 	node.getElement(".striSelect").destroy();
@@ -182,6 +180,9 @@ Selectri.select = function(node, adjustScroll) {
 	
 	scroll.y += self.selection.getSize().y;
 	if(adjustScroll) window.scrollTo(scroll.x, scroll.y);
+	
+	if(treeNode) treeNode.getParent("li").addClass("striSelected");
+	if(resultNode) resultNode.getParent("li").addClass("striSelected");
 };
 
 Selectri.deselect = function(node, adjustScroll) {
@@ -190,9 +191,6 @@ Selectri.deselect = function(node, adjustScroll) {
 	node = self.getSelectionNode(node);
 	if(!node) return;
 	
-	treeNode = self.getTreeNode(node);
-	if(treeNode) treeNode.removeClass(".striSelected");
-	
 	scroll = window.getScroll();
 	scroll.y -= self.selection.getSize().y;
 	
@@ -200,6 +198,12 @@ Selectri.deselect = function(node, adjustScroll) {
 	
 	scroll.y += self.selection.getSize().y;
 	if(adjustScroll) window.scrollTo(scroll.x, scroll.y);
+
+	node = self.getTreeNode(node);
+	if(node) node.getParent("li").removeClass("striSelected");
+
+	node = self.getResultNode(node);
+	if(node) node.getParent("li").removeClass("striSelected");
 };
 
 Selectri.deselectAll = function() {
