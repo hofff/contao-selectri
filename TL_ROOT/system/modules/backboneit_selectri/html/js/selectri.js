@@ -7,11 +7,12 @@ if(!bbit.mt.cto) bbit.mt.cto = {};
 
 var Selectri = {},
 	TRUE = true,
+	EMPTY = Function.from(),
 	OCCLUDE = "bbit.mt.cto.Selectri",
 	ATTR_KEY = "data-stri-key",
 	reservedAttributeSelectorValueChars = /(["\]])/g,
 	escapeAttributeSelectorValue = function(value) { return value.replace(reservedAttributeSelectorValueChars, "\\$1"); },
-	fixSortables = new Sortables().options.unDraggableTags ? Function.from() : function(sortables, element) { // fuck mootools... or... contao...
+	fixSortables = new Sortables().options.unDraggableTags ? EMPTY : function(sortables, element) { // fuck mootools... or... contao...
 		element.store("sortables:start", function(event) {
 			if(event.target.get("tag") != "li") event.target = event.target.getParent("li");
 			sortables.start(event, element);
@@ -34,10 +35,11 @@ Selectri.initialize = function(container, options, detached) {
 		self.id = "stri" + String.uniqueID();
 	}
 	
-	if(!occluded && options == TRUE) self.setOptions(JSON.decode(self.container.get("data-stri-options")));
-	else if(options) self.setOptions(options);
-	
-	if(!occluded) {
+	if(occluded) {
+		self.setOptions(options);
+	} else {
+		if(options === TRUE) options = JSON.decode(self.container.get("data-stri-options"));
+		self.setOptions(options);
 		self.selection = self.container.getElement(".striSelection");
 		self.search = self.container.getElement(".striTools .striSearch input");
 		self.value = self.search.get("value");
@@ -113,7 +115,7 @@ Selectri.onLevelsSuccess			= function(json) {
 	});
 	
 	self.selection.getChildren().each(function(node) {
-		node = self.getTreeNode(node);
+		node = self.getNode(self.tree, node);
 		if(node) node.getParent("li").addClass("striSelected");
 	});
 };
@@ -126,7 +128,7 @@ Selectri.onSearchSuccess			= function(json) {
 	var self = this;
 	self.result.set("html", json ? json.result : "").addClass("striOpen");
 	self.selection.getChildren().each(function(node) {
-		node = self.getResultNode(node);
+		node = self.getNode(self.result, node);
 		if(node) node.getParent("li").addClass("striSelected");
 	});
 };
@@ -167,60 +169,65 @@ Selectri.detach = function() {
 };
 
 Selectri.select = function(node, adjustScroll) {
-	var self = this, scroll;
+	var self = this;
 	if(self.isSelected(node)) return;
 	
-	treeNode = self.getTreeNode(node);
-	resultNode = self.getResultNode(node);
+	treeNode = self.getNode(self.tree, node);
+	resultNode = self.getNode(self.result, node);
 	node = treeNode || resultNode;
 	if(!node) return;
-	
-	scroll = window.getScroll();
-	scroll.y -= self.selection.getSize().y;
 
-	if(self.options.max == 1) self.deselect(self.selection.getFirst());
-	
-	node = new Element("li").grab(node.clone()).inject(self.selection);
+	node = new Element("li").grab(node.clone());
 	node.getElement("input").set("name", self.options.name);
 	node.getElement(".striSelect").destroy();
 	fixSortables(self.sortables, node);
-	self.sortables.addItems(node);
 	
-	scroll.y += self.selection.getSize().y;
-	if(adjustScroll) window.scrollTo(scroll.x, scroll.y);
+	adjustScroll = self.getScrollAdjust(adjustScroll);
+	if(self.options.max == 1) self.deselect(self.selection.getFirst());
+	node.inject(self.selection);
+	self.sortables.addItems(node);
+	adjustScroll();
 	
 	if(treeNode) treeNode.getParent("li").addClass("striSelected");
 	if(resultNode) resultNode.getParent("li").addClass("striSelected");
 };
 
 Selectri.deselect = function(node, adjustScroll) {
-	var self = this, scroll;
+	var self = this;
 	
-	node = self.getSelectionNode(node);
+	node = self.getNode(self.selection, node);
 	if(!node) return;
-	
-	scroll = window.getScroll();
-	scroll.y -= self.selection.getSize().y;
-	
-	self.sortables.removeItems(node.getParent("li")).destroy();
-	
-	scroll.y += self.selection.getSize().y;
-	if(adjustScroll) window.scrollTo(scroll.x, scroll.y);
 
-	node = self.getTreeNode(node);
+	adjustScroll = self.getScrollAdjust(adjustScroll);
+	self.sortables.removeItems(node.getParent("li")).destroy();
+	adjustScroll();
+
+	node = self.getNode(self.tree, node);
 	if(node) node.getParent("li").removeClass("striSelected");
 
-	node = self.getResultNode(node);
+	node = self.getNode(self.result, node);
 	if(node) node.getParent("li").removeClass("striSelected");
 };
 
-Selectri.deselectAll = function() {
+Selectri.deselectAll = function(adjustScroll) {
 	var self = this;
+	adjustScroll = self.getScrollAdjust(adjustScroll);
 	self.selection.getChildren().each(self.deselect, self);
+	adjustScroll();
+};
+
+Selectri.getScrollAdjust = function(adjust) {
+	if(!adjust) return EMPTY;
+	scroll = window.getScroll();
+	scroll.y -= self.selection.getSize().y;
+	return function() {
+		scroll.y += self.selection.getSize().y;
+		window.scrollTo(scroll.x, scroll.y);
+	};
 };
 
 Selectri.isSelected = function(key) {
-	return !!this.getSelectionNode(key);
+	return !!this.getNode(self.selection, key);
 };
 
 Selectri.getKey = function(node) {
@@ -236,31 +243,14 @@ Selectri.getKey = function(node) {
 	return node.get(ATTR_KEY);
 };
 
-Selectri.getNodeSelector = function(key) {
-	return ":not(.striPath) > .striNode[" + ATTR_KEY + "=\"" + escapeAttributeSelectorValue(key) + "\"]";
-};
-
-Selectri.getSelectionNode = function(key) {
-	var self = this;
-	if(typeOf(key) != "string" && !(key = self.getKey(key))) return;
-	return self.selection.getElement(self.getNodeSelector(key));
-};
-
-Selectri.getResultNode = function(key) {
-	var self = this;
-	if(typeOf(key) != "string" && !(key = self.getKey(key))) return;
-	return self.result.getElement(self.getNodeSelector(key));
-};
-
-Selectri.getTreeNode = function(key) {
-	var self = this;
-	if(typeOf(key) != "string" && !(key = self.getKey(key))) return;
-	return self.tree.getElement(self.getNodeSelector(key));
+Selectri.getNode = function(element, key) {
+	if(typeOf(key) != "string" && !(key = this.getKey(key))) return;
+	return element.getElement(":not(.striPath) > .striNode[" + ATTR_KEY + "=\"" + escapeAttributeSelectorValue(key) + "\"]");
 };
 
 Selectri.getChildrenContainer = function(node) {
 	var self = this;
-	node = self.getTreeNode(node);
+	node = self.getNode(self.tree, node);
 	if(!node) return;
 	return node.getParent("li").getChildren(".striChildren")[0];
 };
@@ -284,7 +274,7 @@ Selectri.closeTree = function() {
 
 Selectri.toggleNode = function(node) {
 	var self = this;
-	node = self.getTreeNode(node);
+	node = self.getNode(self.tree, node);
 	if(!node) return;
 	if(node.getParent("li").hasClass("striOpen")) return self.closeNode(node);
 	else self.openNode(node);
