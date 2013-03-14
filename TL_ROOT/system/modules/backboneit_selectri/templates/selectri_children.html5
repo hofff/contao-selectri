@@ -1,6 +1,6 @@
 <ol>
 <?php foreach($level as $node): ?>
-<li>
+<li class="<?php if($node->hasSelectableChildren()) echo 'striHasChildren'; ?>">
 
   <div class="striNode" data-stri-key="<?php echo specialchars($node->getKey()); ?>">
 <?php if($node->isSelectable()): ?>
