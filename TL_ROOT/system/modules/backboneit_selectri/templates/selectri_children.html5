@@ -24,6 +24,7 @@
         ><?php echo specialchars($node->getLabel());
       ?></a
     ></div>
+<?php if($node->isSelectable()): ?>
     <div class="striSelect"
       ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['selectTitle']; ?>"
         ><?php echo $GLOBALS['TL_LANG']['stri']['select'];
@@ -34,6 +35,7 @@
         ><?php echo $GLOBALS['TL_LANG']['stri']['deselect'];
       ?></a
     ></div>
+<?php endif; ?>
   </div>
   
 <?php if($node->hasItems()): ?>
