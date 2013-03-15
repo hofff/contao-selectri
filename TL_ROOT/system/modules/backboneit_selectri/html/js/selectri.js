@@ -220,6 +220,7 @@ Selectri.deselectAll = function(adjustScroll) {
 
 Selectri.getScrollAdjust = function(adjust) {
 	if(!adjust) return EMPTY;
+	var self = this;
 	scroll = window.getScroll();
 	scroll.y -= self.selection.getSize().y;
 	return function() {
@@ -229,7 +230,7 @@ Selectri.getScrollAdjust = function(adjust) {
 };
 
 Selectri.isSelected = function(key) {
-	return !!this.getNode(self.selection, key);
+	return !!this.getNode(this.selection, key);
 };
 
 Selectri.getKey = function(node) {
