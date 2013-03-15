@@ -220,6 +220,10 @@ class SelectriTableData extends SelectriAbstractData {
 		return $this->cfg;
 	}
 	
+	public function filter(array $selection) {
+		return array_keys($this->fetchTreeNodes($selection));
+	}
+	
 	public function getSelectionIterator(array $selection) {
 		if(!$selection) {
 			return new EmptyIterator();

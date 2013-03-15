@@ -161,7 +161,7 @@ class SelectriWidget extends Widget {
 		} while(++$i < $n); }
 
 		$values = (array) $values;
-// 		$values = $this->getData()->filter((array) $values);
+		$values = $this->getData()->filter($values);
 		
 		if(count($values) < $this->getMinSelected()) {
 			if($this->getMinSelected() > 1) {
