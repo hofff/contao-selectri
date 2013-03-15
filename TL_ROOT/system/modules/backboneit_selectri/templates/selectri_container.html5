@@ -1,43 +1,46 @@
-<fieldset class="striWidget striAuto <?php if($this->strClass) echo ' ', $this->strClass;
+<fieldset class="striWidget striAuto<?php if($this->strClass) echo ' ', $this->strClass;
 if($this->isOpen()) echo ' striOpen'; ?>" id="<?php echo $this->strId; ?>"
 data-stri-options="<?php echo specialchars(json_encode($options)); ?>">
 
-<ol class="striSelection">
-<?php foreach($this->getData()->getSelectionIterator($this->varValue) as $node): ?>
-<li><div class="striNode" data-stri-key="<?php echo specialchars($node->getKey()); ?>">
-  <input type="hidden" name="<?php echo $this->getInputName(); ?>"
-      value="<?php echo specialchars($node->getKey()); ?>" />
+<?php $selection = $this->getData()->getSelectionIterator($this->varValue); $selection->rewind(); ?>
+<div class="striSelection<?php if($selection->valid()) echo ' striSelected'; ?>">
+  <ol>
+<?php foreach($selection as $node): ?>
+  <li><div class="striNode" data-stri-key="<?php echo specialchars($node->getKey()); ?>">
+    <input type="hidden" name="<?php echo $this->getInputName(); ?>"
+        value="<?php echo specialchars($node->getKey()); ?>" />
 <?php if($node->hasPath()): ?>
-  <ol class="striPath">
+    <ol class="striPath">
 <?php foreach($node->getPathIterator() as $pathNode): ?>
-    <li class="striNode" data-stri-key="<?php echo specialchars($pathNode->getKey()); ?>">
-      <div class="striLabel" data-stri-icon="<?php echo specialchars($pathNode->getIcon()); ?>"
-	    ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggle']; ?>"
-	      ><?php echo specialchars($pathNode->getLabel());
-	    ?></a
-	  ></div>
-	</li>
+      <li class="striNode" data-stri-key="<?php echo specialchars($pathNode->getKey()); ?>">
+        <div class="striLabel" data-stri-icon="<?php echo specialchars($pathNode->getIcon()); ?>"
+          ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggle']; ?>"
+            ><?php echo specialchars($pathNode->getLabel());
+          ?></a
+        ></div>
+      </li>
+<?php endforeach; ?>
+    </ol>
+<?php endif; ?>
+    <div class="striIcon"
+      ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggle']; ?>"
+        ><img src="<?php echo specialchars($node->getIcon()); ?>" alt=""
+      /></a
+    ></div>
+    <div class="striLabel"
+      ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggle']; ?>"
+        ><?php echo specialchars($node->getLabel());
+      ?></a
+    ></div>
+    <div class="striDeselect"
+      ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['deselectTitle']; ?>"
+        ><?php echo $GLOBALS['TL_LANG']['stri']['deselect'];
+      ?></a
+    ></div>
+  </div></li>
 <?php endforeach; ?>
   </ol>
-<?php endif; ?>
-  <div class="striIcon"
-    ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggle']; ?>"
-      ><img src="<?php echo specialchars($node->getIcon()); ?>" alt=""
-    /></a
-  ></div>
-  <div class="striLabel"
-    ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggle']; ?>"
-      ><?php echo specialchars($node->getLabel());
-    ?></a
-  ></div>
-  <div class="striDeselect"
-    ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['deselectTitle']; ?>"
-      ><?php echo $GLOBALS['TL_LANG']['stri']['deselect'];
-    ?></a
-  ></div>
-</div></li>
-<?php endforeach; ?>
-</ol>
+</div>
 
 <div class="striTools">
   <div class="striSearch"><input type="text" placeholder="<?php echo $GLOBALS['TL_LANG']['stri']['search']; ?>" /></div>

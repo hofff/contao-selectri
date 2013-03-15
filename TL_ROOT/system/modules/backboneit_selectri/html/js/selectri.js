@@ -40,7 +40,7 @@ Selectri.initialize = function(container, options, detached) {
 	} else {
 		if(options === TRUE) options = JSON.decode(self.container.get("data-stri-options"));
 		self.setOptions(options);
-		self.selection = self.container.getElement(".striSelection");
+		self.selection = self.container.getElement(".striSelection > ol");
 		self.search = self.container.getElement(".striTools .striSearch input");
 		self.value = self.search.get("value");
 		self.result = self.container.getElement(".striResult");
@@ -181,7 +181,7 @@ Selectri.select = function(node, adjustScroll) {
 	resultNode = self.getNode(self.result, node);
 	node = treeNode || resultNode;
 	if(!node) return;
-
+	
 	node = new Element("li").grab(node.clone());
 	node.getElement("input").set("name", self.options.name);
 	node.getElement(".striSelect").destroy();
@@ -191,6 +191,7 @@ Selectri.select = function(node, adjustScroll) {
 	if(self.options.max == 1) self.deselect(self.selection.getFirst());
 	node.inject(self.selection);
 	self.sortables.addItems(node);
+	self.selection.getParent().addClass("striSelected");
 	adjustScroll();
 	
 	if(treeNode) treeNode.getParent("li").addClass("striSelected");
@@ -205,6 +206,7 @@ Selectri.deselect = function(node, adjustScroll) {
 
 	adjustScroll = self.getScrollAdjust(adjustScroll);
 	self.sortables.removeItems(node.getParent("li")).destroy();
+	if(!self.selection.getChildren().length) self.selection.getParent().removeClass("striSelected");
 	adjustScroll();
 
 	node = self.getNode(self.tree, node);
@@ -222,12 +224,12 @@ Selectri.deselectAll = function(adjustScroll) {
 };
 
 Selectri.getScrollAdjust = function(adjust) {
-	if(!adjust) return EMPTY;
+	if(adjust !== TRUE) return EMPTY;
 	var self = this;
 	scroll = window.getScroll();
-	scroll.y -= self.selection.getSize().y;
+	scroll.y -= self.selection.getParent().getSize().y;
 	return function() {
-		scroll.y += self.selection.getSize().y;
+		scroll.y += self.selection.getParent().getSize().y;
 		window.scrollTo(scroll.x, scroll.y);
 	};
 };
