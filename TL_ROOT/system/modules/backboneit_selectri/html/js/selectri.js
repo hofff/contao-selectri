@@ -32,7 +32,7 @@ Selectri.initialize = function(container, options, detached) {
 		self = self.occluded;
 		occluded = TRUE;
 	} else {
-		self.id = "stri" + String.uniqueID();
+		self.id = self.container.get("id") || String.uniqueID();
 	}
 	
 	if(occluded) {
@@ -46,7 +46,9 @@ Selectri.initialize = function(container, options, detached) {
 		self.result = self.container.getElement(".striResult");
 		self.tree = self.container.getElement(".striTree");
 		
-		url = window.location.href + (window.location.href.indexOf("?") > -1 ? "&" : "?") + "striAction=";
+		url = window.location.href + (window.location.href.indexOf("?") > -1 ? "&" : "?");
+		url += "striID=" + encodeURIComponent(self.id);
+		url += "&striAction=";
 		self.toggleRequest = new Request.JSON({ url: url + "toggle", method: "post", link: "chain" });
 		delete self.toggleRequest.headers["X-Requested-With"]; // fuck contao...
 		self.toggleRequest.addEvent("success", self.onToggleSuccess);

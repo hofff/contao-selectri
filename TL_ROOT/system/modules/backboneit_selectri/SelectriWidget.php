@@ -194,9 +194,9 @@ class SelectriWidget extends Widget {
 		}
 		$data->validate();
 		
-		$action = $this->Input->get('striAction');
-		if($action) {
-			return $this->generateAjax($action);
+		if($this->Input->get('striID') == $this->strId) {
+			$action = $this->Input->get('striAction');
+			return $action ? $this->generateAjax($action) : '';
 		}
 		
 		static $blnScriptsInjected;
