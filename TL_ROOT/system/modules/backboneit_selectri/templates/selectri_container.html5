@@ -3,10 +3,10 @@ if($this->isOpen()) echo ' striOpen'; ?>" id="<?php echo $this->strId; ?>"
 data-stri-options="<?php echo specialchars(json_encode($options)); ?>">
 
 <?php $selection = $this->getData()->getSelectionIterator($this->varValue); $selection->rewind(); ?>
-<div class="striSelection<?php if($selection->valid()) echo ' striSelected'; ?>">
+<div class="striSelection<?php if($selection->valid()) echo ' striHasSelection'; ?>">
   <ol>
 <?php foreach($selection as $node): ?>
-  <li><div class="striNode" data-stri-key="<?php echo specialchars($node->getKey()); ?>">
+  <li class="striSelected"><div class="striNode" data-stri-key="<?php echo specialchars($node->getKey()); ?>">
     <input type="hidden" name="<?php echo $this->getInputName(); ?>"
         value="<?php echo specialchars($node->getKey()); ?>" />
 <?php if($node->hasPath()): ?>

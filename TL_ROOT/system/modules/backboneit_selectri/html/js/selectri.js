@@ -182,7 +182,7 @@ Selectri.select = function(node, adjustScroll) {
 	node = treeNode || resultNode;
 	if(!node) return;
 	
-	node = new Element("li").grab(node.clone());
+	node = new Element("li.striSelected").grab(node.clone());
 	node.getElement("input").set("name", self.options.name);
 	node.getElement(".striSelect").destroy();
 	fixSortables(self.sortables, node);
@@ -191,7 +191,7 @@ Selectri.select = function(node, adjustScroll) {
 	if(self.options.max == 1) self.deselect(self.selection.getFirst());
 	node.inject(self.selection);
 	self.sortables.addItems(node);
-	self.selection.getParent().addClass("striSelected");
+	self.selection.getParent().addClass("striHasSelection");
 	adjustScroll();
 	
 	if(treeNode) treeNode.getParent("li").addClass("striSelected");
@@ -206,7 +206,7 @@ Selectri.deselect = function(node, adjustScroll) {
 
 	adjustScroll = self.getScrollAdjust(adjustScroll);
 	self.sortables.removeItems(node.getParent("li")).destroy();
-	if(!self.selection.getChildren().length) self.selection.getParent().removeClass("striSelected");
+	if(!self.selection.getChildren().length) self.selection.getParent().removeClass("striHasSelection");
 	adjustScroll();
 
 	node = self.getNode(self.tree, node);

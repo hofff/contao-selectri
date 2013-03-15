@@ -20,7 +20,7 @@
 
 /* @group Tree */
 
-.striSelection.striSelected,
+.striSelection.striHasSelection,
 .striResult.striOpen,
 .striOpen > .striTree {
 	display: block;
