@@ -19,6 +19,11 @@
 <?php endforeach; ?>
     </ol>
 <?php endif; ?>
+    <div class="striIcon"
+      ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggle']; ?>"
+        ><img src="<?php echo specialchars($node->getIcon()); ?>" alt=""
+      /></a
+    ></div>
     <div class="striLabel" data-stri-icon="<?php echo specialchars($node->getIcon()); ?>"
       ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggle']; ?>"
         ><?php echo specialchars($node->getLabel());
