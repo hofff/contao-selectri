@@ -14,172 +14,207 @@
 
 /* @group Selection */
 
-.striSelection {
-	list-style-type: none;
-	list-style-image: none;
-	margin: 5px 0 10px;
-	padding: 0;
-}
 
-.striSelection li {
-}
-
-.striSelection li .striNode {
-	padding: 3px 5px;
-	border-bottom: 1px solid #e9e9e9;
-	border-top: 1px solid #e9e9e9;
-}
-
-.striSelection li .striNode .striPath {
-	display: none;
-}
-
-.striSelection li .striNode .striLabel {
-	float: left;
-}
-
-.striSelection li .striNode .striDeselect {
-	float: right;
-	display: block;
-	background-color: red;
-	width: 16px;
-	height: 16px;
-	text-indent: -10000px;
-	overflow: hidden;
-}
-
-/* @end */
-
-/* @group Result */
-
-.striResult.striOpen {
-	display: block;
-}
-
-.striResult {
-	display: none;
-	background-color: #ebfdd7;
-}
-
-.striResult ul {
-	list-style-type: none;
-	list-style-image: none;
-	margin: 0;
-	padding: 0;
-}
-
-.striResult > ul {
-	border-top: 1px solid #e9e9e9;
-	margin-bottom: 2px;
-	margin-top: 9px;
-}
-
-.striResult ul li .striNode {
-	padding: 3px 5px;
-	border-bottom: 1px solid #e9e9e9;
-}
-
-.striResult ul li .striNode .striPath {
-	display: none;
-}
-
-.striResult ul li .striNode .striLabel {
-	float: left;
-}
-
-.striResult ul li .striNode .striSelect,
-.striResult ul li .striNode .striDeselect {
-	float: right;
-	margin-left: 5px;
-	display: block;
-	width: 16px;
-	height: 16px;
-	text-indent: -10000px;
-	overflow: hidden;
-}
-
-.striResult ul li .striNode .striSelect {
-	background-color: green;
-}
-
-.striResult ul li .striNode .striDeselect {
-	background-color: red;
-}
-
-.striResult ul li > .striChildren {
-	display: none;
-}
-
-.striResult ul li.striOpen > .striChildren {
-	display: block;
-}
 
 /* @end */
 
 /* @group Tree */
 
+.striSelection.striSelected,
+.striResult.striOpen,
 .striOpen > .striTree {
 	display: block;
 }
 
+.striSelection,
+.striResult,
 .striTree {
 	display: none;
+	padding-top: 5px;
+	padding-bottom: 10px;
 }
 
+.striTree {
+	padding-bottom: 2px;
+	padding-top: 10px;
+}
+
+.striSelection ol,
+.striResult ul,
 .striTree ol {
 	list-style-type: none;
 	list-style-image: none;
 	margin: 0;
-	padding: 0;
+	padding: 0 0 0 18px;
+}
+
+.striSelection ol,
+.striResult ul,
+.striTree > ol {
+	border-top: 1px solid #e9e9e9;
+	border-bottom: 1px solid #e9e9e9;
+	margin: 0;
+	padding: 0 0 0 10px;
 }
 
 .striTree > ol {
-	border-top: 1px solid #e9e9e9;
-	margin-bottom: 2px;
-	margin-top: 9px;
+	padding-left: 10px;
 }
 
-.striTree ol ol li {
-	margin-left: 20px;
-	border-left: 1px solid #e9e9e9;
+.striSelection ol li,
+.striTree ol li {
+	position: relative;
 }
 
+.striSelection ol li .striNode,
+.striResult ul li .striNode,
 .striTree ol li .striNode {
-	padding: 3px 5px;
 	border-bottom: 1px solid #e9e9e9;
 }
 
+.striTree ol li .striNode {
+	border-left: 1px solid #e9e9e9;
+}
+
+.striSelection ol li:last-child .striNode,
+.striResult ul li:last-child .striNode,
+.striTree ol li:last-child > .striNode {
+	border-bottom-style: none;
+}
+
+.striTree ol li:first-child > .striNode {
+	border-bottom: 1px solid #e9e9e9;
+}
+
+.striSelection ol li .striNode:hover,
+.striTree ol li .striNode:hover {
+	background-color: #ebfdd7;
+}
+
+.striSelection ol li .striNode .striIcon,
+.striTree ol li .striNode .striIcon {
+	float: left;
+	line-height: 0;
+	padding: 2px 5px 2px 2px;
+}
+
+.striTree ol li .striNode .striIcon {
+	padding-left: 20px;
+	margin-left: -10px;
+}
+
+.striTree ol li .striChildren {
+	border-left: 1px solid #e9e9e9;
+}
+
+.striTree ol .striHasChildren:last-Child .striChildren {
+	border-left-style: none;
+	padding-left: 1px;
+}
+
+.striTree ol .striHasChildren:first-child .striChildren {
+	border-left: 1px solid #e9e9e9;
+	padding-left: 0;
+}
+
+.striTree ol > li > .striChildren > ol > li:last-child > .striNode {
+	border-bottom-style: none;
+}
+
+.striTree ol > li > .striChildren > ol > li.striOpen:last-child > .striNode {
+	border-bottom: 1px solid #e9e9e9;
+}
+
+.striTree ol > li.striHasChildren.striOpen + li > .striNode {
+	border-top: 1px solid #e9e9e9;
+}
+
+.striTree ol li.striHasChildren > .striNode > .striIcon {
+	padding-left: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+.striTree ol li.striHasChildren > .striNode > .striIcon > a {
+	background: url(folPlus.gif) no-repeat left 2px;
+	display: block;
+	margin: 0;
+	padding-top: 2px;
+	padding-bottom: 2px;
+	padding-left: 20px;
+}
+
+.striTree ol li.striHasChildren.striOpen > .striNode > .striIcon > a {
+	background-image: url(folMinus.gif);
+}
+
+.striSelection ol li .striNode .striPath,
+.striResult ul li .striNode .striPath,
 .striTree ol li .striNode .striPath {
 	display: none;
 }
 
+.striSelection ol li .striNode .striLabel,
+.striResult ul li .striNode .striLabel,
 .striTree ol li .striNode .striLabel {
 	float: left;
+	line-height: 22px;
 }
 
+.striSelection ol li .striNode .striDeselect,
+.striResult ul li .striNode .striSelect,
+.striResult ul li .striNode .striDeselect,
 .striTree ol li .striNode .striSelect,
 .striTree ol li .striNode .striDeselect {
-	float: right;
-	margin-left: 5px;
 	display: block;
-	width: 16px;
-	height: 16px;
+	width: 18px;
+	height: 18px;
 	text-indent: -10000px;
 	overflow: hidden;
+	position: absolute;
+	top: 2px;
+	right: 3px;
 }
 
+.striSelection ol li .striNode .striDeselect a,
+.striResult ul li .striNode .striSelect a,
+.striResult ul li .striNode .striDeselect a,
+.striTree ol li .striNode .striSelect a,
+.striTree ol li .striNode .striDeselect a {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.striResult ul li .striNode .striSelect,
 .striTree ol li .striNode .striSelect {
-	background-color: green;
+	background: url(copy.gif) no-repeat center center;
+	display: block;
 }
 
+.striResult ul li.striSelected > .striNode > .striSelect,
+.striTree ol li.striSelected > .striNode > .striSelect {
+	display: none;
+}
+
+.striSelection ol li .striNode .striDeselect,
+.striResult ul li.striSelected > .striNode > .striDeselect,
+.striTree ol li.striSelected > .striNode > .striDeselect {
+	background: url(delete.gif) no-repeat center 2px;
+	display: block;
+}
+
+.striResult ul li .striNode .striDeselect,
 .striTree ol li .striNode .striDeselect {
-	background-color: red;
+	display: none;
 }
 
+.striResult ul li > .striChildren,
 .striTree ol li > .striChildren {
 	display: none;
 }
 
+.striResult ul li.striOpen > .striChildren,
 .striTree ol li.striOpen > .striChildren {
 	display: block;
 }
@@ -191,6 +226,7 @@
 .striTools {
 	position: relative;
 	padding-bottom: 1px;
+	padding-top: 1px;
 }
 
 .striTools .striSearch {
