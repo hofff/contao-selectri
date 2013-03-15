@@ -159,7 +159,7 @@ class SelectriWidget extends Widget {
 			}
 			$values = $values[$path[$i]];
 		} while(++$i < $n); }
-
+		
 		$values = (array) $values;
 		$values = $this->getData()->filter($values);
 		
