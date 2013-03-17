@@ -224,15 +224,18 @@ class SelectriWidget extends Widget {
 				strlen($start) || $start = null;
 				list($level, $start) = $this->getData()->getTreeIterator($start);
 				$response = $this->generateLevels($level, $start);
+				$response['key'] = $start;
 				break;
 			case 'path':
 				$key = $this->Input->get('striKey');
 				$level = $this->getData()->getPathIterator($key);
 				$response = $this->generateLevels($level);
+				$response['key'] = $key;
 				break;
 			case 'search':
 				$search = $this->Input->get('striSearch');
 				$response = $this->generateSearch($search);
+				$response['search'] = $search;
 				break;
 			case 'toggle':
 				$key = $this->Input->post('striKey');
@@ -243,8 +246,10 @@ class SelectriWidget extends Widget {
 					$unfolded = array_diff($unfolded, array($key));
 				}
 				$this->setUnfolded($unfolded);
+				$response['key'] = $key;
 				break;
 		}
+		$response['action'] = $action;
 		isset($_POST) && $response['token'] = REQUEST_TOKEN;
 		header('Content-Type: application/json');
 		echo json_encode($response);
