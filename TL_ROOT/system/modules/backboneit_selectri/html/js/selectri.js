@@ -120,6 +120,10 @@ Selectri.onLevelsSuccess			= function(json) {
 		node = self.getNode(self.tree, node);
 		if(node) node.getParent("li").addClass("striSelected");
 	});
+	
+	if(json.action == "path") {
+		self.highlight(json.key);
+	}
 };
 Selectri.onSearchRequest			= function() { this.container.addClass("striSearching"); };
 Selectri.onSearchCancel				= function() { this.container.removeClass("striSearching"); };
@@ -311,8 +315,17 @@ Selectri.openPath = function(node) {
 	var self = this, key = self.getKey(node);
 	if(!key) return;
 	node = self.getChildrenContainer(node);
-	if(node) node.getParents().filter(".striTree li").addClass("striOpen");
-	else self.requestPath(key);
+	if(node) {
+		node.getParents().filter(".striTree li").addClass("striOpen");
+		self.highlight(node);
+		return;
+	}
+	self.requestPath(key);
+};
+
+Selectri.highlight = function(node) {
+	node = this.getNode(this.tree, node);
+	if(node) node.addClass("striHighlight").removeClass.delay(200, node, "striHighlight");
 };
 
 Selectri.requestLevels = function(start) {
