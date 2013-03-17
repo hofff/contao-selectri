@@ -220,14 +220,15 @@ class SelectriWidget extends Widget {
 		while(ob_end_clean());
 		switch($action) {
 			case 'levels':
-				$start = $this->Input->get('striStart');
-				strlen($start) || $start = null;
-				list($level, $start) = $this->getData()->getTreeIterator($start);
+				$start = $this->Input->get('striKey');
+				strlen($key) || $key = null;
+				list($level, $start) = $this->getData()->getTreeIterator($key);
 				$response = $this->generateLevels($level, $start);
-				$response['key'] = $start;
+				$response['key'] = $key;
 				break;
 			case 'path':
 				$key = $this->Input->get('striKey');
+				strlen($key) || $key = null;
 				$level = $this->getData()->getPathIterator($key);
 				$response = $this->generateLevels($level);
 				$response['key'] = $key;

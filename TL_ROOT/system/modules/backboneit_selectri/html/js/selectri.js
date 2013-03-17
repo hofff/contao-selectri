@@ -316,7 +316,7 @@ Selectri.openPath = function(node) {
 };
 
 Selectri.requestLevels = function(start) {
-	this.levelsRequest.send({ data: { striStart: start } });
+	this.levelsRequest.send({ data: { striKey: start } });
 };
 
 Selectri.requestPath = function(key) {
