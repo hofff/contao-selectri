@@ -316,8 +316,8 @@ Selectri.openPath = function(node) {
 	if(!key) return;
 	node = self.getChildrenContainer(node);
 	if(node) {
-		node.getParents().filter(".striTree li").addClass("striOpen");
-		self.highlight(node);
+		node.getParent().getParents().filter(".striTree li").addClass("striOpen");
+		self.highlight(key);
 		return;
 	}
 	self.requestPath(key);
