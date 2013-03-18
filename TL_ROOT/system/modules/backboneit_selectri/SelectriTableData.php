@@ -221,7 +221,7 @@ class SelectriTableData extends SelectriAbstractData {
 	}
 	
 	public function filter(array $selection) {
-		return array_keys($this->fetchTreeNodes($selection));
+		return array_intersect($selection, array_keys($this->fetchTreeNodes($selection)));
 	}
 	
 	public function getSelectionIterator(array $selection) {
