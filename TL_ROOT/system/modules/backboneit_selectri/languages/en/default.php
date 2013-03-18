@@ -1,6 +1,7 @@
 <?php
 
 $GLOBALS['TL_LANG']['stri']['toggle'] = 'toggle node';
+$GLOBALS['TL_LANG']['stri']['pathTitle'] = 'click to show node in tree';
 $GLOBALS['TL_LANG']['stri']['select'] = 'Select';
 $GLOBALS['TL_LANG']['stri']['selectTitle'] = 'click to add to selection';
 $GLOBALS['TL_LANG']['stri']['deselect'] = 'Deselect';

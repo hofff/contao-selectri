@@ -1,6 +1,8 @@
 <fieldset class="striWidget striAuto<?php if($this->strClass) echo ' ', $this->strClass;
 if($this->isOpen()) echo ' striOpen'; ?>" id="<?php echo $this->strId; ?>"
-data-stri-options="<?php echo specialchars(json_encode($options)); ?>">
+data-stri-options="<?php echo specialchars(json_encode(array_merge($options, array(
+	'pathTitle' => $GLOBALS['TL_LANG']['stri']['pathTitle'],
+)))); ?>">
 
 <?php $selection = $this->getData()->getSelectionIterator($this->varValue); $selection->rewind(); ?>
 <div class="striSelection<?php if($selection->valid()) echo ' striHasSelection'; ?>">
@@ -23,12 +25,12 @@ data-stri-options="<?php echo specialchars(json_encode($options)); ?>">
     </ol>
 <?php endif; ?>
     <div class="striIcon"
-      ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggle']; ?>"
+      ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['pathTitle']; ?>"
         ><img src="<?php echo specialchars($node->getIcon()); ?>" alt=""
       /></a
     ></div>
     <div class="striLabel"
-      ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggle']; ?>"
+      ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['pathTitle']; ?>"
         ><?php echo specialchars($node->getLabel());
       ?></a
     ></div>

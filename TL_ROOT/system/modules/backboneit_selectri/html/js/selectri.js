@@ -18,6 +18,11 @@ var Selectri = {},
 			sortables.start(event, element);
 		});
 	},
+	wrapPathHandle = function(self, element) {
+		var handle = element.getFirst(".striHandle");
+		if(!handle) handle = new Element("a.striHandle").set("href", "#").adopt(element.childNodes).inject(element);
+		handle.set("title", self.options.pathTitle);
+	},
 	events;
 
 Selectri.Implements = [ Options, Class.Occlude ];
@@ -186,9 +191,12 @@ Selectri.select = function(node, adjustScroll) {
 	node = treeNode || resultNode;
 	if(!node) return;
 	
-	node = new Element("li.striSelected").grab(node.clone());
-	node.getElement("input").set("name", self.options.name);
-	node.getElement(".striSelect").destroy();
+	node = node.clone();
+	node.getFirst("input").set("name", self.options.name);
+	node.getFirst(".striSelect").destroy();
+	wrapPathHandle(self, node.getFirst(".striIcon"));
+	wrapPathHandle(self, node.getFirst(".striLabel"));
+	node = new Element("li.striSelected").grab(node);
 	fixSortables(self.sortables, node);
 	
 	adjustScroll = self.getScrollAdjust(adjustScroll);
