@@ -9,6 +9,8 @@ var Selectri = {},
 	TRUE = true,
 	EMPTY = Function.from(),
 	OCCLUDE = "bbit.mt.cto.Selectri",
+	FN_HL = "bbit.mt.cto.Selectri.hl",
+	FN_FADE = "bbit.mt.cto.Selectri.fade",
 	ATTR_KEY = "data-stri-key",
 	reservedAttributeSelectorValueChars = /(["\]])/g,
 	escapeAttributeSelectorValue = function(value) { return value.replace(reservedAttributeSelectorValueChars, "\\$1"); },
@@ -351,7 +353,11 @@ Selectri.openPath = function(node) {
 
 Selectri.highlight = function(node) {
 	node = this.getNode(this.tree, node);
-	if(node) node.addClass("striHighlight").removeClass.delay(200, node, "striHighlight");
+	if(!node) return;
+	clearTimeout(node.retrieve(FN_HL));
+	clearTimeout(node.retrieve(FN_FADE));
+	node.store(FN_HL, node.addClass("striHighlight").removeClass.delay(200, node, "striHighlight"));
+	node.store(FN_FADE, node.addClass("striFade").removeClass.delay(3000, node, "striFade"));
 };
 
 Selectri.requestLevels = function(start) {
