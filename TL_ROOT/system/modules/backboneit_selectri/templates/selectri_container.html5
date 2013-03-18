@@ -51,7 +51,7 @@ data-stri-options="<?php echo specialchars(json_encode(array_merge($options, arr
   <div class="striToggle"><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['treeTitle']; ?>"><?php echo $GLOBALS['TL_LANG']['stri']['tree']; ?></a></div>
 </div>
 
-<p class="striMessage"></p>
+<div class="striMessages"></div>
 
 <div class="striResult">
 </div>

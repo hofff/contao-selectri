@@ -265,7 +265,7 @@ class SelectriWidget extends Widget {
 	
 	public function generateLevels($level, $start = null) {
 		if(!$level) {
-			return array('empty' => $GLOBALS['TL_LANG']['stri']['empty']);
+			return array('empty' => true, 'messages' => array($GLOBALS['TL_LANG']['stri']['noOptions']));
 		}
 		
 		if($start) {
@@ -300,10 +300,10 @@ class SelectriWidget extends Widget {
 	}
 	
 	public function generateSearch($search) {
-		$search = $this->getData()->getSearchIterator($search);
-		$search->rewind();
-		if(!$search->valid()) {
-			return null;
+		$result = $this->getData()->getSearchIterator($search);
+		$result->rewind();
+		if(!$result->valid()) {
+			return array('messages' => array(sprintf($GLOBALS['TL_LANG']['stri']['searchEmpty'], $search)));
 		}
 		ob_start();
 		include $this->getTemplate('selectri_search');

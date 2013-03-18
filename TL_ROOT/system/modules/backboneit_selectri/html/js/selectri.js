@@ -50,6 +50,7 @@ Selectri.initialize = function(container, options, detached) {
 		self.value = self.search.get("value");
 		self.result = self.container.getElement(".striResult");
 		self.tree = self.container.getElement(".striTree");
+		self.messages = self.container.getElement(".striMessages");
 		
 		url = window.location.href + (window.location.href.indexOf("?") > -1 ? "&" : "?");
 		url += "striID=" + encodeURIComponent(self.id);
@@ -59,7 +60,7 @@ Selectri.initialize = function(container, options, detached) {
 		self.toggleRequest.addEvent("success", self.onToggleSuccess);
 		self.levelsRequest = new Request.JSON({ url: url + "levels", method: "get", link: "chain" });
 		self.searchRequest = new Request.JSON({ url: url + "search", method: "get", link: "cancel" });
-		"request cancel exception complete failure success".split(" ").each(function(event) {
+		"request cancel exception complete success".split(" ").each(function(event) {
 			self.levelsRequest.addEvent(event, self["onLevels" + event.capitalize()]);
 			self.searchRequest.addEvent(event, self["onSearch" + event.capitalize()]);
 		});
@@ -99,14 +100,14 @@ Selectri.onLevelsRequest			= function() { this.container.addClass("striLoading")
 Selectri.onLevelsCancel				= function() { this.container.removeClass("striLoading"); };
 Selectri.onLevelsException			= function() { this.container.removeClass("striLoading").addClass("striError"); };
 Selectri.onLevelsComplete			= function() { this.container.removeClass("striLoading"); };
-Selectri.onLevelsFailure			= function() { };
 Selectri.onLevelsSuccess			= function(json) {
 	var self = this, node = undef;
 	if(!json) return;
 	
+	self.setMessages(json.messages);
+	
 	if(!self.tree.getChildren().length) {
 		if(json.empty) {
-			self.container.getFirst(".striMessage").set("text", json.empty);
 			self.container.addClass("striEmpty");
 			return;
 		} else {
@@ -134,10 +135,14 @@ Selectri.onSearchRequest			= function() { this.container.addClass("striSearching
 Selectri.onSearchCancel				= function() { this.container.removeClass("striSearching"); };
 Selectri.onSearchException			= function() { this.container.removeClass("striSearching").addClass("striError"); };
 Selectri.onSearchComplete			= function() { this.container.removeClass("striSearching"); };
-Selectri.onSearchFailure			= function() { this.container.addClass("striNotFound"); };
 Selectri.onSearchSuccess			= function(json) {
 	var self = this;
-	self.result.set("html", json ? json.result : "").addClass("striOpen");
+	
+	self.setMessages(json.messages);
+	
+	self.result.set("html", json.result);
+	if(self.result.getChildren().length) self.result.addClass("striOpen");
+	
 	self.selection.getChildren().each(function(node) {
 		node = self.getNode(self.result, node);
 		if(node) node.getParent("li").addClass("striSelected");
@@ -179,6 +184,19 @@ Selectri.detach = function() {
 	self.sortables.detach();
 	Object.each(events, function(handler, event) {
 		self.container.removeEvent(event, self[handler]);
+	});
+};
+
+Selectri.setMessages = function(messages) {
+	var self = this;
+	self.messages.empty();
+	
+	type = typeOf(messages);
+	if(type == "string") messages = [ messages ];
+	else if(type != "array") return;
+	
+	messages.each(function(message) {
+		new Element("p").set("text", message).inject(self.messages);
 	});
 };
 

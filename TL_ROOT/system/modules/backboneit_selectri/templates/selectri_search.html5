@@ -1,5 +1,5 @@
 <ul>
-<?php foreach($search as $node): ?>
+<?php foreach($result as $node): ?>
 <li><div class="striNode" data-stri-key="<?php echo specialchars($node->getKey()); ?>">
   <input type="hidden" name="<?php echo $this->getInputName(); ?>"
       value="<?php echo specialchars($node->getKey()); ?>" />
