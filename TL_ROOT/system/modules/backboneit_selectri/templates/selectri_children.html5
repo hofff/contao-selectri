@@ -11,7 +11,7 @@
 <?php foreach($node->getPathIterator() as $pathNode): ?>
       <li class="striNode" data-stri-key="<?php echo specialchars($pathNode->getKey()); ?>">
         <div class="striLabel" data-stri-icon="<?php echo specialchars($pathNode->getIcon()); ?>"
-          ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggle']; ?>"
+          ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['pathTitle']; ?>"
             ><?php echo specialchars($pathNode->getLabel());
           ?></a
         ></div>
@@ -20,12 +20,12 @@
     </ol>
 <?php endif; ?>
     <div class="striIcon"
-      ><?php if($hasSelectableChildren): ?><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggle']; ?>"
+      ><?php if($hasSelectableChildren): ?><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggleTitle']; ?>"
         ><?php endif; ?><img src="<?php echo specialchars($node->getIcon()); ?>" alt=""
       /><?php if($hasSelectableChildren): ?></a
     ><?php endif; ?></div>
     <div class="striLabel"
-      ><?php if($hasSelectableChildren): ?><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggle']; ?>"
+      ><?php if($hasSelectableChildren): ?><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggleTitle']; ?>"
         ><?php endif; ?><?php echo specialchars($node->getLabel());
       ?><?php if($hasSelectableChildren): ?></a
     ><?php endif; ?></div>
