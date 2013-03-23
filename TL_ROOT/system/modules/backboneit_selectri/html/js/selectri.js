@@ -397,8 +397,8 @@ Selectri.updateRequestToken = function(token) {
 Selectri.Binds = Object.keys(Selectri).filter(function(method) { return method.substr(0, 2) == "on"; });
 
 Selectri = bbit.mt.cto.Selectri = new Class(Selectri);
-Selectri.auto = function() { $$(".striWidget.striAuto").each(function(e) { new Selectri(e, TRUE); }); };
-window.addEvent("domready", Selectri.auto);
-window.addEvent("ajaxready", Selectri.auto);
+Selectri.scan = function() { $$(".striWidget.striAuto").each(function(e) { new Selectri(e, TRUE); }); };
+window.addEvent("domready", Selectri.scan);
+window.addEvent("ajaxready", Selectri.scan);
 
 })(document.id, window.$$);
