@@ -399,5 +399,6 @@ Selectri.Binds = Object.keys(Selectri).filter(function(method) { return method.s
 Selectri = bbit.mt.cto.Selectri = new Class(Selectri);
 Selectri.auto = function() { $$(".striWidget.striAuto").each(function(e) { new Selectri(e, TRUE); }); };
 window.addEvent("domready", Selectri.auto);
+window.addEvent("ajaxready", Selectri.auto);
 
 })(document.id, window.$$);
