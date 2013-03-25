@@ -6,11 +6,11 @@ interface SelectriNode {
 	
 	public function getLabel();
 	
+	public function getContent();
+	
 	public function getIcon();
 	
 	public function isSelectable();
-	
-	public function hasSelectableChildren();
 	
 	public function hasPath();
 	
@@ -20,7 +20,9 @@ interface SelectriNode {
 	
 	public function getItemIterator();
 	
-	public function hasChildren();
+	public function hasSelectableChildren();
+	
+	public function isOpen();
 	
 	public function getChildrenIterator();
 	

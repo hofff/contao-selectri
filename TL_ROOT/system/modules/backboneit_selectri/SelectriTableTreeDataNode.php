@@ -1,13 +1,13 @@
 <?php
 
-class SelectriTableDataTreeNode implements SelectriNode {
+class SelectriTableTreeDataNode implements SelectriNode {
 	
 	protected $data;
 	protected $tree;
 	protected $key;
 	protected $node;
 	
-	public function __construct(SelectriTableData $data, stdClass $tree, $key) {
+	public function __construct(SelectriTableTreeData $data, stdClass $tree, $key) {
 		$this->data = $data;
 		$this->tree = $tree;
 		$this->key = $key;
@@ -19,39 +19,34 @@ class SelectriTableDataTreeNode implements SelectriNode {
 	}
 	
 	public function getLabel() {
-		return $this->data->getConfig()->resolveTreeLabelFormat($this->node, $this->data);
+		return $this->data->generateTreeLabel($this->node);
+	}
+	
+	public function getContent() {
+		return $this->data->generateTreeContent($this->node);
 	}
 	
 	public function getIcon() {
-		$icon = $this->data->getConfig()->resolveTreeIcon($this->node, $this->data);
-		return strpos($icon, '/') === false
-			? sprintf('system/themes/%s/images/%s', $this->data->getWidget()->getTheme(), $icon)
-			: $icon;
+		return $this->data->generateTreeIcon($this->node);
 	}
 	
 	public function isSelectable() {
-		if($this->data->getConfig()->hasItem()) {
-			return false;
-		}
 		switch($this->data->getWidget()->getMode()) {
-			case 'leaf': return !$this->node['hasChildren']; break;
-			case 'inner': return !!$this->node['hasChildren']; break;
+			case 'leaf': return !$this->node['_hasChildren']; break;
+			case 'inner': return !!$this->node['_hasChildren']; break;
 			default: return true; break;
 		}
 	}
 	
 	public function hasSelectableChildren() {
-		if($this->data->getConfig()->hasItem()) {
-			return true;
-		}
 		if($this->data->getWidget()->getMode() == 'inner') {
-			return !!$this->node['hasGrandChildren'] == 1;
+			return $this->node['_hasGrandChildren'] == 1;
 		} else {
-			return !!$this->node['hasChildren'] == 1;
+			return $this->node['_hasChildren'] == 1;
 		}
 	}
 	
-	public function hasChildren() {
+	public function isOpen() {
 		$children = $this->tree->children[$this->key];
 		if(!$children) {
 			return false;
@@ -61,8 +56,11 @@ class SelectriTableDataTreeNode implements SelectriNode {
 	}
 	
 	public function getChildrenIterator() {
+		if(!$this->isOpen()) {
+			return new EmptyIterator();
+		}
 		$children = array();
-		if($this->hasChildren()) foreach($this->tree->children[$this->key] as $key => $_) {
+		foreach($this->tree->children[$this->key] as $key => $_) {
 			$children[] = new self($this->data, $this->tree, $key);
 		}
 		return new ArrayIterator($children);

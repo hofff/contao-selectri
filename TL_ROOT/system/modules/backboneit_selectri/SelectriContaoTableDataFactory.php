@@ -2,14 +2,62 @@
 
 class SelectriContaoTableDataFactory extends SelectriTableDataFactory {
 	
-	protected $db;
+	protected static $icons = array(
+		'tl_article'				=> 'articles.gif',
+		'tl_calendar'				=> 'system/modules/calendar/html/icon.gif',
+		'tl_faq_category'			=> 'system/modules/faq/html/icon.gif',
+		'tl_form'					=> 'form.gif',
+		'tl_layout'					=> 'layout.gif',
+		'tl_member'					=> 'member.gif',
+		'tl_member_group'			=> 'mgroup.gif',
+		'tl_module'					=> 'modules.gif',
+		'tl_news_archive'			=> 'news.gif',
+		'tl_newsletter_channel'		=> 'system/modules/newsletter/html/icon.gif',
+		'tl_newsletter_recipients'	=> 'member.gif',
+		'tl_search'					=> 'regular.gif',
+		'tl_style'					=> 'iconCSS.gif',
+		'tl_style_sheet'			=> 'css.gif',
+		'tl_task'					=> 'taskcenter.gif',
+		'tl_user'					=> 'user.gif',
+		'tl_user_group'				=> 'group.gif',
+	);
+	
+	public static function setIcon($table, $icon) {
+		self::$icons[$table] = $icon;
+	}
+	
+	public static function getIcon($table) {
+		return self::$icons[$table];
+	}
+	
+	public static function getIcons() {
+		return self::$icons;
+	}
+	
+	protected static $iconCallbacks = array(
+		'tl_page' => array(
+			array(__CLASS__, 'pageIconCallback'),
+			array('type', 'published', 'start', 'stop', 'hide', 'protected')
+		),
+	);
+	
+	public static function setIconCallback($table, $callback, array $columns = null) {
+		self::$iconCallbacks[$table] = array($callback, (array) $columns);
+	}
+	
+	public static function getIconCallback($table) {
+		return (array) self::$iconCallbacks[$table];
+	}
+	
+	public static function getIconCallbacks() {
+		return self::$iconCallbacks;
+	}
 	
 	public function __construct() {
 		parent::__construct();
 		
-		$this->db = Database::getInstance();
-		
 		$cfg = $this->getConfig();
+		
 		$cfg->setTreeKeyColumn('id');
 		$cfg->setTreeParentKeyColumn('pid');
 		$cfg->setTreeRootValue(0);
@@ -31,159 +79,109 @@ class SelectriContaoTableDataFactory extends SelectriTableDataFactory {
 	}
 	
 	public function setTreeTable($treeTable) {
-		if(!$this->db->tableExists($treeTable)) {
+		$db = $this->getDatabase();
+		if(!$db->tableExists($treeTable)) {
 			return $this;
 		}
 
 		$cfg = $this->getConfig();
 		$cfg->setTreeTable($treeTable);
-		
-		$labelColumns = $cfg->getTreeLabelColumns();
-		$labelFormat = $cfg->getTreeLabelFormat();
-		$orderByExpr = $cfg->getTreeOrderByExpr();
-		$icon = $cfg->getTreeIcon();
-		$additionalColumns = $cfg->getTreeAdditionalColumns();
-		
-		$this->getDefaultSettings(
-			$treeTable,
-			$cfg->getTreeKeyColumn(),
-			$labelColumns,
-			$labelFormat,
-			$orderByExpr,
-			$icon,
-			$additionalColumns
-		);
 
-		$cfg->setTreeLabelColumns($labelColumns);
-		$cfg->setTreeLabelFormat($labelFormat);	
-		$cfg->setTreeOrderByExpr($orderByExpr);
-		$cfg->setTreeIcon($icon);
-		$cfg->setTreeAdditionalColumns($additionalColumns);
-
+		if($db->fieldExists('sorting', $treeTable)) {
+			$cfg->setTreeOrderByExpr('sorting');
+		}
+		
 		return $this;
 	}
 	
 	public function setItemTable($itemTable) {
-		if(!$this->db->tableExists($itemTable)) {
+		$db = $this->getDatabase();
+		if(!$db->tableExists($itemTable)) {
 			return $this;
 		}
 		
 		$cfg = $this->getConfig();
 		$cfg->setItemTable($itemTable);
-		
-		$labelColumns = $cfg->getItemLabelColumns();
-		$labelFormat = $cfg->getItemLabelFormat();
-		$orderByExpr = $cfg->getItemOrderByExpr();
-		$icon = $cfg->getItemIcon();
-		$additionalColumns = $cfg->getItemAdditionalColumns();
-		
-		$this->getDefaultSettings(
-			$itemTable,
-			$cfg->getItemKeyColumn(),
-			$labelColumns,
-			$labelFormat,
-			$orderByExpr,
-			$icon,
-			$additionalColumns
-		);
-		
-		$cfg->setItemLabelColumns($labelColumns);
-		$cfg->setItemLabelFormat($labelFormat);
-		$cfg->setItemOrderByExpr($orderByExpr);
-		$cfg->setItemIcon($icon);
-		$cfg->setItemAdditionalColumns($additionalColumns);
+
+		if($db->fieldExists('sorting', $itemTable)) {
+			$cfg->setItemOrderByExpr('sorting');
+		}
 		
 		return $this;
 	}
 	
-	protected function getDefaultSettings($table, $id, &$labelColumns, &$labelFormat, &$orderByExpr, &$icon, &$additionalColumns) {
-		if(!$labelColumns) {
-			if($this->db->fieldExists('name', $table)) {
-				$labelColumns = array('name', $id);
-			} elseif($this->db->fieldExists('title', $table)) {
-				$labelColumns = array('title', $id);
+	protected function prepareTreeConfig(SelectriTableDataConfig $cfg) {
+		if(!$cfg->getTreeLabelCallback()) {
+			$formatter = $this->createLabelFormatter($cfg->getTreeTable(), $cfg->getTreeKeyColumn());
+			$cfg->setTreeLabelCallback($formatter->getCallback());
+		}
+		if(!$cfg->getTreeIconCallback()) {
+			list($callback, $columns) = self::getIconCallback($cfg->getTreeTable());
+			if($callback) {
+				$cfg->setTreeIconCallback($callback);
+				$cfg->addTreeColumns($columns);
 			} else {
-				$labelColumns = array($id);
+				$cfg->setTreeIconCallback(array(__CLASS__, 'treeIconCallback'));
 			}
 		}
-		
-		if(!$labelFormat) {
-			$labelFormat = '';
-			foreach($labelColumns as $column) {
-				$labelFormat .= $column == $id ? ' (ID %s)' : ', %s';
-			}
-			$labelFormat = ltrim($labelFormat, ', ');
+		parent::prepareTreeConfig($cfg);
+	}
+	
+	protected function prepareItemConfig(SelectriTableDataConfig $cfg) {
+		if(!$cfg->getItemLabelCallback()) {
+			$formatter = $this->createLabelFormatter($cfg->getItemTable(), $cfg->getItemKeyColumn());
+			$cfg->setItemLabelCallback($formatter->getCallback());
 		}
-		
-		if(!$orderByExpr) {
-			if($this->db->fieldExists('sorting', $table)) {
-				$orderByExpr = 'sorting';
+		if(!$cfg->getItemIconCallback()) {
+			list($callback, $columns) = self::getIconCallback($cfg->getItemTable());
+			if($callback) {
+				$cfg->setItemIconCallback($callback);
+				$cfg->addItemColumns($columns);
 			} else {
-				$orderByExpr = $labelColumns[0];
+				$cfg->setItemIconCallback(array(__CLASS__, 'itemIconCallback'));
 			}
 		}
-		
-		if(!$icon) {
-			$icon = self::getIcon($table, $iconColumns);
-			$iconColumns && $additionalColumns = array_merge((array) $additionalColumns, $iconColumns);
+		parent::prepareTreeConfig($cfg);
+	}
+	
+	protected function createLabelFormatter($table, $keyColumn) {
+		if($this->getDatabase()->fieldExists('name', $table)) {
+			$fields = array('name', $keyColumn);
+		} elseif($this->getDatabase()->fieldExists('title', $table)) {
+			$fields = array('title', $keyColumn);
+		} else {
+			$fields = array($keyColumn);
 		}
+		
+		$format = '';
+		foreach($fields as $field) {
+			$format .= $field == $keyColumn ? ' (ID %s)' : ', %s';
+		}
+		$format = ltrim($format, ', ');
+		
+		return SelectriLabelFormatter::create($format, $fields);
 	}
 	
-	protected static $icons = array(
-		'tl_article'				=> 'articles.gif',
-		'tl_calendar'				=> 'system/modules/calendar/html/icon.gif',
-		'tl_faq_category'			=> 'system/modules/faq/html/icon.gif',
-		'tl_form'					=> 'form.gif',
-		'tl_layout'					=> 'layout.gif',
-		'tl_member'					=> 'member.gif',
-		'tl_member_group'			=> 'mgroup.gif',
-		'tl_module'					=> 'modules.gif',
-		'tl_news_archive'			=> 'news.gif',
-		'tl_newsletter_channel'		=> 'system/modules/newsletter/html/icon.gif',
-		'tl_newsletter_recipients'	=> 'member.gif',
-		'tl_page'					=> array(__CLASS__, 'resolvePageIcon'),
-		'tl_search'					=> 'regular.gif',
-		'tl_style'					=> 'iconCSS.gif',
-		'tl_style_sheet'			=> 'css.gif',
-		'tl_task'					=> 'taskcenter.gif',
-		'tl_user'					=> 'user.gif',
-		'tl_user_group'				=> 'group.gif',
-	);
-	
-	protected static $iconColumns = array(
-		'tl_page'	=> array('type', 'published', 'start', 'stop', 'hide', 'protected'),
-	);
-	
-	public static function setIcon($table, $icon, array $iconColumns = null) {
-		self::$icons[$table] = $icon;
-		$iconColumns && self::$iconColumns[$table] = $iconColumns;
+	public static function treeIconCallback(array $node, SelectriData $data, SelectriTableDataConfig $cfg) {
+		return SelectriTableDataFactory::getIconPath($data->getWidget(), self::getIcon($cfg->getTreeTable()));
 	}
 	
-	public static function getIcon($table, array &$iconColumns = null) {
-		isset(self::$iconColumns[$table]) && $iconColumns = self::$iconColumns[$table];
-		return isset(self::$icons[$table]) ? self::$icons[$table] : 'iconPLAIN.gif';
+	public static function itemIconCallback(array $node, SelectriData $data, SelectriTableDataConfig $cfg) {
+		return SelectriTableDataFactory::getIconPath($data->getWidget(), self::getIcon($cfg->getItemTable()));
 	}
 	
-	public static function getIcons(array &$iconColumns = null) {
-		$iconColumns = self::$iconColumns;
-		return self::$icons;
-	}
-	
-	public static function resolvePageIcon($node, $data, $cfg) {
-		$row = $node['additional'];
-		if(!$row['published'] || ($row['start'] && $row['start'] > time()) || ($row['stop'] && $row['stop'] < time())) {
+	public static function pageIconCallback(array $node, SelectriData $data, SelectriTableDataConfig $cfg) {
+		if(!$node['published'] || ($node['start'] && $node['start'] > time()) || ($node['stop'] && $node['stop'] < time())) {
 			$sub += 1;
 		}
-		
-		if($row['hide'] && !in_array($row['type'], array('redirect', 'forward', 'root', 'error_403', 'error_404'))) {
+		if($node['hide'] && !in_array($node['type'], array('redirect', 'forward', 'root', 'error_403', 'error_404'))) {
 			$sub += 2;
 		}
-		
-		if($row['protected'] && !in_array($row['type'], array('root', 'error_403', 'error_404'))) {
+		if($node['protected'] && !in_array($node['type'], array('root', 'error_403', 'error_404'))) {
 			$sub += 4;
 		}
-		
-		return $sub ? $row['type'] . '_' . $sub . '.gif' : $row['type'].'.gif';
+		$icon = $sub ? $node['type'] . '_' . $sub . '.gif' : $node['type'].'.gif';
+		return SelectriTableDataFactory::getIconPath($data->getWidget(), $icon);
 	}
 	
 }

@@ -23,7 +23,7 @@ var Selectri = {},
 	wrapPathHandle = function(self, element) {
 		var handle = element.getFirst(".striHandle");
 		if(!handle) handle = new Element("a.striHandle").set("href", "#").adopt(element.childNodes).inject(element);
-		handle.set("title", self.options.pathTitle);
+		handle.set("title", self.options.openPathTitle);
 	},
 	events;
 
@@ -214,7 +214,6 @@ Selectri.select = function(node, adjustScroll) {
 	node = node.clone();
 	node.getFirst("input").set("name", self.options.name);
 	node.getFirst(".striSelect").destroy();
-	wrapPathHandle(self, node.getFirst(".striIcon"));
 	wrapPathHandle(self, node.getFirst(".striLabel"));
 	node = new Element("li.striSelected").grab(node);
 	fixSortables(self.sortables, node);

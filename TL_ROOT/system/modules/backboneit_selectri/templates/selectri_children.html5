@@ -6,66 +6,49 @@
 <?php if($node->isSelectable()): ?>
     <input type="hidden" value="<?php echo specialchars($node->getKey()); ?>" />
 <?php endif; ?>
+
 <?php if($node->hasPath()): ?>
-    <ol class="striPath">
+    <div class="striPath">
+      <ol>
 <?php foreach($node->getPathIterator() as $pathNode): ?>
       <li class="striNode" data-stri-key="<?php echo specialchars($pathNode->getKey()); ?>">
-        <div class="striLabel" data-stri-icon="<?php echo specialchars($pathNode->getIcon()); ?>"
-          ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['pathTitle']; ?>"
-            ><?php echo specialchars($pathNode->getLabel());
-          ?></a
-        ></div>
+        <div class="striLabel">
+          <a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['pathTitle']; ?>">
+            <img class="striIcon" src="<?php echo specialchars($pathNode->getIcon()); ?>" alt="" />
+            <?php echo specialchars($pathNode->getLabel()); ?>
+          </a>
+        </div>
       </li>
 <?php endforeach; ?>
-    </ol>
+      </ol>
+    </div>
 <?php endif; ?>
-    <div class="striIcon"
-      ><?php if($hasSelectableChildren): ?><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggleTitle']; ?>"
-        ><?php endif; ?><img src="<?php echo specialchars($node->getIcon()); ?>" alt=""
-      /><?php if($hasSelectableChildren): ?></a
-    ><?php endif; ?></div>
-    <div class="striLabel"
-      ><?php if($hasSelectableChildren): ?><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggleTitle']; ?>"
-        ><?php endif; ?><?php echo specialchars($node->getLabel());
-      ?><?php if($hasSelectableChildren): ?></a
-    ><?php endif; ?></div>
+
+    <div class="striLabel">
+<?php if($hasSelectableChildren): ?>
+      <a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggleTitle']; ?>">
+<?php endif; ?>
+        <img class="striIcon" src="<?php echo specialchars($node->getIcon()); ?>" alt="" />
+        <?php echo specialchars($node->getLabel()); ?>
+<?php if($hasSelectableChildren): ?>
+      </a>
+<?php endif; ?>
+    </div>
+
 <?php if($node->isSelectable()): ?>
-    <div class="striSelect"
-      ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['selectTitle']; ?>"
-        ><?php echo $GLOBALS['TL_LANG']['stri']['select'];
-      ?></a
-    ></div>
-    <div class="striDeselect"
-      ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['deselectTitle']; ?>"
-        ><?php echo $GLOBALS['TL_LANG']['stri']['deselect'];
-      ?></a
-    ></div>
+    <div class="striSelect">
+      <a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['selectTitle']; ?>"
+        ><?php echo $GLOBALS['TL_LANG']['stri']['select']; ?></a>
+    </div>
+    <div class="striDeselect">
+      <a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['deselectTitle']; ?>"
+        ><?php echo $GLOBALS['TL_LANG']['stri']['deselect']; ?></a>
+    </div>
 <?php endif; ?>
+
   </div>
 
 <?php if($node->hasItems()): ?>
-  <ol class="tblt_items">
-<?php foreach($objNode->getItemIterator() as $objItem): ?>
-  <li>
-    <div class="tblt_node">
-      <div class="tblt_inner">
-        <div class="tblt_label" style="margin-left: <?php echo ($objNode->getDepth() + 1) * $intSpacing, $strSpacingUnit; ?>;">
-          <label for="<?php echo $objItem->getInputID(); ?>"
-              style="background-image: url(<?php echo $objItem->getIcon(); ?>);"
-            ><?php echo $objItem->getLabel(); ?></label>
-        </div>
-        <div class="tblt_select">
-          <input type="<?php echo $objItem->getInputType(); ?>"
-              name="<?php echo $objItem->getInputName(); ?>"
-              id="<?php echo $objItem->getInputID(); ?>"
-              value="<?php echo specialchars($objItem->getKey()); ?>"
-              <?php echo $objItem->getCheckedAttribute(); ?> />
-        </div>
-      </div>
-    </div>
-  </li>
-<?php endforeach; ?>
-  </ol>
 <?php endif; ?>
 
 <?php if($hasSelectableChildren): ?>

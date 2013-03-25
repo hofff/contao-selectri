@@ -280,7 +280,7 @@ class SelectriWidget extends Widget {
 			$insert = $this->renderChildren($level);
 			
 			// push levels onto stack
-			foreach($level as $node) if($node->hasChildren()) {
+			foreach($level as $node) if($node->isOpen()) {
 				$iterators[] = array($node->getKey(), $node->getChildrenIterator());
 			}
 			
@@ -386,6 +386,10 @@ class SelectriWidget extends Widget {
 	public function setMaxSelected($max) {
 		$this->max = max(1, intval($max));
 		return $this;
+	}
+	
+	public function getSearchLimit() {
+		return 20;
 	}
 	
 	public function isDataContainerDriven() {

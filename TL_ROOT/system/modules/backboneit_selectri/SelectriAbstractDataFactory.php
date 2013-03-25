@@ -4,7 +4,8 @@ abstract class SelectriAbstractDataFactory implements SelectriDataFactory {
 
 	public static function create() {
 		$clazz = get_called_class();
-		return new $clazz();
+		$factory = new $clazz();
+		return $factory;
 	}
 	
 	private $widget;

@@ -7,29 +7,23 @@ class SelectriTableDataConfig {
 	private $treeTable;
 	private $treeKeyColumn;
 	private $treeParentKeyColumn;
-	private $treeLabelColumns;
 	private $treeSearchColumns;
-	private $treeAdditionalColumns;
+	private $treeColumns;
 	private $treeRootValue;
 	private $treeConditionExpr;
 	private $treeOrderByExpr;
-	private $treeLabelFormat;
-	private $treeLabelFormatFunction;
-	private $treeIcon;
-	private $treeIconFunction;
+	private $treeLabelCallback;
+	private $treeIconCallback;
 	
 	private $itemTable;
 	private $itemKeyColumn;
 	private $itemTreeKeyColumn;
-	private $itemLabelColumns;
 	private $itemSearchColumns;
-	private $itemAdditionalColumns;
+	private $itemColumns;
 	private $itemConditionExpr;
 	private $itemOrderByExpr;
-	private $itemLabelFormat;
-	private $itemLabelFormatFunction;
-	private $itemIcon;
-	private $itemIconFunction;
+	private $itemLabelCallback;
+	private $itemIconCallback;
 	
 	public function __construct() {
 	}
@@ -86,15 +80,6 @@ class SelectriTableDataConfig {
 		return $this;
 	}
 	
-	public function getTreeLabelColumns() {
-		return (array) $this->treeLabelColumns;
-	}
-	
-	public function setTreeLabelColumns($treeLabelColumns) {
-		$this->treeLabelColumns = self::cleanColumns($treeLabelColumns);
-		return $this;
-	}
-	
 	public function getTreeSearchColumns() {
 		return (array) $this->treeSearchColumns;
 	}
@@ -104,13 +89,21 @@ class SelectriTableDataConfig {
 		return $this;
 	}
 	
-	public function getTreeAdditionalColumns() {
-		return (array) $this->treeAdditionalColumns;
+	public function addTreeSearchColumns($treeSearchColumns) {
+		return $this->setTreeSearchColumns(array_merge($this->getTreeSearchColumns(), (array) $treeSearchColumns));
 	}
 	
-	public function setTreeAdditionalColumns($treeAdditionalColumns) {
-		$this->treeAdditionalColumns = self::cleanColumns($treeAdditionalColumns);
+	public function getTreeColumns() {
+		return (array) $this->treeColumns;
+	}
+	
+	public function setTreeColumns($treeColumns) {
+		$this->treeColumns = self::cleanColumns($treeColumns);
 		return $this;
+	}
+	
+	public function addTreeColumns($treeColumns) {
+		return $this->setTreeColumns(array_merge($this->getTreeColumns(), (array) $treeColumns));
 	}
 	
 	public function getTreeRootValue() {
@@ -122,8 +115,11 @@ class SelectriTableDataConfig {
 		return $this;
 	}
 	
-	public function getTreeConditionExpr() {
-		return $this->treeConditionExpr;
+	public function getTreeConditionExpr($clause = null) {
+		$expr = strval($this->treeConditionExpr);
+		$clause = strval($clause);
+		strlen($expr) && strlen($clause) && $expr = $clause . ' (' . $expr . ')';
+		return $expr;
 	}
 	
 	public function setTreeConditionExpr($treeConditionExpr) {
@@ -131,8 +127,11 @@ class SelectriTableDataConfig {
 		return $this;
 	}
 	
-	public function getTreeOrderByExpr() {
-		return $this->treeOrderByExpr;
+	public function getTreeOrderByExpr($clause = null) {
+		$expr = strval($this->treeOrderByExpr);
+		$clause = strval($clause);
+		strlen($expr) && strlen($clause) && $expr = $clause . ' ' . $expr;
+		return $expr;
 	}
 	
 	public function setTreeOrderByExpr($treeOrderByExpr) {
@@ -140,46 +139,22 @@ class SelectriTableDataConfig {
 		return $this;
 	}
 	
-	public function getTreeLabelFormat() {
-		return $this->treeLabelFormat;
+	public function getTreeLabelCallback() {
+		return $this->treeLabelCallback;
 	}
 	
-	public function setTreeLabelFormat($treeLabelFormat) {
-		if(is_callable($treeLabelFormat)) {
-			$this->treeLabelFormat = $treeLabelFormat;
-			$this->treeLabelFormatFunction = $treeLabelFormat;
-		} else {
-			$this->treeLabelFormat = strval($treeLabelFormat);
-			$this->treeLabelFormatFunction = array($this, 'formatTreeLabel');
-		}
+	public function setTreeLabelCallback($treeLabelCallback) {
+		$this->treeLabelCallback = $treeLabelCallback;
 		return $this;
 	}
 	
-	public function resolveTreeLabelFormat(array $node, SelectriTableData $data) {
-		return call_user_func($this->treeLabelFormatFunction, $node, $data, $this);
+	public function getTreeIconCallback() {
+		return $this->treeIconCallback;
 	}
 	
-	public function formatTreeLabel(array $node, SelectriTableData $data, SelectriTableDataConfig $cfg) {
-		return vsprintf($this->treeLabelFormat, $node['label']);
-	}
-	
-	public function getTreeIcon() {
-		return $this->treeIcon;
-	}
-	
-	public function setTreeIcon($treeIcon) {
-		if(is_callable($treeIcon)) {
-			$this->treeIcon = $treeIcon;
-			$this->treeIconFunction = $treeIcon;
-		} else {
-			$this->treeIcon = strval($treeIcon);
-			$this->treeIconFunction = array($this, 'getTreeIcon');
-		}
+	public function setTreeIconCallback($treeIconCallback) {
+		$this->treeIconCallback = $treeIconCallback;
 		return $this;
-	}
-	
-	public function resolveTreeIcon(array $node, SelectriTableData $data) {
-		return call_user_func($this->treeIconFunction, $node, $data, $this);
 	}
 	
 	public function hasItem() {
@@ -213,15 +188,6 @@ class SelectriTableDataConfig {
 		return $this;
 	}
 	
-	public function getItemLabelColumns() {
-		return (array) $this->itemLabelColumns;
-	}
-	
-	public function setItemLabelColumns($itemLabelColumns) {
-		$this->itemLabelColumns = self::cleanColumns($itemLabelColumns);
-		return $this;
-	}
-	
 	public function getItemSearchColumns() {
 		return (array) $this->itemSearchColumns;
 	}
@@ -231,13 +197,21 @@ class SelectriTableDataConfig {
 		return $this;
 	}
 	
-	public function getItemAdditionalColumns() {
-		return (array) $this->itemAdditionalColumns;
+	public function addItemSearchColumns($itemSearchColumns) {
+		return $this->setItemSearchColumns(array_merge($this->getItemSearchColumns(), (array) $itemSearchColumns));
 	}
 	
-	public function setItemAdditionalColumns($itemAdditionalColumns) {
-		$this->itemAdditionalColumns = self::cleanColumns($itemAdditionalColumns);
+	public function getItemColumns() {
+		return (array) $this->itemColumns;
+	}
+	
+	public function setItemColumns($itemColumns) {
+		$this->itemColumns = self::cleanColumns($itemColumns);
 		return $this;
+	}
+	
+	public function addItemColumns($itemColumns) {
+		return $this->setItemColumns(array_merge($this->getItemColumns(), (array) $itemColumns));
 	}
 	
 	public function getItemConditionExpr() {
@@ -258,46 +232,22 @@ class SelectriTableDataConfig {
 		return $this;
 	}
 	
-	public function getItemLabelFormat() {
-		return $this->treeLabelFormat;
+	public function getItemLabelCallback() {
+		return $this->itemLabelCallback;
 	}
 	
-	public function setItemLabelFormat($itemLabelFormat) {
-		if(is_callable($itemLabelFormat)) {
-			$this->itemLabelFormat = $itemLabelFormat;
-			$this->itemLabelFormatFunction = $itemLabelFormat;
-		} else {
-			$this->itemLabelFormat = strval($itemLabelFormat);
-			$this->itemLabelFormatFunction = array($this, 'formatItemLabel');
-		}
+	public function setItemLabelCallback($itemLabelCallback) {
+		$this->itemLabelCallback = $itemLabelCallback;
 		return $this;
 	}
 	
-	public function resolveItemLabelFormat(array $node, SelectriTableData $data) {
-		return call_user_func($this->itemLabelFormatFunction, $node, $data, $this);
+	public function getItemIconCallback() {
+		return $this->itemIconCallback;
 	}
 	
-	public function formatItemLabel(array $node, SelectriTableData $data, SelectriTableDataConfig $cfg) {
-		return vsprintf($this->itemLabelFormat, $node['label']);
-	}
-	
-	public function getItemIcon() {
-		return $this->itemIcon;
-	}
-	
-	public function setItemIcon($itemIcon) {
-		if(is_callable(itemIcon)) {
-			$this->itemIcon = $itemIcon;
-			$this->itemIconFunction = $itemIcon;
-		} else {
-			$this->itemIcon = strval($itemIcon);
-			$this->itemIconFunction = array($this, 'getItemIcon');
-		}
+	public function setItemIconCallback($itemIconCallback) {
+		$this->itemIconCallback = $itemIconCallback;
 		return $this;
-	}
-	
-	public function resolveItemIcon(array $node, SelectriTableData $data) {
-		return call_user_func($this->itemIconFunction, $node, $data, $this);
 	}
 	
 	public static function cleanColumns($columns) {

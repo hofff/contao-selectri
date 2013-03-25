@@ -1,45 +1,52 @@
-<fieldset class="striWidget striAuto<?php if($this->strClass) echo ' ', $this->strClass;
-if($this->isOpen()) echo ' striOpen'; ?>" id="<?php echo $this->strId; ?>"
-data-stri-options="<?php echo specialchars(json_encode(array_merge($options, array(
-	'pathTitle' => $GLOBALS['TL_LANG']['stri']['pathTitle'],
-)))); ?>">
+<?php
+$class = 'striWidget striAuto';
+$this->isOpen() && $class .= ' striOpen';
+$this->strClass && $class .= ' ' . $this->strClass;
+$options['openPathTitle'] = $GLOBALS['TL_LANG']['stri']['openPathTitle'];
+?>
+<fieldset class="<?php echo $class; ?>" id="<?php echo $this->strId; ?>"
+    data-stri-options="<?php echo specialchars(json_encode($options)); ?>">
 
 <?php $selection = $this->getData()->getSelectionIterator($this->varValue); $selection->rewind(); ?>
 <div class="striSelection<?php if($selection->valid()) echo ' striHasSelection'; ?>">
   <ol>
 <?php foreach($selection as $node): ?>
-  <li class="striSelected"><div class="striNode" data-stri-key="<?php echo specialchars($node->getKey()); ?>">
-    <input type="hidden" name="<?php echo $this->getInputName(); ?>"
-        value="<?php echo specialchars($node->getKey()); ?>" />
+  <li class="striSelected">
+    <div class="striNode" data-stri-key="<?php echo specialchars($node->getKey()); ?>">
+      <input type="hidden" name="<?php echo $this->getInputName(); ?>"
+          value="<?php echo specialchars($node->getKey()); ?>" />
+
 <?php if($node->hasPath()): ?>
-    <ol class="striPath">
+      <div class="striPath">
+        <ol>
 <?php foreach($node->getPathIterator() as $pathNode): ?>
-      <li class="striNode" data-stri-key="<?php echo specialchars($pathNode->getKey()); ?>">
-        <div class="striLabel" data-stri-icon="<?php echo specialchars($pathNode->getIcon()); ?>"
-          ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['pathTitle']; ?>"
-            ><?php echo specialchars($pathNode->getLabel());
-          ?></a
-        ></div>
-      </li>
+        <li class="striPathNode" data-stri-key="<?php echo specialchars($pathNode->getKey()); ?>">
+          <div class="striLabel">
+            <a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['pathTitle']; ?>">
+              <img class="striIcon" src="<?php echo specialchars($pathNode->getIcon()); ?>" alt="" />
+              <?php echo specialchars($pathNode->getLabel()); ?>
+            </a>
+          </div>
+        </li>
 <?php endforeach; ?>
-    </ol>
+        </ol>
+      </div>
 <?php endif; ?>
-    <div class="striIcon"
-      ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['pathTitle']; ?>"
-        ><img src="<?php echo specialchars($node->getIcon()); ?>" alt=""
-      /></a
-    ></div>
-    <div class="striLabel"
-      ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['pathTitle']; ?>"
-        ><?php echo specialchars($node->getLabel());
-      ?></a
-    ></div>
-    <div class="striDeselect"
-      ><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['deselectTitle']; ?>"
-        ><?php echo $GLOBALS['TL_LANG']['stri']['deselect'];
-      ?></a
-    ></div>
-  </div></li>
+
+      <div class="striLabel">
+        <a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['openPathTitle']; ?>">
+          <img class="striIcon" src="<?php echo specialchars($node->getIcon()); ?>" alt="" />
+          <?php echo specialchars($node->getLabel()); ?>
+        </a>
+      </div>
+
+      <div class="striDeselect">
+        <a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['deselectTitle']; ?>"
+          ><?php echo $GLOBALS['TL_LANG']['stri']['deselect']; ?></a>
+      </div>
+
+    </div>
+  </li>
 <?php endforeach; ?>
   </ol>
 </div>
@@ -53,10 +60,8 @@ data-stri-options="<?php echo specialchars(json_encode(array_merge($options, arr
 
 <div class="striMessages"></div>
 
-<div class="striResult">
-</div>
+<div class="striResult"></div>
 
-<div class="striTree" style="height: <?php echo $this->getHeight(); ?>;">
-</div>
+<div class="striTree" style="height: <?php echo $this->getHeight(); ?>;"></div>
 
 </fieldset>

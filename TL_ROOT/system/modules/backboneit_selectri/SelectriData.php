@@ -6,6 +6,8 @@ interface SelectriData {
 	
 	public function filter(array $selection);
 	
+	public function getWidget();
+	
 	public function getSelectionIterator(array $selection);
 	
 	public function getTreeIterator($start = null);
