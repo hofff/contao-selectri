@@ -11,7 +11,7 @@
     <div class="striPath">
       <ol>
 <?php foreach($node->getPathIterator() as $pathNode): ?>
-      <li class="striNode" data-stri-key="<?php echo specialchars($pathNode->getKey()); ?>">
+      <li class="striPathNode" data-stri-key="<?php echo specialchars($pathNode->getKey()); ?>">
         <div class="striLabel">
           <a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['pathTitle']; ?>">
             <img class="striIcon" src="<?php echo specialchars($pathNode->getIcon()); ?>" alt="" />

@@ -91,6 +91,7 @@ Selectri.onResultDeselectClick		= function(event, target) { this.deselect(target
 Selectri.onTreeLabelClick			= function(event, target) { this.toggleNode(target); };
 Selectri.onTreeSelectClick			= function(event, target) { this.select(target, TRUE); };
 Selectri.onTreeDeselectClick		= function(event, target) { this.deselect(target, TRUE); };
+Selectri.onPathClick				= function(event, target) { this.openPath(target); this.openTree(); };
 Selectri.onClearSearchClick			= function(event, target) { this.clearSearch(); };
 Selectri.onClearSelectionClick		= function(event, target) { if(event.shift) this.deselectAll(); };
 Selectri.onToggleClick				= function(event, target) { this.toggleTree(); };
@@ -152,23 +153,21 @@ Selectri.onSearchSuccess			= function(json) {
 };
 
 events = {
-	"click:relay(.striHandle)":									"onHandleClick",
-	"mousedown:relay(.striSelection)":							"onSelectionMouseDown",
-	"click:relay(.striSelection .striIcon > .striHandle)":		"onSelectionLabelClick",
-	"click:relay(.striSelection .striLabel > .striHandle)":		"onSelectionLabelClick",
-	"click:relay(.striSelection .striDeselect > .striHandle)":	"onSelectionDeselectClick",
-	"click:relay(.striResult .striIcon > .striHandle)":			"onResultLabelClick",
-	"click:relay(.striResult .striLabel > .striHandle)":		"onResultLabelClick",
-	"click:relay(.striResult .striSelect > .striHandle)":		"onResultSelectClick",
-	"click:relay(.striResult .striDeselect > .striHandle)":		"onResultDeselectClick",
-	"click:relay(.striTree .striIcon > .striHandle)":			"onTreeLabelClick",
-	"click:relay(.striTree .striLabel > .striHandle)":			"onTreeLabelClick",
-	"click:relay(.striTree .striSelect > .striHandle)":			"onTreeSelectClick",
-	"click:relay(.striTree .striDeselect > .striHandle)":		"onTreeDeselectClick",
-	"click:relay(.striClearSearch > .striHandle)":				"onClearSearchClick",
-	"click:relay(.striClearSelection > .striHandle)":			"onClearSelectionClick",
-	"click:relay(.striToggle > .striHandle)":					"onToggleClick",
-	"keydown:relay(.striSearch > input):pause(250)":			"onSearchKeyDown"
+	"click:relay(.striHandle)":											"onHandleClick",
+	"mousedown:relay(.striSelection)":									"onSelectionMouseDown",
+	"click:relay(.striSelection .striNode > .striLabel > .striHandle)":	"onSelectionLabelClick",
+	"click:relay(.striSelection .striDeselect > .striHandle)":			"onSelectionDeselectClick",
+	"click:relay(.striResult .striNode > .striLabel > .striHandle)":	"onResultLabelClick",
+	"click:relay(.striResult .striSelect > .striHandle)":				"onResultSelectClick",
+	"click:relay(.striResult .striDeselect > .striHandle)":				"onResultDeselectClick",
+	"click:relay(.striTree .striNode > .striLabel > .striHandle)":		"onTreeLabelClick",
+	"click:relay(.striTree .striSelect > .striHandle)":					"onTreeSelectClick",
+	"click:relay(.striTree .striDeselect > .striHandle)":				"onTreeDeselectClick",
+	"click:relay(.striPathNode > .striLabel > .striHandle)":			"onPathClick",
+	"click:relay(.striClearSearch > .striHandle)":						"onClearSearchClick",
+	"click:relay(.striClearSelection > .striHandle)":					"onClearSelectionClick",
+	"click:relay(.striToggle > .striHandle)":							"onToggleClick",
+	"keydown:relay(.striSearch > input):pause(250)":					"onSearchKeyDown"
 };
 
 Selectri.attach = function() {
@@ -276,15 +275,17 @@ Selectri.getKey = function(node) {
 	var key = node.get(ATTR_KEY);
 	if(key) return key;
 	
-	node = node.get("tag") == "li" ? node.getFirst(".striNode") : node.getParent(".striNode");
-	if(!node) return undef;
+	if(node.get("tag") == "li") key = node.getFirst(".striNode");
+	if(!key) key = node.getParent(".striPathNode");
+	if(!key) key = node.getParent(".striNode");
+	if(!key) return undef;
 	
-	return node.get(ATTR_KEY);
+	return key.get(ATTR_KEY);
 };
 
 Selectri.getNode = function(element, key) {
 	if(typeOf(key) != "string" && !(key = this.getKey(key))) return;
-	return element.getElement(":not(.striPath) > .striNode[" + ATTR_KEY + "=\"" + escapeAttributeSelectorValue(key) + "\"]");
+	return element.getElement(".striNode[" + ATTR_KEY + "=\"" + escapeAttributeSelectorValue(key) + "\"]");
 };
 
 Selectri.getChildrenContainer = function(node) {
