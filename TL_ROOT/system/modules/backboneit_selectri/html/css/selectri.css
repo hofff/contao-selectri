@@ -7,7 +7,19 @@
 	padding: 0;
 	margin: 0;
 	font-size: 12px;
-	border: none;
+	border: 0;
+}
+
+.striWidget ol,
+.striWidget ul {
+	list-style-type: none;
+	list-style-image: none;
+	margin: 0;
+	padding: 0;
+}
+
+.striWidget li {
+	position: relative;
 }
 
 /* @end */
@@ -27,146 +39,102 @@
 }
 
 .striSelection,
-.striResult,
+.striResult {
+	display: none;
+	padding: 5px 0 10px;
+}
+
 .striTree {
 	display: none;
-	padding-top: 5px;
-	padding-bottom: 10px;
+	padding: 10px 0 2px;
 }
 
-.striTree {
-	padding-bottom: 2px;
-	padding-top: 10px;
-}
-
-.striSelection ol,
-.striResult ul,
-.striTree ol {
-	list-style-type: none;
-	list-style-image: none;
-	margin: 0;
-	padding: 0 0 0 18px;
-}
-
-.striSelection ol,
-.striResult ul,
+.striSelection > ol,
+.striResult > ul,
 .striTree > ol {
 	border-top: 1px solid #e9e9e9;
+/* 	border-bottom: 1px solid #e9e9e9; */
+}
+
+.striNode {
 	border-bottom: 1px solid #e9e9e9;
-	margin: 0;
-	padding: 0 0 0 10px;
+	background-color: #f6f6f6;
+	background-image: -webkit-linear-gradient(top, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%);
 }
 
-.striTree > ol {
-	padding-left: 10px;
-}
-
-.striSelection ol li,
-.striTree ol li {
-	position: relative;
-}
-
-.striSelection ol li .striNode,
-.striResult ul li .striNode,
-.striTree ol li .striNode {
-	border-bottom: 1px solid #e9e9e9;
-}
-
-.striTree ol li .striNode {
+.striTree .striNode {
+	margin-left: 10px;
 	border-left: 1px solid #e9e9e9;
 }
 
-.striSelection ol li:last-child .striNode,
-.striResult ul li:last-child .striNode,
-.striTree ol li:last-child > .striNode {
-	border-bottom-style: none;
+.striNode:hover {
+	background-color: #d8f9ae; /* #ebfdd7; */
 }
 
-.striTree ol li:first-child > .striNode {
-	border-bottom: 1px solid #e9e9e9;
+.striNode.striFade {
+	background-color: #f6f6f6;
+	-webkit-transition: background-color 1.5s ease 0.5s;
 }
 
-.striSelection ol li .striNode:hover,
-.striTree ol li .striNode:hover {
-	background-color: #ebfdd7;
+.striNode.striHighlight {
+	background-color: #aed8f9; /*#eff5fa;*/
+	-webkit-transition: none;
 }
 
-.striSelection ol li .striNode .striIcon,
-.striTree ol li .striNode .striIcon {
-	float: left;
-	line-height: 0;
-	padding: 2px 5px 2px 2px;
-}
-
-.striTree ol li .striNode .striIcon {
-	padding-left: 20px;
-	margin-left: -10px;
-}
-
-.striTree ol li .striChildren {
+.striChildren {
+	display: none;
+	margin-left: 10px;
 	border-left: 1px solid #e9e9e9;
+	padding-left: 8px;
+	padding-bottom: 5px;
 }
 
-.striTree ol .striHasChildren:last-Child .striChildren {
-	border-left-style: none;
-	padding-left: 1px;
-}
-
-.striTree ol .striHasChildren:first-child .striChildren {
-	border-left: 1px solid #e9e9e9;
-	padding-left: 0;
-}
-
-.striTree ol > li > .striChildren > ol > li:last-child > .striNode {
-	border-bottom-style: none;
-}
-
-.striTree ol > li > .striChildren > ol > li.striOpen:last-child > .striNode {
-	border-bottom: 1px solid #e9e9e9;
-}
-
-.striTree ol > li.striHasChildren.striOpen + li > .striNode {
-	border-top: 1px solid #e9e9e9;
-}
-
-.striTree ol li.striHasChildren > .striNode > .striIcon {
-	padding-left: 0;
-	padding-top: 0;
+:last-child > .striChildren {
+	border-left: 0;
+	padding-left: 9px;
 	padding-bottom: 0;
 }
 
-.striTree ol li.striHasChildren > .striNode > .striIcon > a {
-	background: url(folPlus.gif) no-repeat left 2px;
+:not(:last-child) > .striChildren :last-child > .striChildren {
+	padding-bottom: 5px;
+}
+
+.striOpen > .striChildren {
 	display: block;
-	margin: 0;
-	padding-top: 2px;
-	padding-bottom: 2px;
-	padding-left: 20px;
 }
 
-.striTree ol li.striHasChildren.striOpen > .striNode > .striIcon > a {
-	background-image: url(folMinus.gif);
-}
-
-.striSelection ol li .striNode .striPath,
-.striResult ul li .striNode .striPath,
-.striTree ol li .striNode .striPath {
+.striPath {
 	display: none;
 }
 
-.striSelection ol li .striNode .striLabel,
-.striResult ul li .striNode .striLabel,
-.striTree ol li .striNode .striLabel {
+.striIcon {
+	line-height: 0;
+	vertical-align: top;
+	padding: 2px;
+}
+
+.striLabel {
 	float: left;
 	line-height: 22px;
 }
 
-.striSelection ol li .striNode .striDeselect,
-.striResult ul li .striNode .striSelect,
-.striResult ul li .striNode .striDeselect,
-.striTree ol li .striNode .striSelect,
-.striTree ol li .striNode .striDeselect {
+.striTree .striLabel {
+	padding-left: 7px
+}
+
+.striTree .striLabel > .striHandle {
 	display: block;
+	background: url(folPlus.gif) no-repeat 1px 2px;
+	margin-left: -18px;
+	padding-left: 18px;
+}
+
+.striOpen > .striNode > .striLabel > .striHandle {
+	background-image: url(folMinus.gif);
+}
+
+.striSelect,
+.striDeselect {
 	width: 18px;
 	height: 18px;
 	text-indent: -10000px;
@@ -176,47 +144,29 @@
 	right: 3px;
 }
 
-.striSelection ol li .striNode .striDeselect a,
-.striResult ul li .striNode .striSelect a,
-.striResult ul li .striNode .striDeselect a,
-.striTree ol li .striNode .striSelect a,
-.striTree ol li .striNode .striDeselect a {
-	display: block;
-	width: 100%;
-	height: 100%;
-}
-
-.striResult ul li .striNode .striSelect,
-.striTree ol li .striNode .striSelect {
+.striSelect {
 	background: url(copy.gif) no-repeat center center;
 	display: block;
 }
 
-.striResult ul li.striSelected > .striNode > .striSelect,
-.striTree ol li.striSelected > .striNode > .striSelect {
+.striSelected > .striNode > .striSelect {
 	display: none;
 }
 
-.striSelection ol li .striNode .striDeselect,
-.striResult ul li.striSelected > .striNode > .striDeselect,
-.striTree ol li.striSelected > .striNode > .striDeselect {
+.striDeselect {
 	background: url(delete.gif) no-repeat center 2px;
-	display: block;
-}
-
-.striResult ul li .striNode .striDeselect,
-.striTree ol li .striNode .striDeselect {
 	display: none;
 }
 
-.striResult ul li > .striChildren,
-.striTree ol li > .striChildren {
-	display: none;
+.striSelected > .striNode > .striDeselect {
+	display: block;
 }
 
-.striResult ul li.striOpen > .striChildren,
-.striTree ol li.striOpen > .striChildren {
+.striDeselect .striHandle,
+.striSelect .striHandle {
 	display: block;
+	width: 100%;
+	height: 100%;
 }
 
 /* @end */
@@ -335,6 +285,12 @@
 	width: 100%;
 }
 
+.ie9 .striTools .striClearSearch a,
+.ie9 .striTools .striClearSelection a,
+.ie9 .striTools .striToggle a {
+	filter: none;
+}
+
 .striTools .striClearSearch a {
 	border-left: 1px solid #b8b8b8;
 	-moz-border-radius: 10px;
@@ -367,8 +323,8 @@
 
 /* @end */
 
-.striMessage {
-	display: none;
+.striMessages p {
+	margin: 3px 0px;
 }
 
 /* @group helper */
