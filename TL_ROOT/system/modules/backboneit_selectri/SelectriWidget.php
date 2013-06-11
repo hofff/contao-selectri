@@ -432,7 +432,7 @@ class SelectriWidget extends Widget {
 	}
 
 	// fuck contao...
-	public function getTheme() {
+	public function _getTheme() {
 		return parent::getTheme();
 	}
 

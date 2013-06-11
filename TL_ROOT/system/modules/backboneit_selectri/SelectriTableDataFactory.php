@@ -91,7 +91,7 @@ class SelectriTableDataFactory extends SelectriAbstractDataFactory {
 	public static function getIconPath(SelectriWidget $widget, $icon = null) {
 		strlen($icon) || $icon = self::DEFAULT_ICON;
 		return strpos($icon, '/') === false
-			? 'system/themes/' . $widget->getTheme() . '/images/' . $icon
+			? 'system/themes/' . $widget->_getTheme() . '/images/' . $icon
 			: $icon;
 	}
 
