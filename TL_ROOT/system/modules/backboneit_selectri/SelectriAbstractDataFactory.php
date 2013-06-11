@@ -7,25 +7,25 @@ abstract class SelectriAbstractDataFactory implements SelectriDataFactory {
 		$factory = new $clazz();
 		return $factory;
 	}
-	
+
 	private $widget;
-	
+
 	public function __construct() {
 	}
-	
+
 	public function __clone() {
 	}
-	
+
 	public function setParameters($params) {
 	}
-	
+
 	public function setWidget(SelectriWidget $widget) {
 		$this->widget = $widget;
 		return $this;
 	}
-	
+
 	public function getWidget() {
 		return $this->widget;
 	}
-	
+
 }

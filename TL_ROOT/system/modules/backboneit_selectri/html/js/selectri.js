@@ -32,7 +32,7 @@ Selectri.options = {};
 
 Selectri.initialize = function(container, options, detached) {
 	var self = this, occluded = undef, url;
-	
+
 	self.container = container = $(container);
 	if(!container) return undef;
 	if(self.occlude(OCCLUDE, container)) {
@@ -41,7 +41,7 @@ Selectri.initialize = function(container, options, detached) {
 	} else {
 		self.id = self.container.get("id") || String.uniqueID();
 	}
-	
+
 	if(occluded) {
 		self.setOptions(options);
 	} else {
@@ -53,7 +53,7 @@ Selectri.initialize = function(container, options, detached) {
 		self.result = self.container.getElement(".striResult");
 		self.tree = self.container.getElement(".striTree");
 		self.messages = self.container.getElement(".striMessages");
-		
+
 		url = window.location.href + (window.location.href.indexOf("?") > -1 ? "&" : "?");
 		url += "striID=" + encodeURIComponent(self.id);
 		url += "&striAction=";
@@ -66,18 +66,18 @@ Selectri.initialize = function(container, options, detached) {
 			self.levelsRequest.addEvent(event, self["onLevels" + event.capitalize()]);
 			self.searchRequest.addEvent(event, self["onSearch" + event.capitalize()]);
 		});
-		
+
 		self.sortables = new Sortables(undef, { opacity: 0.8, onStart: self.onSortStart, onComplete: self.onSortComplete });
 		if(self.sortables.options.unDraggableTags) self.sortables.options.unDraggableTags.erase("a");
 		else self.selection.getChildren().each(function(element) { fixSortables(self.sortables, element); });
 		self.sortables.addLists(self.selection).detach();
-		
+
 		if(self.container.hasClass("striOpen")) self.openTree();
 		else self.closeTree();
-		
+
 		if(!detached) self.attach();
 	}
-	
+
 	return self;
 };
 
@@ -106,9 +106,9 @@ Selectri.onLevelsComplete			= function() { this.container.removeClass("striLoadi
 Selectri.onLevelsSuccess			= function(json) {
 	var self = this, node = undef;
 	if(!json) return;
-	
+
 	self.setMessages(json.messages);
-	
+
 	if(!self.tree.getChildren().length) {
 		if(json.empty) {
 			self.container.addClass("striEmpty");
@@ -117,19 +117,19 @@ Selectri.onLevelsSuccess			= function(json) {
 			self.tree.set("html", json.first);
 		}
 	}
-	
+
 	if(json.levels) Object.each(json.levels, function(level, key) {
 		node = self.getChildrenContainer(key);
 		if(!node) return;
 		if(!node.getChildren().length) node.set("html", level);
 		node.getParent("li").addClass("striOpen");
 	});
-	
+
 	self.selection.getChildren().each(function(node) {
 		node = self.getNode(self.tree, node);
 		if(node) node.getParent("li").addClass("striSelected");
 	});
-	
+
 	if(json.action == "path") {
 		self.highlight(json.key);
 	}
@@ -140,12 +140,12 @@ Selectri.onSearchException			= function() { this.container.removeClass("striSear
 Selectri.onSearchComplete			= function() { this.container.removeClass("striSearching"); };
 Selectri.onSearchSuccess			= function(json) {
 	var self = this;
-	
+
 	self.setMessages(json.messages);
-	
+
 	self.result.set("html", json.result);
 	if(self.result.getChildren().length) self.result.addClass("striOpen");
-	
+
 	self.selection.getChildren().each(function(node) {
 		node = self.getNode(self.result, node);
 		if(node) node.getParent("li").addClass("striSelected");
@@ -178,7 +178,7 @@ Selectri.attach = function() {
 		self.container.addEvent(event, self[handler]);
 	});
 };
-	
+
 Selectri.detach = function() {
 	var self = this;
 	self.attached = undef;
@@ -191,11 +191,11 @@ Selectri.detach = function() {
 Selectri.setMessages = function(messages) {
 	var self = this;
 	self.messages.empty();
-	
+
 	type = typeOf(messages);
 	if(type == "string") messages = [ messages ];
 	else if(type != "array") return;
-	
+
 	messages.each(function(message) {
 		new Element("p").set("text", message).inject(self.messages);
 	});
@@ -204,33 +204,33 @@ Selectri.setMessages = function(messages) {
 Selectri.select = function(node, adjustScroll) {
 	var self = this;
 	if(self.isSelected(node)) return;
-	
+
 	treeNode = self.getNode(self.tree, node);
 	resultNode = self.getNode(self.result, node);
 	node = treeNode || resultNode;
 	if(!node) return;
-	
+
 	node = node.clone();
 	node.getFirst("input").set("name", self.options.name);
 	node.getFirst(".striSelect").destroy();
 	wrapPathHandle(self, node.getFirst(".striLabel"));
 	node = new Element("li.striSelected").grab(node);
 	fixSortables(self.sortables, node);
-	
+
 	adjustScroll = self.getScrollAdjust(adjustScroll);
 	if(self.options.max == 1) self.deselect(self.selection.getFirst());
 	node.inject(self.selection);
 	self.sortables.addItems(node);
 	self.selection.getParent().addClass("striHasSelection");
 	adjustScroll();
-	
+
 	if(treeNode) treeNode.getParent("li").addClass("striSelected");
 	if(resultNode) resultNode.getParent("li").addClass("striSelected");
 };
 
 Selectri.deselect = function(node, adjustScroll) {
 	var self = this;
-	
+
 	node = self.getNode(self.selection, node);
 	if(!node) return;
 
@@ -271,15 +271,15 @@ Selectri.isSelected = function(key) {
 Selectri.getKey = function(node) {
 	node = $(node);
 	if(!node) return undef;
-	
+
 	var key = node.get(ATTR_KEY);
 	if(key) return key;
-	
+
 	if(node.get("tag") == "li") key = node.getFirst(".striNode");
 	if(!key) key = node.getParent(".striPathNode");
 	if(!key) key = node.getParent(".striNode");
 	if(!key) return undef;
-	
+
 	return key.get(ATTR_KEY);
 };
 

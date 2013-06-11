@@ -1,7 +1,7 @@
 <?php
 
 class SelectriContaoTableDataFactory extends SelectriTableDataFactory {
-	
+
 	protected static $icons = array(
 		'tl_article'				=> 'articles.gif',
 		'tl_calendar'				=> 'system/modules/calendar/html/icon.gif',
@@ -21,55 +21,55 @@ class SelectriContaoTableDataFactory extends SelectriTableDataFactory {
 		'tl_user'					=> 'user.gif',
 		'tl_user_group'				=> 'group.gif',
 	);
-	
+
 	public static function setIcon($table, $icon) {
 		self::$icons[$table] = $icon;
 	}
-	
+
 	public static function getIcon($table) {
 		return self::$icons[$table];
 	}
-	
+
 	public static function getIcons() {
 		return self::$icons;
 	}
-	
+
 	protected static $iconCallbacks = array(
 		'tl_page' => array(
 			array(__CLASS__, 'pageIconCallback'),
 			array('type', 'published', 'start', 'stop', 'hide', 'protected')
 		),
 	);
-	
+
 	public static function setIconCallback($table, $callback, array $columns = null) {
 		self::$iconCallbacks[$table] = array($callback, (array) $columns);
 	}
-	
+
 	public static function getIconCallback($table) {
 		return (array) self::$iconCallbacks[$table];
 	}
-	
+
 	public static function getIconCallbacks() {
 		return self::$iconCallbacks;
 	}
-	
+
 	public function __construct() {
 		parent::__construct();
-		
+
 		$cfg = $this->getConfig();
-		
+
 		$cfg->setTreeKeyColumn('id');
 		$cfg->setTreeParentKeyColumn('pid');
 		$cfg->setTreeRootValue(0);
-		
+
 		$cfg->setItemKeyColumn('id');
 		$cfg->setItemTreeKeyColumn('pid');
 	}
-	
+
 	public function __clone() {
 		parent::__clone();
 	}
-	
+
 	public function setParameters($params) {
 		parent::setParameters($params);
 		$params = (array) $params;
@@ -77,7 +77,7 @@ class SelectriContaoTableDataFactory extends SelectriTableDataFactory {
 		isset($params['itemTable']) && $this->setItemTable($params['itemTable']);
 		return $this;
 	}
-	
+
 	public function setTreeTable($treeTable) {
 		$db = $this->getDatabase();
 		if(!$db->tableExists($treeTable)) {
@@ -90,26 +90,26 @@ class SelectriContaoTableDataFactory extends SelectriTableDataFactory {
 		if($db->fieldExists('sorting', $treeTable)) {
 			$cfg->setTreeOrderByExpr('sorting');
 		}
-		
+
 		return $this;
 	}
-	
+
 	public function setItemTable($itemTable) {
 		$db = $this->getDatabase();
 		if(!$db->tableExists($itemTable)) {
 			return $this;
 		}
-		
+
 		$cfg = $this->getConfig();
 		$cfg->setItemTable($itemTable);
 
 		if($db->fieldExists('sorting', $itemTable)) {
 			$cfg->setItemOrderByExpr('sorting');
 		}
-		
+
 		return $this;
 	}
-	
+
 	protected function prepareTreeConfig(SelectriTableDataConfig $cfg) {
 		if(!$cfg->getTreeLabelCallback()) {
 			$formatter = $this->createLabelFormatter($cfg->getTreeTable(), $cfg->getTreeKeyColumn());
@@ -126,7 +126,7 @@ class SelectriContaoTableDataFactory extends SelectriTableDataFactory {
 		}
 		parent::prepareTreeConfig($cfg);
 	}
-	
+
 	protected function prepareItemConfig(SelectriTableDataConfig $cfg) {
 		if(!$cfg->getItemLabelCallback()) {
 			$formatter = $this->createLabelFormatter($cfg->getItemTable(), $cfg->getItemKeyColumn());
@@ -143,7 +143,7 @@ class SelectriContaoTableDataFactory extends SelectriTableDataFactory {
 		}
 		parent::prepareTreeConfig($cfg);
 	}
-	
+
 	protected function createLabelFormatter($table, $keyColumn) {
 		if($this->getDatabase()->fieldExists('name', $table)) {
 			$fields = array('name', $keyColumn);
@@ -152,24 +152,24 @@ class SelectriContaoTableDataFactory extends SelectriTableDataFactory {
 		} else {
 			$fields = array($keyColumn);
 		}
-		
+
 		$format = '';
 		foreach($fields as $field) {
 			$format .= $field == $keyColumn ? ' (ID %s)' : ', %s';
 		}
 		$format = ltrim($format, ', ');
-		
+
 		return SelectriLabelFormatter::create($format, $fields);
 	}
-	
+
 	public static function treeIconCallback(array $node, SelectriData $data, SelectriTableDataConfig $cfg) {
 		return SelectriTableDataFactory::getIconPath($data->getWidget(), self::getIcon($cfg->getTreeTable()));
 	}
-	
+
 	public static function itemIconCallback(array $node, SelectriData $data, SelectriTableDataConfig $cfg) {
 		return SelectriTableDataFactory::getIconPath($data->getWidget(), self::getIcon($cfg->getItemTable()));
 	}
-	
+
 	public static function pageIconCallback(array $node, SelectriData $data, SelectriTableDataConfig $cfg) {
 		if(!$node['published'] || ($node['start'] && $node['start'] > time()) || ($node['stop'] && $node['stop'] < time())) {
 			$sub += 1;
@@ -183,5 +183,5 @@ class SelectriContaoTableDataFactory extends SelectriTableDataFactory {
 		$icon = $sub ? $node['type'] . '_' . $sub . '.gif' : $node['type'].'.gif';
 		return SelectriTableDataFactory::getIconPath($data->getWidget(), $icon);
 	}
-	
+
 }

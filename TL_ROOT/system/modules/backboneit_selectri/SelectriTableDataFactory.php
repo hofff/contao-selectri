@@ -1,37 +1,37 @@
 <?php
 
 class SelectriTableDataFactory extends SelectriAbstractDataFactory {
-	
+
 	const DEFAULT_ICON = 'iconPLAIN.gif';
-	
+
 	private $db;
-	
+
 	private $cfg;
-	
+
 	public function __construct() {
 		parent::__construct();
 		$this->db = Database::getInstance();
 		$this->cfg = $cfg = new SelectriTableDataConfig();
 	}
-	
+
 	public function __clone() {
 		parent::__clone();
 		$this->cfg = clone $this->cfg;
 	}
-	
+
 	public function getDatabase() {
 		return $this->db;
 	}
-	
+
 	public function getConfig() {
 		return $this->cfg;
 	}
-	
+
 	protected function prepareConfig(SelectriTableDataConfig $cfg) {
 		$cfg->hasTree() && $this->prepareTreeConfig($cfg);
 		$cfg->hasItem() && $this->prepareItemConfig($cfg);
 	}
-	
+
 	protected function prepareTreeConfig(SelectriTableDataConfig $cfg) {
 		$callback = $cfg->getTreeLabelCallback();
 		if(!$callback) {
@@ -47,7 +47,7 @@ class SelectriTableDataFactory extends SelectriAbstractDataFactory {
 			$cfg->setTreeIconCallback(array(__CLASS__, 'defaultIconCallback'));
 		}
 	}
-	
+
 	protected function prepareItemConfig(SelectriTableDataConfig $cfg) {
 		$callback = $cfg->getItemLabelCallback();
 		if(!$callback) {
@@ -63,7 +63,7 @@ class SelectriTableDataFactory extends SelectriAbstractDataFactory {
 			$cfg->setItemIconCallback(array(__CLASS__, 'defaultIconCallback'));
 		}
 	}
-	
+
 	public function getData() {
 		$cfg = clone $this->getConfig();
 		$this->prepareConfig($cfg);
@@ -75,24 +75,24 @@ class SelectriTableDataFactory extends SelectriAbstractDataFactory {
 			throw new Exception('tree and item mode not implemented');
 		}
 	}
-	
+
 	public static function defaultTreeLabelCallback(array $node, SelectriData $data, SelectriTableDataConfig $cfg) {
 		return $node[$cfg->getTreeKeyColumn()];
 	}
-	
+
 	public static function defaultItemLabelCallback(array $node, SelectriData $data, SelectriTableDataConfig $cfg) {
 		return $node[$cfg->getItemKeyColumn()];
 	}
-	
+
 	public static function defaultIconCallback(array $node, SelectriData $data) {
 		return self::getIconPath($data->getWidget());
 	}
-	
+
 	public static function getIconPath(SelectriWidget $widget, $icon = null) {
 		strlen($icon) || $icon = self::DEFAULT_ICON;
 		return strpos($icon, '/') === false
 			? 'system/themes/' . $widget->getTheme() . '/images/' . $icon
 			: $icon;
 	}
-	
+
 }

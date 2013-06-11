@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="yui" basedir=".">
-	
+
 	<dirname property="yui.basedir" file="${ant.file.yui}"/>
 	<property name="yui.jar" value="${yui.basedir}/yuicompressor-2.4.2.jar" />
-	
+
 	<property name="minjs.src.dir" value="src" />
 	<property name="minjs.src.delete" value="false" />
 	<property name="minjs.license.file" value="publish/license_js.txt" />
 	<property name="minjs.license.append" value="false" />
-	
+
 	<property name="mincss.src.dir" value="src" />
 	<property name="mincss.src.delete" value="false" />
 	<property name="mincss.license.file" value="publish/license_css.txt" />
 	<property name="mincss.license.append" value="true" />
 
-	
-	
+
+
 	<target name="minjs.license.without" unless="${minjs.license.exists}">
 		<copy file="${minjs.dir}/${minjs.file}" tofile="${minjs.dir}/${minjs.file}.license" />
 	</target>
-	
+
 	<target name="minjs.license.with" if="${minjs.license.exists}">
 		<echo>Prepending license ${minjs.license.file}</echo>
 	  	<concat destfile="${minjs.dir}/${minjs.file}.license">
@@ -29,7 +29,7 @@
 			</filterchain>
 	  	</concat>
 	</target>
-	
+
 	<target name="minjs.license" if="${minjs.license.append}">
 		<available file="${minjs.license.file}" property="minjs.license.exists" />
 		<antcall target="minjs.license.without" />
@@ -42,7 +42,7 @@
 		<antcall target="minjs.license" />
 		<copy file="${minjs.dir}/${minjs.file}" tofile="${minjs.dir}/${minjs.src.dir}/${minjs.file}" />
 	</target>
-	
+
 	<target name="minjs.yui">
 		<antcall target="yuicompress">
 			<param name="yui.src"  value="${minjs.dir}/${minjs.file}" />
@@ -52,7 +52,7 @@
 		<move file="${minjs.dir}/${minjs.file}.yui" tofile="${minjs.dir}/${minjs.file}" overwrite="true" />
 		<antcall target="minjs.license" />
 	</target>
-	
+
 	<target name="minjs">
 		<echo>Minify JS ${minjs.file}...</echo>
 		<antcall target="minjs.src" />
@@ -60,13 +60,13 @@
 		<gzip src="${minjs.dir}/${minjs.file}" destfile="${minjs.dir}/${minjs.file}.gz" />
 		<echo>Done.</echo>
 	</target>
-	
-	
-	
+
+
+
 	<target name="mincss.license.without" unless="${mincss.license.exists}">
 		<copy file="${mincss.dir}/${mincss.file}" tofile="${mincss.dir}/${mincss.file}.license" />
 	</target>
-	
+
 	<target name="mincss.license.with" if="${mincss.license.exists}">
 		<echo>Prepending license ${mincss.license.file}</echo>
 	  	<concat destfile="${mincss.dir}/${mincss.file}.license">
@@ -76,7 +76,7 @@
 			</filterchain>
 	  	</concat>
 	</target>
-	
+
 	<target name="mincss.license" if="${mincss.license.append}">
 		<available file="${mincss.license.file}" property="mincss.license.exists" />
 		<antcall target="mincss.license.without" />
@@ -89,7 +89,7 @@
 		<antcall target="mincss.license" />
 		<copy file="${mincss.dir}/${mincss.file}" tofile="${mincss.dir}/${mincss.src.dir}/${mincss.file}" />
 	</target>
-	
+
 	<target name="mincss.yui">
 		<antcall target="yuicompress">
 			<param name="yui.src"  value="${mincss.dir}/${mincss.file}" />
@@ -99,7 +99,7 @@
 		<move file="${mincss.dir}/${mincss.file}.yui" tofile="${mincss.dir}/${mincss.file}" overwrite="true" />
 		<antcall target="mincss.license" />
 	</target>
-	
+
 	<target name="mincss">
 		<echo>Minify CSS ${mincss.file}...</echo>
 		<antcall target="mincss.src" />
@@ -107,9 +107,9 @@
 	  	<gzip src="${mincss.dir}/${mincss.file}" destfile="${mincss.dir}/${mincss.file}.gz" />
 		<echo>Done.</echo>
 	</target>
-	
-	
-	
+
+
+
 	<target name="yuicompress">
 		<java jar="${yui.jar}" fork="true">
 			<arg value="-v" />
@@ -124,6 +124,6 @@
 			<arg value="${yui.src}" />
 		</java>
 	</target>
-	
-	
+
+
 </project>

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="backboneit_selectri" default="build" basedir=".">
-  
+
 	<property name="build.dir" value="build" />
 	<property name="build.module" value="${build.dir}/TL_ROOT/system/modules/backboneit_selectri" />
 	<property name="minjs.dir" value="${build.module}/js" />
 	<property name="minjs.keepsrc" value="true" />
 	<property name="mincss.dir" value="${build.module}/css" />
 	<property name="mincss.keepsrc" value="true" />
-		
+
 	<property name="test.dir" value="G:\contao\ct2113" />
 
 	<import file="ext/yui-compressor/yui.xml" />
@@ -16,7 +16,7 @@
 		<delete dir="${build.dir}" />
 		<mkdir dir="${build.dir}/TL_ROOT" />
 	</target>
-	
+
 	<target name="build" depends="clean">
 		<copy todir="${build.dir}/TL_ROOT">
 			<fileset dir="TL_ROOT" includes="**/*.php" />
@@ -28,12 +28,12 @@
 		<copy todir="${build.dir}/TL_ROOT">
 			<fileset dir="TL_ROOT" excludes="**/*.php" />
 		</copy>
-		
+
 	  	<zip destfile="${build.dir}/backboneit_selectri.zip">
 	  		<zipfileset dir="${build.dir}/TL_ROOT" />
 	  	</zip>
 	</target>
-	
+
 	<target name="test">
 		<delete dir="${test.dir}/system/modules/backboneit_selectri" />
 		<copy todir="${test.dir}/system/modules/backboneit_selectri">
@@ -44,5 +44,5 @@
 			<fileset dir="test/TL_ROOT/system/modules/backboneit_selectri_test" />
 		</copy>
 	</target>
-	
+
 </project>
