@@ -141,7 +141,7 @@ class SelectriTableTreeData implements SelectriData {
 			return new EmptyIterator();
 		}
 
-		$query = $this->getTreeSearchQuery();
+		$query = $this->buildTreeSearchQuery();
 		$expr = $this->getTreeSearchExpr(count($keywords), $columnCnt);
 
 		foreach($search as $word) {
