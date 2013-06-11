@@ -406,7 +406,7 @@ class SelectriWidget extends Widget {
 
 	public function getFieldDCA() {
 		return $this->isDataContainerDriven()
-			? $GLOBALS['TL_DCA'][$table]['fields'][$field]
+			? $GLOBALS['TL_DCA'][$this->getDataContainerTable()]['fields'][$this->getDataContainerField()]
 			: array();
 	}
 
