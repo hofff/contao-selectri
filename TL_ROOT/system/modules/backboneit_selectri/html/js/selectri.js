@@ -342,13 +342,10 @@ Selectri.closeNode = function(node) {
 Selectri.openPath = function(node) {
 	var self = this, key = self.getKey(node);
 	if(!key) return;
-	node = self.getChildrenContainer(node);
-	if(node) {
-		node.getParent().getParents().filter(".striTree li").addClass("striOpen");
-		self.highlight(key);
-		return;
-	}
-	self.requestPath(key);
+	node = self.getNode(self.tree, key);
+	if(!node) return !self.requestPath(key);
+	node.getParent().getParents().filter(".striTree li").addClass("striOpen");
+	self.highlight(key);
 };
 
 Selectri.highlight = function(node) {
