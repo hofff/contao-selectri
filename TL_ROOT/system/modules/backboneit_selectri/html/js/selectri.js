@@ -382,7 +382,7 @@ Selectri.clearSearch = function() {
 };
 
 Selectri.getRequestToken = function() {
-	return window.REQUEST_TOKEN || document.getElements("input[type=\"hidden\"][name=\"REQUEST_TOKEN\"]").get("value");
+	return window.REQUEST_TOKEN || document.getElements("input[type=\"hidden\"][name=\"REQUEST_TOKEN\"]").get("value")[0];
 };
 
 Selectri.updateRequestToken = function(token) {
