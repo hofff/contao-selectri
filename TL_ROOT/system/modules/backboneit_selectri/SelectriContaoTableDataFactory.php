@@ -146,12 +146,11 @@ class SelectriContaoTableDataFactory extends SelectriTableDataFactory {
 
 	protected function createLabelFormatter($table, $keyColumn) {
 		if($this->getDatabase()->fieldExists('name', $table)) {
-			$fields = array('name', $keyColumn);
+			$fields[] = 'name';
 		} elseif($this->getDatabase()->fieldExists('title', $table)) {
-			$fields = array('title', $keyColumn);
-		} else {
-			$fields = array($keyColumn);
+			$fields[] = 'title';
 		}
+		$fields[] = array($keyColumn);
 
 		$format = '';
 		foreach($fields as $field) {
@@ -163,11 +162,11 @@ class SelectriContaoTableDataFactory extends SelectriTableDataFactory {
 	}
 
 	public static function treeIconCallback(array $node, SelectriData $data, SelectriTableDataConfig $cfg) {
-		return SelectriTableDataFactory::getIconPath($data->getWidget(), self::getIcon($cfg->getTreeTable()));
+		return self::getIconPath($data->getWidget(), self::getIcon($cfg->getTreeTable()));
 	}
 
 	public static function itemIconCallback(array $node, SelectriData $data, SelectriTableDataConfig $cfg) {
-		return SelectriTableDataFactory::getIconPath($data->getWidget(), self::getIcon($cfg->getItemTable()));
+		return self::getIconPath($data->getWidget(), self::getIcon($cfg->getItemTable()));
 	}
 
 	public static function pageIconCallback(array $node, SelectriData $data, SelectriTableDataConfig $cfg) {
@@ -181,7 +180,7 @@ class SelectriContaoTableDataFactory extends SelectriTableDataFactory {
 			$sub += 4;
 		}
 		$icon = $sub ? $node['type'] . '_' . $sub . '.gif' : $node['type'].'.gif';
-		return SelectriTableDataFactory::getIconPath($data->getWidget(), $icon);
+		return self::getIconPath($data->getWidget(), $icon);
 	}
 
 }
