@@ -48,8 +48,8 @@ Selectri.initialize = function(container, options, detached) {
 		if(options === TRUE) options = JSON.decode(self.container.get("data-stri-options"));
 		self.setOptions(options);
 		self.selection = self.container.getElement(".striSelection > ol");
-		self.search = self.container.getElement(".striTools .striSearch input");
-		self.value = self.search.get("value");
+		self.input = self.container.getElement(".striTools .striSearch input");
+		self.query = self.input.get("value");
 		self.result = self.container.getElement(".striResult");
 		self.tree = self.container.getElement(".striTree");
 		self.messages = self.container.getElement(".striMessages");
@@ -95,7 +95,7 @@ Selectri.onPathClick				= function(event, target) { this.openPath(target); this.
 Selectri.onClearSearchClick			= function(event, target) { this.clearSearch(); };
 Selectri.onClearSelectionClick		= function(event, target) { if(event.shift) this.deselectAll(); };
 Selectri.onToggleClick				= function(event, target) { this.toggleTree(); };
-Selectri.onSearchKeyDown			= function(event, target) { this.requestSearch(target.get("value")); };
+Selectri.onSearchKeyDown			= function(event, target) { this.search(target.get("value")); };
 Selectri.onSortStart				= function() { this.container.addClass("striSorting"); };
 Selectri.onSortComplete				= function() { this.container.removeClass("striSorting"); };
 Selectri.onToggleSuccess			= function(json) { if(json && json.token) this.updateRequestToken(json.token); };
@@ -305,7 +305,7 @@ Selectri.openTree = function() {
 	var self = this;
 	self.container.addClass("striOpen");
 	self.clearSearch();
-	if(!self.tree.getChildren().length && !self.levelsRequest.isRunning()) self.requestLevels();
+	self.tree.getChildren().length || self.levelsRequest.isRunning() || self.levelsRequest.send();
 };
 
 Selectri.closeTree = function() {
@@ -326,7 +326,7 @@ Selectri.openNode = function(node) {
 	node = self.getChildrenContainer(node);
 	if(!node) return;
 	node.getParent("li").addClass("striOpen");
-	if(!node.getChildren().length) self.requestLevels(key);
+	node.getChildren().length || self.levelsRequest.send({ data: { striKey: key } });
 	self.toggleRequest.send({ data: { striKey: key, striOpen: 1, REQUEST_TOKEN: self.getRequestToken() } });
 };
 
@@ -343,7 +343,10 @@ Selectri.openPath = function(node) {
 	var self = this, key = self.getKey(node);
 	if(!key) return;
 	node = self.getNode(self.tree, key);
-	if(!node) return !self.requestPath(key);
+	if(!node) {
+		self.levelsRequest.send({ data: { striAction: "path", striKey: key } });
+		return;
+	}
 	node.getParent().getParents().filter(".striTree li").addClass("striOpen");
 	self.highlight(key);
 };
@@ -357,26 +360,19 @@ Selectri.highlight = function(node) {
 	node.store(FN_FADE, node.addClass("striFade").removeClass.delay(3000, node, "striFade"));
 };
 
-Selectri.requestLevels = function(start) {
-	this.levelsRequest.send({ data: { striKey: start } });
-};
-
-Selectri.requestPath = function(key) {
-	this.levelsRequest.send({ data: { striAction: "path", striKey: key } });
-};
-
-Selectri.requestSearch = function(value) {
+Selectri.search = function(query) {
 	var self = this;
-	if(self.value == value) return;
-	self.value = value;
+	if(self.query == query) return;
+	self.query = query;
+	if(!query) return self.clearSearch();
 	self.closeTree();
 	self.container.removeClass("striNotFound");
-	self.searchRequest.send({ data: { striSearch: value } });
+	self.searchRequest.send({ data: { striSearch: query } });
 };
 
 Selectri.clearSearch = function() {
 	var self = this;
-	self.search.set("value");
+	self.input.set("value");
 	self.container.removeClass("striNotFound");
 	self.result.removeClass("striOpen");
 };
