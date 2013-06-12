@@ -143,12 +143,13 @@ class SelectriTableTreeData implements SelectriData {
 
 		$query = $this->buildTreeSearchQuery();
 		$expr = $this->getTreeSearchExpr(count($keywords), $columnCnt);
+		$query = sprintf($query, $expr);
 
-		foreach($search as $word) {
+		foreach($keywords as $word) {
 			$params[] = array_fill(0, $columnCnt, $word);
 		}
 		$params = call_user_func_array('array_merge', $params);
-		$found = $this->db->prepare($query)->limit($this->getWidget()->getSearchLimit())->execute($params)->fetchEach('id');
+		$found = $this->db->prepare($query)->limit($this->getWidget()->getSearchLimit())->execute($params)->fetchEach('_key');
 		return $this->getSelectionIterator($found);
 	}
 
