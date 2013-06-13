@@ -14,11 +14,11 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['backboneit_navigation_roots'] = array
 //		'min'			=> 1,
 		'max'			=> PHP_INT_MAX,
 //		'findInSet'		=> false,				// boolean,	optional, defaults to false
-//		'mode'			=> '|leaf|inner',		// string,		future
 //		'sort'			=> 'preorder|list|tree',
 // 		'height'		=> 'auto|<css value and unit>',
 
 // 		'treeTable'		=> 'tl_page',			// uses a SelectriContaoTableDataFactory
+//		'mode'			=> 'all|leaf|inner',	// string, default 'all'
 		'data'			=> $data,
 
 		'tl_class'		=> 'clr',
