@@ -93,7 +93,7 @@ class SelectriTableTreeData implements SelectriData {
 		}
 
 		// fetch data for path nodes
-		unset($pathKeys[$this->cfg->getTreeRootValue()]);
+		unset($pathKeys[strval($this->cfg->getTreeRootValue())]);
 		if($pathKeys) foreach($this->fetchTreeNodes(array_keys($pathKeys)) as $key => $node) {
 			$tree->nodes[$key] = $node;
 		}
