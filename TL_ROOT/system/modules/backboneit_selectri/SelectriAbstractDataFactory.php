@@ -17,6 +17,7 @@ abstract class SelectriAbstractDataFactory implements SelectriDataFactory {
 	}
 
 	public function setParameters($params) {
+		return $this;
 	}
 
 	public function setWidget(SelectriWidget $widget) {

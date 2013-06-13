@@ -72,7 +72,7 @@ class SelectriTableDataFactory extends SelectriAbstractDataFactory {
 		return $this;
 	}
 
-	public function getData() {
+	public function createData() {
 		$cfg = clone $this->getConfig();
 		$this->prepareConfig($cfg);
 		if($cfg->isTreeOnlyMode()) {

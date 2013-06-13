@@ -110,11 +110,11 @@ class SelectriWidget extends Widget {
 			}
 			$data->setParameters($attrs);
 			$data->setWidget($this);
-			$this->setData($data->getData());
+			$this->setData($data->createData());
 
 		} elseif($data instanceof SelectriDataFactory) {
 			$data->setWidget($this);
-			$this->setData($data->getData());
+			$this->setData($data->createData());
 
 		} else {
 			throw new Exception('invalid selectri data factory configuration');
