@@ -20,7 +20,7 @@ interface SelectriNode {
 
 	public function getItemIterator();
 
-	public function hasSelectableChildren();
+	public function hasSelectableDescendants();
 
 	public function isOpen();
 

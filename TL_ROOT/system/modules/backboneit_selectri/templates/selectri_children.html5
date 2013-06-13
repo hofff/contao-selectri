@@ -1,6 +1,6 @@
 <ol>
-<?php foreach($level as $node): $hasSelectableChildren = $node->hasSelectableChildren(); ?>
-<li class="<?php if($hasSelectableChildren) echo 'striHasChildren'; ?>">
+<?php foreach($level as $node): $hasSelectableDescendants = $node->hasSelectableDescendants(); ?>
+<li class="<?php if($hasSelectableDescendants) echo 'striHasChildren'; ?>">
 
   <div class="striNode" data-stri-key="<?php echo specialchars($node->getKey()); ?>">
 <?php if($node->isSelectable()): ?>
@@ -25,12 +25,12 @@
 <?php endif; ?>
 
     <div class="striLabel">
-<?php if($hasSelectableChildren): ?>
+<?php if($hasSelectableDescendants): ?>
       <a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggleTitle']; ?>">
 <?php endif; ?>
         <img class="striIcon" src="<?php echo specialchars($node->getIcon()); ?>" alt="" />
         <?php echo specialchars($node->getLabel()); ?>
-<?php if($hasSelectableChildren): ?>
+<?php if($hasSelectableDescendants): ?>
       </a>
 <?php endif; ?>
     </div>
@@ -51,7 +51,7 @@
 <?php if($node->hasItems()): ?>
 <?php endif; ?>
 
-<?php if($hasSelectableChildren): ?>
+<?php if($hasSelectableDescendants): ?>
   <div class="striChildren"></div>
 <?php endif; ?>
 </li>
