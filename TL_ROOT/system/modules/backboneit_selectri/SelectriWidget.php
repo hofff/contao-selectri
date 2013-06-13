@@ -248,7 +248,7 @@ class SelectriWidget extends Widget {
 				break;
 		}
 		$response['action'] = $action;
-		isset($_POST) && $response['token'] = REQUEST_TOKEN;
+		$response['token'] = REQUEST_TOKEN;
 		header('Content-Type: application/json');
 		echo json_encode($response);
 		exit;
