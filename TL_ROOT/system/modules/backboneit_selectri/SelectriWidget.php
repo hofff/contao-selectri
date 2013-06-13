@@ -7,6 +7,7 @@ class SelectriWidget extends Widget {
 	protected $data;
 	protected $min = 0;
 	protected $max = 1;
+	protected $searchLimit = 20;
 	protected $sort = 'list';
 	protected $height;
 
@@ -127,6 +128,7 @@ class SelectriWidget extends Widget {
 		isset($attrs['sort']) && $this->setSort($attrs['sort']);
 		isset($attrs['min']) && $this->setMinSelected($attrs['min']);
 		isset($attrs['max']) && $this->setMaxSelected($attrs['max']);
+		isset($attrs['searchLimit']) && $this->setSearchLimit($attrs['searchLimit']);
 
 		unset(
 			$attrs['mandatory'],
@@ -370,7 +372,12 @@ class SelectriWidget extends Widget {
 	}
 
 	public function getSearchLimit() {
-		return 20;
+		return $this->searchLimit;
+	}
+
+	public function setSearchLimit($searchLimit) {
+		$this->searchLimit = max(1, intval($searchLimit));
+		return $this;
 	}
 
 	public function isDataContainerDriven() {
