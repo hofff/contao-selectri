@@ -31,7 +31,7 @@ class SelectriTableTreeDataNode implements SelectriNode {
 	}
 
 	public function isSelectable() {
-		switch($this->data->getWidget()->getMode()) {
+		switch($this->data->getConfig()->getTreeMode()) {
 			case 'leaf': return !$this->node['_hasChildren']; break;
 			case 'inner': return !!$this->node['_hasChildren']; break;
 			default: return true; break;
@@ -39,7 +39,7 @@ class SelectriTableTreeDataNode implements SelectriNode {
 	}
 
 	public function hasSelectableDescendants() {
-		if($this->data->getWidget()->getMode() == 'inner') {
+		if($this->data->getConfig()->getTreeMode() == 'inner') {
 			return $this->node['_hasGrandChildren'] == 1;
 		} else {
 			return $this->node['_hasChildren'] == 1;

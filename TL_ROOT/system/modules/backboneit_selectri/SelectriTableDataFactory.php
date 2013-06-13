@@ -12,6 +12,7 @@ class SelectriTableDataFactory extends SelectriAbstractDataFactory {
 		parent::__construct();
 		$this->db = Database::getInstance();
 		$this->cfg = $cfg = new SelectriTableDataConfig();
+		$cfg->setTreeMode('all');
 	}
 
 	public function __clone() {
@@ -62,6 +63,13 @@ class SelectriTableDataFactory extends SelectriAbstractDataFactory {
 		if(!$cfg->getItemIconCallback()) {
 			$cfg->setItemIconCallback(array(__CLASS__, 'defaultIconCallback'));
 		}
+	}
+
+	public function setParameters($params) {
+		parent::setParameters($params);
+		$params = (array) $params;
+		isset($params['mode']) && $this->getConfig()->setTreeMode($params['mode']);
+		return $this;
 	}
 
 	public function getData() {

@@ -228,7 +228,7 @@ EOT;
 
 		$query = vsprintf($query, $params);
 
-		$this->getWidget()->getMode() == 'inner' && $query .= PHP_EOL . 'HAVING _hasChildren';
+		$this->getConfig()->getTreeMode() == 'inner' && $query .= PHP_EOL . 'HAVING _hasChildren';
 
 		return $this->treeNodeQuery = $query;
 	}
@@ -311,7 +311,7 @@ EOT;
 		$query = vsprintf($query, $params);
 
 		// having
-		$this->getWidget()->getMode() == 'inner' && $query .= PHP_EOL . 'HAVING COUNT(child._id) != 0';
+		$this->getConfig()->getTreeMode() == 'inner' && $query .= PHP_EOL . 'HAVING COUNT(child._id) != 0';
 
 		return $query;
 	}

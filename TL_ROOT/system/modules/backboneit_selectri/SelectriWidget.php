@@ -7,7 +7,6 @@ class SelectriWidget extends Widget {
 	protected $data;
 	protected $min = 0;
 	protected $max = 1;
-	protected $mode = 'all';
 	protected $sort = 'list';
 	protected $height;
 
@@ -126,7 +125,6 @@ class SelectriWidget extends Widget {
 
 		isset($attrs['height']) && $this->setHeight($attrs['height']);
 		isset($attrs['sort']) && $this->setSort($attrs['sort']);
-		isset($attrs['mode']) && $this->setMode($attrs['mode']);
 		isset($attrs['min']) && $this->setMinSelected($attrs['min']);
 		isset($attrs['max']) && $this->setMaxSelected($attrs['max']);
 
@@ -350,20 +348,6 @@ class SelectriWidget extends Widget {
 			default: $sort = 'preorder'; break;
 		}
 		$this->sort = $sort;
-		return $this;
-	}
-
-	public function getMode() {
-		return $this->mode;
-	}
-
-	public function setMode($mode) {
-		switch($mode) {
-			case 'leaf': break;
-			case 'inner': break;
-			default: $mode = 'all'; break;
-		}
-		$this->mode = $mode;
 		return $this;
 	}
 

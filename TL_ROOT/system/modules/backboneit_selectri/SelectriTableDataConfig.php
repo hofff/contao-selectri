@@ -4,6 +4,7 @@ class SelectriTableDataConfig {
 
 	private $roots;
 
+	private $treeMode;
 	private $treeTable;
 	private $treeKeyColumn;
 	private $treeParentKeyColumn;
@@ -51,6 +52,20 @@ class SelectriTableDataConfig {
 
 	public function hasTree() {
 		return strlen($this->getTreeTable()) != 0;
+	}
+
+	public function getTreeMode() {
+		return $this->treeMode;
+	}
+
+	public function setTreeMode($treeMode) {
+		switch($treeMode) {
+			case 'leaf':
+			case 'inner': break;
+			default: $treeMode = 'all'; break;
+		}
+		$this->treeMode = $treeMode;
+		return $this;
 	}
 
 	public function getTreeTable() {
