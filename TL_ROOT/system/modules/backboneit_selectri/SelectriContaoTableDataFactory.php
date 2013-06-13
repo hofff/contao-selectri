@@ -150,7 +150,7 @@ class SelectriContaoTableDataFactory extends SelectriTableDataFactory {
 		} elseif($this->getDatabase()->fieldExists('title', $table)) {
 			$fields[] = 'title';
 		}
-		$fields[] = array($keyColumn);
+		$fields[] = $keyColumn;
 
 		$format = '';
 		foreach($fields as $field) {
