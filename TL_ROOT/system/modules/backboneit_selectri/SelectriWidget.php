@@ -199,11 +199,8 @@ class SelectriWidget extends Widget {
 			return $action ? $this->generateAjax($action) : '';
 		}
 
-		static $blnScriptsInjected;
-		if(!$blnScriptsInjected) {
-			$GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/backboneit_selectri/html/js/selectri.js';
-			$GLOBALS['TL_CSS'][] = 'system/modules/backboneit_selectri/html/css/selectri.css';
-		}
+		$GLOBALS['TL_JAVASCRIPT']['selectri.js'] = 'system/modules/backboneit_selectri/html/js/selectri.js';
+		$GLOBALS['TL_CSS']['selectri.css'] = 'system/modules/backboneit_selectri/html/css/selectri.css';
 
 		$options = array(
 			'name' => $this->getInputName(),
