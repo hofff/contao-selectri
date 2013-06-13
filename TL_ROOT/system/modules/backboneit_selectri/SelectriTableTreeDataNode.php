@@ -31,6 +31,9 @@ class SelectriTableTreeDataNode implements SelectriNode {
 	}
 
 	public function isSelectable() {
+		if(!$this->node['_isSelectable']) {
+			return false;
+		}
 		switch($this->data->getConfig()->getTreeMode()) {
 			case 'leaf': return !$this->node['_hasChildren']; break;
 			case 'inner': return !!$this->node['_hasChildren']; break;

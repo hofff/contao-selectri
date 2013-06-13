@@ -31,7 +31,10 @@ class SelectriTableTreeData implements SelectriData {
 	}
 
 	public function filter(array $selection) {
-		return array_intersect($selection, array_keys($this->fetchTreeNodes($selection)));
+		foreach($this->fetchTreeNodes($selection) as $key => $node) if($node['_isSelectable']) {
+			$nodes[] = $key;
+		}
+		return $nodes ? array_intersect($selection, $nodes) : array();
 	}
 
 	public function getSelectionIterator(array $selection) {
@@ -43,6 +46,8 @@ class SelectriTableTreeData implements SelectriData {
 		$tree->children = $this->fetchAncestorOrSelfTree(array_merge($roots, $selection));
 		$tree->parents = $this->getParentsFromTree($tree->children);
 		$tree->nodes = $this->fetchTreeNodes(array_keys($tree->parents));
+		// TODO filter nodes for _isSelectable (will be filtered on save anyway,
+		// but may save some confusion for disappearing selection nodes)
 		$selection = array_intersect($selection, $this->getDescendantsPreorder($roots, $tree->children));
 		$nodes = array();
 		foreach($selection as $key) {
@@ -180,6 +185,10 @@ class SelectriTableTreeData implements SelectriData {
 		return implode(', ', array_unique($columns));
 	}
 
+	protected function buildSelectableExpr() {
+		return $this->cfg->getSelectableExpr() ? $this->cfg->getSelectableExpr() : '1';
+	}
+
 	protected function buildTreeNodeQuery() {
 		if($this->treeNodeQuery) {
 			return $this->treeNodeQuery;
@@ -190,6 +199,7 @@ SELECT		%s AS _key,
 			%s AS _parentKey,
 			COUNT(child._key) != 0 AS _hasChildren,
 			COUNT(grandchild._key) != 0 AS _hasGrandChildren,
+			(%s) AS _isSelectable,
 			%s
 
 FROM		%s AS tree
@@ -207,6 +217,7 @@ EOT;
 		// select
 		$params[] = $this->cfg->getTreeKeyColumn();
 		$params[] = $this->cfg->getTreeParentKeyColumn();
+		$params[] = $this->buildSelectableExpr();
 		$params[] = $this->buildTreeSelectExpr();
 		// from
 		$params[] = $this->cfg->getTreeTable();
@@ -290,6 +301,7 @@ LEFT JOIN	( SELECT %s AS _key, %s AS _parentKey FROM %s %s
 
 WHERE		(%%s)
 %s
+%s
 GROUP BY	%s
 EOT;
 
@@ -305,6 +317,7 @@ EOT;
 		$params[] = $this->cfg->getTreeKeyColumn();
 		// where
 		$params[] = $this->cfg->getTreeConditionExpr('AND');
+		$params[] = $this->cfg->getSelectableExpr('AND');
 		// group by
 		$params[] = $this->cfg->getTreeKeyColumn();
 

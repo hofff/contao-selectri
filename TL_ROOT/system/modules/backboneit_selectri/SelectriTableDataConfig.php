@@ -3,6 +3,7 @@
 class SelectriTableDataConfig {
 
 	private $roots;
+	private $selectableExpr;
 
 	private $treeMode;
 	private $treeTable;
@@ -35,6 +36,18 @@ class SelectriTableDataConfig {
 
 	public function setRoots($roots) {
 		$this->roots = array_values((array) $roots);
+		return $this;
+	}
+
+	public function getSelectableExpr($clause = null) {
+		$expr = strval($this->selectableExpr);
+		$clause = strval($clause);
+		strlen($expr) && strlen($clause) && $expr = $clause . ' (' . $expr . ')';
+		return $expr;
+	}
+
+	public function setSelectableExpr($selectableExpr) {
+		$this->selectableExpr = $selectableExpr;
 		return $this;
 	}
 
