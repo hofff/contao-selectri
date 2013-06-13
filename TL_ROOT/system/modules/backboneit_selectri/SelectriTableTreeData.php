@@ -40,7 +40,7 @@ class SelectriTableTreeData implements SelectriData {
 		}
 		$roots = $this->cfg->getRoots();
 		$tree = new stdClass();
-		$tree->children = $this->getAncestorOrSelfTree(array_merge($roots, $selection));
+		$tree->children = $this->fetchAncestorOrSelfTree(array_merge($roots, $selection));
 		$tree->parents = $this->getParentsFromTree($tree->children);
 		$tree->nodes = $this->fetchTreeNodes(array_keys($tree->parents));
 		$selection = array_intersect($selection, $this->getDescendantsPreorder($roots, $tree->children));
@@ -58,7 +58,7 @@ class SelectriTableTreeData implements SelectriData {
 
 		// start tree
 		$tree = new stdClass();
-		$tree->children = $this->getAncestorOrSelfTree(array_merge($roots, $start));
+		$tree->children = $this->fetchAncestorOrSelfTree(array_merge($roots, $start));
 
 		// filter start
 		if(!$start) {
@@ -106,7 +106,7 @@ class SelectriTableTreeData implements SelectriData {
 
 		// start tree
 		$tree = new stdClass();
-		$tree->children = $this->getAncestorOrSelfTree(array_merge($roots, array($key)));
+		$tree->children = $this->fetchAncestorOrSelfTree(array_merge($roots, array($key)));
 
 		// prepare roots
 		$roots = $this->getPreorder($roots, $tree->children, true);
@@ -330,7 +330,7 @@ EOT;
 		return '(' . implode(') AND (', array_fill(0, $keywordCnt, $condition)) . ')';
 	}
 
-	protected function getAncestorOrSelfTree(array $ids) {
+	protected function fetchAncestorOrSelfTree(array $ids) {
 		if(!$ids) {
 			return array();
 		}
