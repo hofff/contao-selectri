@@ -146,6 +146,7 @@ Selectri.onSearchSuccess			= function(json) {
 
 	self.result.set("html", json.result);
 	if(self.result.getChildren().length) self.result.addClass("striOpen");
+	else self.result.removeClass("striOpen");
 
 	self.selection.getChildren().each(function(node) {
 		node = self.getNode(self.result, node);
@@ -363,6 +364,7 @@ Selectri.highlight = function(node) {
 
 Selectri.search = function(query) {
 	var self = this;
+	if(!query) query = "";
 	if(self.query == query) return;
 	self.query = query;
 	if(!query) return self.clearSearch();
@@ -373,6 +375,7 @@ Selectri.search = function(query) {
 
 Selectri.clearSearch = function() {
 	var self = this;
+	self.setMessages(undef);
 	self.input.set("value");
 	self.container.removeClass("striNotFound");
 	self.result.removeClass("striOpen");
