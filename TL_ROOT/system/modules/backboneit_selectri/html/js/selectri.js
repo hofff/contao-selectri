@@ -1,5 +1,6 @@
-(function($, $$, undef) {
+(function($, $$, window, undef) {
 if(!$) return;
+window = $(window);
 
 if(!window.bbit) window.bbit = {};
 if(!bbit.mt) bbit.mt = {};
@@ -394,4 +395,4 @@ Selectri.scan = function() { $$(".striWidget.striAuto").each(function(e) { new S
 window.addEvent("domready", Selectri.scan);
 window.addEvent("ajaxready", Selectri.scan);
 
-})(document.id, window.$$);
+})(document.id, window.$$, window);
