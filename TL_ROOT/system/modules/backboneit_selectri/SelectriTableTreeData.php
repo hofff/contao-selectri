@@ -42,12 +42,11 @@ class SelectriTableTreeData implements SelectriData {
 			return new EmptyIterator();
 		}
 		$roots = $this->cfg->getRoots();
+		$selection = $this->filter($selection);
 		$tree = new stdClass();
 		$tree->children = $this->fetchAncestorOrSelfTree(array_merge($roots, $selection));
 		$tree->parents = $this->getParentsFromTree($tree->children);
 		$tree->nodes = $this->fetchTreeNodes(array_keys($tree->parents));
-		// TODO filter nodes for _isSelectable (will be filtered on save anyway,
-		// but may save some confusion for disappearing selection nodes)
 		$selection = array_intersect($selection, $this->getDescendantsPreorder($roots, $tree->children));
 		$nodes = array();
 		foreach($selection as $key) {
