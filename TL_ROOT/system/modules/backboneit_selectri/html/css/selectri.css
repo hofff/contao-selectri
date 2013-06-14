@@ -97,8 +97,17 @@
 	padding-bottom: 0;
 }
 
+/* children container, where the path contains at least one non last child node,
+will get padding, this is true for all except the last children container of the
+last node in preorder, if it has one */
 :not(:last-child) > .striChildren :last-child > .striChildren {
 	padding-bottom: 5px;
+}
+
+/* children avoid double padding when there are already a bottom padding on a
+parents children container */
+:last-child > .striChildren :last-child > .striChildren {
+	padding-bottom: 0;
 }
 
 .striOpen > .striChildren {
