@@ -19,7 +19,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['backboneit_navigation_roots'] = array
 		'sort'			=> 'list',
 		'height'		=> 'auto',
 		'tl_class'		=> 'clr',
-		'data'			=> 'SelectriContaoTableDataFactory',
+		'data'			=> $data,
 		'treeTable'		=> 'tl_page',
 		'mode'			=> 'all',
 	)
