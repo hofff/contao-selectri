@@ -453,7 +453,7 @@ EOT;
 			if(isset($ids[$id])) {
 				$preorder[] = $id;
 			} elseif($tree[$id]) {
-				$this->getPreorderHelperFilterUnnest($preorder, $ids, $tree, $id);
+				$this->getPreorderHelperUnnest($preorder, $ids, $tree, $id);
 			}
 		}
 	}
