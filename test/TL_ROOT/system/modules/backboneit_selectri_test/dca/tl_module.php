@@ -3,6 +3,7 @@
 $data = SelectriContaoTableDataFactory::create();
 $data->setTreeTable('tl_page');
 $data->getConfig()->setTreeSearchColumns(array('title'));
+// $data->getConfig()->setRoots(array(4, 5));
 // $data->getConfig()->setSelectableExpr('id IN (' . implode(',', range(1,10)) . ')');
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['backboneit_navigation_roots'] = array(

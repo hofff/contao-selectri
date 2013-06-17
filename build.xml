@@ -8,7 +8,7 @@
 	<property name="mincss.dir" value="${build.module}/css" />
 	<property name="mincss.keepsrc" value="true" />
 
-	<property name="test.dir" value="G:\contao\ct31" />
+	<property name="test.dir" value="E:\contao\ct31" />
 
 	<import file="ext/yui-compressor/yui.xml" />
 
