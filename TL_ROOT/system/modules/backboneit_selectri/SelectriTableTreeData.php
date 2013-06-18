@@ -47,7 +47,7 @@ class SelectriTableTreeData implements SelectriData {
 		$tree->children = $this->fetchAncestorOrSelfTree(array_merge($roots, $selection));
 		$tree->parents = $this->getParentsFromTree($tree->children);
 		$tree->nodes = $this->fetchTreeNodes(array_keys($tree->parents));
-		$selection = array_intersect($selection, $this->getDescendantsPreorder($roots, $tree->children));
+		$selection = array_intersect($selection, $this->getDescendantsPreorder($roots, $tree->children, true));
 		$nodes = array();
 		foreach($selection as $key) {
 			$nodes[] = new SelectriTableTreeDataNode($this, $tree, $key);
@@ -56,57 +56,71 @@ class SelectriTableTreeData implements SelectriData {
 	}
 
 	public function getTreeIterator($start = null) {
-		$start === $this->cfg->getTreeRootValue() && $start = null;
-		$start = $start === null ? array() : array($start);
 		$roots = $this->cfg->getRoots();
+		if(!$roots) {
+			return null;
+		}
+		$rootValue = strval($this->cfg->getTreeRootValue());
+
+		$endpoints = $roots;
+
+		// clean start
+		if($start === null) {
+			$rootStart = true;
+		} else {
+			$start = strval($start);
+			$start === $rootValue ? $rootStart = true : $endpoints[] = $start;
+		}
 
 		// start tree
 		$tree = new stdClass();
-		$tree->children = $this->fetchAncestorOrSelfTree(array_merge($roots, $start));
+		$tree->children = $this->fetchAncestorOrSelfTree($endpoints);
 
-		// filter start
-		if(!$start) {
-			$rootStart = true;
-			$start = $this->getPreorder($roots, $tree->children, true);
-			if(!$start) {
+		// prepare roots
+		if($rootStart) {
+			$roots = $this->getPreorder($roots, $tree->children, true);
+			$roots && $tree->nodes = $roots[0] === $rootValue // implies count($roots) == 1 because unnested
+				? $this->fetchTreeNodes(array($rootValue), true, true)
+				: $this->fetchTreeNodes($roots);
+
+		} else {
+			// filter start
+			if(!in_array($start, $this->getDescendantsPreorder($roots, $tree->children, true))) {
 				return null;
 			}
-		} elseif(!array_intersect($start, $this->getDescendantsPreorder($roots, $tree->children))) {
+			$this->fetchLevels($tree, array($start));
+		}
+
+		$roots = array_keys((array) $tree->nodes);
+		if(!$roots) {
 			return null;
 		}
 
-		// add unfolded
-		$unfolded = $this->getWidget()->getUnfolded();
-		$unfolded = $this->fetchTreeNodes($unfolded); // TODO performance? half wayne
-		$this->getWidget()->setUnfolded(array_keys($unfolded)); // cleaned out inexistant values to avoid longterm leaking...
-		foreach($unfolded as $key => $node) {
-			$tree->children[strval($node['_parentKey'])][$key] = true;
-		}
-
 		$tree->parents = $this->getParentsFromTree($tree->children);
-		$this->fetchLevels($tree, $this->getDescendantsPreorder($start, $tree->children, true));
+		$this->addUnfolded($tree, $roots);
 
 		// build first level
-		foreach($start as $startKey) foreach($tree->children[$startKey] as $key => $_) {
-			$first[] = new SelectriTableTreeDataNode($this, $tree, $key);
+		foreach($roots as $rootKey) {
+			$first[] = new SelectriTableTreeDataNode($this, $tree, $rootKey);
 		}
 
-		// get path node keys of first level
+		// get & fetch path node of first level
 		foreach($first as $node) foreach($node->getPathKeys() as $key) {
 			$pathKeys[$key] = true;
 		}
-
-		// fetch data for path nodes
-		unset($pathKeys[strval($this->cfg->getTreeRootValue())]);
+		unset($pathKeys[$rootValue]);
 		if($pathKeys) foreach($this->fetchTreeNodes(array_keys($pathKeys)) as $key => $node) {
 			$tree->nodes[$key] = $node;
 		}
 
-		return array(new ArrayIterator($first), $rootStart ? null : $start[0]);
+		return array(new ArrayIterator($first), $rootStart ? null : $start);
 	}
 
 	public function getPathIterator($key) {
 		$roots = $this->cfg->getRoots();
+		if(!$roots) {
+			return null;
+		}
 
 		// start tree
 		$tree = new stdClass();
@@ -114,24 +128,38 @@ class SelectriTableTreeData implements SelectriData {
 
 		// prepare roots
 		$roots = $this->getPreorder($roots, $tree->children, true);
-		if(!in_array($key, $this->getDescendantsPreorder($roots, $tree->children))) {
-			return null;
-		}
+		$rootValue = strval($this->cfg->getTreeRootValue());
+		$tree->nodes = $roots[0] === $rootValue // implies count($roots) == 1 because unnested
+			? $this->fetchTreeNodes(array($rootValue), true, true)
+			: $this->fetchTreeNodes($roots);
+		$roots = array_keys($tree->nodes);
 
 		$tree->parents = $this->getParentsFromTree($tree->children);
-		unset($tree->children[$tree->parents[$key]]);
-		$this->fetchLevels($tree, $this->getDescendantsPreorder($roots, $tree->children, true));
 
-		// build first level
-		foreach($roots as $rootKey) foreach($tree->children[$rootKey] as $key => $_) {
-			$first[] = new SelectriTableTreeDataNode($this, $tree, $key);
+		// fetch levels along the path
+		if(!in_array($key, $roots)) {
+			$node = new SelectriTableTreeDataNode($this, $tree, $key);
+			$pathKeys = $node->getPathKeys();
+			foreach($pathKeys as $i => $key) if(in_array($key, $roots)) {
+				$rootsInPath = true;
+				$pathKeys = array_slice($pathKeys, 0, $i + 1);
+				break;
+			}
+			if(!$rootsInPath) {
+				return null;
+			}
+			$this->fetchLevels($tree, $pathKeys);
 		}
 
-		// get path node keys of first level
+		// build first level
+		foreach($roots as $rootKey) {
+			$first[] = new SelectriTableTreeDataNode($this, $tree, $rootKey);
+		}
+
+		// get & fetch path node of first level
 		foreach($first as $node) foreach($node->getPathKeys() as $key) {
 			$pathKeys[] = $key;
 		}
-		// fetch data for path nodes
 		if($pathKeys) foreach($this->fetchTreeNodes($pathKeys) as $key => $node) {
 			$tree->nodes[$key] = $node;
 		}
@@ -278,6 +306,29 @@ EOT;
 			$tree->children[$parentKey][$key] = true;
 			$tree->parents[$key] = $parentKey;
 		}
+	}
+
+	protected function addUnfolded(stdClass $tree, array $roots) {
+		$unfolded = $this->getWidget()->getUnfolded();
+		if(!$unfolded) {
+			return;
+		}
+
+		$unfolded = $this->fetchTreeNodes($unfolded);
+		if(!$unfolded) {
+			return;
+		}
+
+		$unfoldedChildren = array();
+		foreach($unfolded as $key => $node) {
+			$unfoldedChildren[strval($node['_parentKey'])][$key] = true;
+		}
+
+		$unfolded = array_keys($unfolded);
+		$this->getWidget()->setUnfolded($unfolded); // cleaned out inexistant values to avoid longterm leaking...
+
+		$unfolded = $this->getDescendantsPreorder(array_intersect($roots, $unfolded), $unfoldedChildren, true);
+		$unfolded && $this->fetchLevels($tree, $unfolded);
 	}
 
 	protected function parseKeywords($search) {
