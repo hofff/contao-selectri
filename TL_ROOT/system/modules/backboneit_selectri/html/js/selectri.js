@@ -257,8 +257,7 @@ Selectri.deselectAll = function(adjustScroll) {
 
 Selectri.getScrollAdjust = function(adjust) {
 	if(adjust !== TRUE) return EMPTY;
-	var self = this;
-	scroll = window.getScroll();
+	var self = this, scroll = window.getScroll();
 	scroll.y -= self.selection.getParent().getSize().y;
 	return function() {
 		scroll.y += self.selection.getParent().getSize().y;
