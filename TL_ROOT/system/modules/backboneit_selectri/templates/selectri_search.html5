@@ -1,8 +1,7 @@
 <ul>
 <?php foreach($result as $node): if($node->isSelectable()): ?>
 <li><div class="striNode" data-stri-key="<?php echo specialchars($node->getKey()); ?>">
-  <input type="hidden" name="<?php echo $this->getInputName(); ?>"
-      value="<?php echo specialchars($node->getKey()); ?>" />
+  <input type="hidden" value="<?php echo specialchars($node->getKey()); ?>" />
 
 <?php if($node->hasPath()): ?>
   <div class="striPath">
