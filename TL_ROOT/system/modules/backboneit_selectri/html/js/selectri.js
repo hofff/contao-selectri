@@ -231,13 +231,13 @@ Selectri.select = function(node, adjustScroll) {
 };
 
 Selectri.deselect = function(node, adjustScroll) {
-	var self = this;
+	var self = this, removed;
 
 	node = self.getNode(self.selection, node);
 	if(!node) return;
 
 	adjustScroll = self.getScrollAdjust(adjustScroll);
-	self.sortables.removeItems(node.getParent("li")).destroy();
+	removed = self.sortables.removeItems(node.getParent("li")).dispose();
 	if(!self.selection.getChildren().length) self.selection.getParent().removeClass("striHasSelection");
 	adjustScroll();
 
@@ -246,6 +246,8 @@ Selectri.deselect = function(node, adjustScroll) {
 
 	node = self.getNode(self.result, node);
 	if(node) node.getParent("li").removeClass("striSelected");
+	
+	removed.destroy();
 };
 
 Selectri.deselectAll = function(adjustScroll) {
