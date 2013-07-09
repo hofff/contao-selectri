@@ -205,6 +205,13 @@ parents children container */
 	display: block;
 }
 
+.checkbox .striSelect {
+	background-image: url(checkbox_unchecked.png);
+}
+.radio .striSelect {
+	background-image: url(radio_unchecked.png);
+}
+
 .striSelected > .striNode > .striSelect {
 	display: none;
 }
@@ -212,6 +219,14 @@ parents children container */
 .striDeselect {
 	background: url(delete.gif) no-repeat center 2px;
 	display: none;
+}
+
+.checkbox .striDeselect {
+	background-image: url(checkbox_checked.png);
+}
+
+.radio .striDeselect {
+	background-image: url(radio_checked.png);
 }
 
 .striSelected > .striNode > .striDeselect {
