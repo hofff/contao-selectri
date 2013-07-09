@@ -69,6 +69,8 @@ be arranged with tree properties
 
 *	`tl_class` - string - *optional*
 
+	You can use "radio" or "checkbox" to replace the (x) and (+) Icons with input-like icons.
+
 
 *	`data` - string or an object implementing `SelectriDataFactory` - defaults
 to the string `SelectriContaoTableDataFactory`
@@ -115,18 +117,53 @@ $GLOBALS['TL_DCA']['tl_mydca']['fields']['mySelectriField'] = array(
 	'inputType' => 'selectri',
 	...
 	'eval' => array(
+    	// all values are the defaults
+		'min'			=> 0,		// the selection can be empty
+		'max'			=> 1,		// let the user select not more than 1 item
+		'searchLimit'	=> 20,		// numbers of search results 
+		'findInSet'		=> false,	// dont use csv
+		'sort'			=> 'list',	
+		'height'		=> 'auto',	// the height of the tree widget
+		'tl_class'		=> 'clr',	// some css-classes, use radio or checkbox to replace the icons
+		'data'			=> 'SelectriContaoTableDataFactory', // the data factory
+		'treeTable'		=> 'tl_page', // a DB-table containing the tree
+		'mode'			=> 'all',	// which nodes are selectable (all|leaf|inner)
+	),
+	...
+);
+```
+
+### Factory example
+```php
+$data = SelectriContaoTableDataFactory::create();
+
+// use the tl_page table
+$data->setTreeTable('tl_page');
+
+// show all nodes
+$data->getConfig()->setTreeMode('all');
+
+//search the title and pageTitle column
+$data->getConfig()->setTreeSearchColumns(array('title', 'pageTitle'));
+
+// only show nodes matching the condition
+$data->getConfig()->setTreeConditionExpr('type="regular" AND tstamp>0');
+
+// only let the user select nodes matching the condition
+$data->getConfig()->setSelectableExpr('hide<>"1"');
+
+
+$GLOBALS['TL_DCA']['tl_mydca']['fields']['mySelectriField'] = array(
+	...
+	'inputType' => 'selectri',
+	...
+	'eval' => array(
+    	// all values are the defaults
 		'min'			=> 0,
 		'max'			=> 1,
-		'mandatory'		=> null,
-		'multiple'		=> null,
 		'searchLimit'	=> 20,
-		'findInSet'		=> false,
-		'sort'			=> 'list',
-		'height'		=> 'auto',
-		'tl_class'		=> 'clr',
-		'data'			=> 'SelectriContaoTableDataFactory',
-		'treeTable'		=> 'tl_page',
-		'mode'			=> 'all',
+		'tl_class'		=> 'clr checkbox',
+		'data'			=> $data
 	),
 	...
 );
