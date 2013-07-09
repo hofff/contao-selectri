@@ -69,6 +69,15 @@ be arranged with tree properties
 
 *	`tl_class` - string - *optional*
 
+	Only used in Backend.
+
+
+*	`class` - string - *optional*
+
+	Use this to apply your custom CSS savely. You can use "radio" or "checkbox"
+to replace the Contao-style select (+) and deselect (x) icons with Windows
+legacy input-like icon images.
+
 
 *	`data` - string or an object implementing `SelectriDataFactory` - defaults
 to the string `SelectriContaoTableDataFactory`
@@ -107,7 +116,7 @@ method.
 	- `inner`: only inner nodes are selectable
 
 
-### DCA example
+### Simple example for usage in DCA
 
 ```php
 $GLOBALS['TL_DCA']['tl_mydca']['fields']['mySelectriField'] = array(
@@ -115,18 +124,63 @@ $GLOBALS['TL_DCA']['tl_mydca']['fields']['mySelectriField'] = array(
 	'inputType' => 'selectri',
 	...
 	'eval' => array(
+    	// all values are the defaults
+		'min'			=> 0,			// the selection can be empty
+		'max'			=> 1,			// let the user select not more than 1 item
+		'searchLimit'	=> 20,			// max search results
+		'findInSet'		=> false,		// dont use csv
+		'sort'			=> 'list',
+		'height'		=> 'auto',		// the height of the tree widget
+		'tl_class'		=> 'clr',		// some css-classes,
+		'class'			=> '',			// use "radio" or "checkbox" to replace the icons
+		'data'			=> 'SelectriContaoTableDataFactory', // the data factory class to use
+		'treeTable'		=> 'tl_page',	// a DB-table containing the tree structure (Contao-like adjacency list)
+		'mode'			=> 'all',		// which nodes are selectable: "all", "leaf", "inner"
+	),
+	...
+);
+```
+
+### Advanced example for usage in DCA
+
+Instead of using a implicit created factory instance by providing a factory
+class name in the previous example, you can preconfigure your own factory
+instance and have full access to all parameters used by the `SelectriData`-class
+produced by the factory.
+
+```php
+$data = SelectriContaoTableDataFactory::create();
+
+// use the tl_page table for the tree structure
+$data->setTreeTable('tl_page');
+
+// show all nodes
+$data->getConfig()->setTreeMode('all');
+
+// search the title and pageTitle column
+$data->getConfig()->setTreeSearchColumns(array('title', 'pageTitle'));
+
+// only show nodes matching the condition
+$data->getConfig()->setTreeConditionExpr('type = \'regular\' AND tstamp > 0');
+
+// only let the user select nodes matching the condition
+$data->getConfig()->setSelectableExpr('hide <> \'1\'');
+
+// for more parameters see the factory class and the underlaying config class
+
+$GLOBALS['TL_DCA']['tl_mydca']['fields']['mySelectriField'] = array(
+	...
+	'inputType' => 'selectri',
+	...
+	'eval' => array(
 		'min'			=> 0,
 		'max'			=> 1,
-		'mandatory'		=> null,
-		'multiple'		=> null,
 		'searchLimit'	=> 20,
-		'findInSet'		=> false,
-		'sort'			=> 'list',
-		'height'		=> 'auto',
 		'tl_class'		=> 'clr',
-		'data'			=> 'SelectriContaoTableDataFactory',
-		'treeTable'		=> 'tl_page',
-		'mode'			=> 'all',
+		'class'			=> 'checkbox',
+		
+		// assign your preconfigured factory instance to the widgets configuration
+		'data'			=> $data,
 	),
 	...
 );
