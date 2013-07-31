@@ -14,10 +14,7 @@
 	],
 	"require":{
 		"php":">=5.2",
-		"contao":">=2.11,<3.1"
-	},
-	"autoload":{
-		"classmap":["system/"]
+		"contao":">=2.11,<4"
 	},
 	"extra":{
 		"contao": {
