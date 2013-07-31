@@ -1,5 +1,5 @@
 {
-	"name":"backbone87/backboneit_selectri",
+	"name":"backboneit/contao-selectri",
 	"description":"A selection widget for large structured option sets.",
 	"keywords":["widget", "select", "tree", "contao"],
 	"type":"contao-module",
