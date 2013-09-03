@@ -14,7 +14,7 @@
 	],
 	"require":{
 		"php":">=5.2",
-		"contao":">=2.11,<4"
+		"contao/core":">=2.11,<4"
 	},
 	"extra":{
 		"contao": {
