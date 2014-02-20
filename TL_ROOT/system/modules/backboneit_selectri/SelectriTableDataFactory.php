@@ -78,7 +78,8 @@ class SelectriTableDataFactory extends SelectriAbstractDataFactory {
 		if($cfg->isTreeOnlyMode()) {
 			return new SelectriTableTreeData($this->getDatabase(), $this->getWidget(), $cfg);
 		} elseif($cfg->isItemOnlyMode()) {
-			throw new Exception('item mode not implemented');
+			$cfg->setTreeRootValue(null);
+			return new SelectriTableItemData($this->getDatabase(), $this->getWidget(), $cfg);
 		} else {
 			throw new Exception('tree and item mode not implemented');
 		}

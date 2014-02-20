@@ -22,6 +22,8 @@ ClassLoader::addClasses(array
 	'SelectriDataFactory'            => 'system/modules/backboneit_selectri/SelectriDataFactory.php',
 	'SelectriLabelFormatter'         => 'system/modules/backboneit_selectri/SelectriLabelFormatter.php',
 	'SelectriNode'                   => 'system/modules/backboneit_selectri/SelectriNode.php',
+	'SelectriTableItemData'          => 'system/modules/backboneit_selectri/SelectriTableItemData.php',
+	'SelectriTableItemDataNode'      => 'system/modules/backboneit_selectri/SelectriTableItemDataNode.php',
 	'SelectriTableDataConfig'        => 'system/modules/backboneit_selectri/SelectriTableDataConfig.php',
 	'SelectriTableDataFactory'       => 'system/modules/backboneit_selectri/SelectriTableDataFactory.php',
 	'SelectriTableTreeData'          => 'system/modules/backboneit_selectri/SelectriTableTreeData.php',
