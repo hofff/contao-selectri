@@ -101,6 +101,10 @@ class SelectriWidget extends Widget {
 
 		$data = $attrs['data'];
 
+		if(is_callable($data)) {
+			$data = call_user_func($data, $this, $attrs);
+		}
+
 		if(!is_object($data)) {
 			if(!strlen($data)) {
 				$data = new SelectriContaoTableDataFactory();

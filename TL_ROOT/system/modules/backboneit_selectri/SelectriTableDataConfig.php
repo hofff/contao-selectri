@@ -242,8 +242,11 @@ class SelectriTableDataConfig {
 		return $this->setItemColumns(array_merge($this->getItemColumns(), (array) $itemColumns));
 	}
 
-	public function getItemConditionExpr() {
-		return $this->itemConditionExpr;
+	public function getItemConditionExpr($clause = null) {
+		$expr = strval($this->itemConditionExpr);
+		$clause = strval($clause);
+		strlen($expr) && strlen($clause) && $expr = $clause . ' (' . $expr . ')';
+		return $expr;
 	}
 
 	public function setItemConditionExpr($itemConditionExpr) {
@@ -251,8 +254,11 @@ class SelectriTableDataConfig {
 		return $this;
 	}
 
-	public function getItemOrderByExpr() {
-		return $this->itemOrderByExpr;
+	public function getItemOrderByExpr($clause = null) {
+		$expr = $this->itemOrderByExpr;
+		$clause = strval($clause);
+		strlen($expr) && strlen($clause) && $expr = $clause . ' ' . $expr;
+		return $expr;
 	}
 
 	public function setItemOrderByExpr($itemOrderByExpr) {
