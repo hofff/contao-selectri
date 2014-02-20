@@ -242,7 +242,7 @@ class SelectriTableDataConfig {
 		return $this->setItemColumns(array_merge($this->getItemColumns(), (array) $itemColumns));
 	}
 
-	public function getItemConditionExpr($clause) {
+	public function getItemConditionExpr($clause = null) {
 		$expr = strval($this->itemConditionExpr);
 		$clause = strval($clause);
 		strlen($expr) && strlen($clause) && $expr = $clause . ' (' . $expr . ')';
