@@ -15,12 +15,14 @@ var Selectri = {},
 	ATTR_KEY = "data-stri-key",
 	reservedAttributeSelectorValueChars = /(["\]])/g,
 	escapeAttributeSelectorValue = function(value) { return value.replace(reservedAttributeSelectorValueChars, "\\$1"); },
-	fixSortables = new Sortables().options.unDraggableTags ? EMPTY : function(sortables, element) { // fuck mootools... or... contao...
-		element.store("sortables:start", function(event) {
-			if(event.target.get("tag") != "li") event.target = event.target.getParent("li");
-			sortables.start(event, element);
-		});
-	},
+	fixSortables = new Sortables([], {}).options.unDraggableTags
+		? EMPTY
+		: function(sortables, element) { // fuck mootools... or... contao...
+			element.store("sortables:start", function(event) {
+				if(event.target.get("tag") != "li") event.target = event.target.getParent("li");
+				sortables.start(event, element);
+			});
+		},
 	wrapPathHandle = function(self, element) {
 		var handle = element.getFirst(".striHandle");
 		if(!handle) handle = new Element("a.striHandle").set("href", "#").adopt(element.childNodes).inject(element);
