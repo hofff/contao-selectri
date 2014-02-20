@@ -251,8 +251,11 @@ class SelectriTableDataConfig {
 		return $this;
 	}
 
-	public function getItemOrderByExpr() {
-		return $this->itemOrderByExpr;
+	public function getItemOrderByExpr($clause = null) {
+		$expr = $this->itemOrderByExpr;
+		$clause = strval($clause);
+		strlen($expr) && strlen($clause) && $expr = $clause . ' ' . $expr;
+		return $expr;
 	}
 
 	public function setItemOrderByExpr($itemOrderByExpr) {
