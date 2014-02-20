@@ -101,7 +101,7 @@ class SelectriTableDataFactory extends SelectriAbstractDataFactory {
 		if(strpos($icon, '/') !== false) {
 			return $icon;
 		}
-		if(version_compare(VERSION, '3.1', '>=') && strncmp($icon, 'icon', 4)) {
+		if(version_compare(VERSION, '3.1', '>=') && strncmp($icon, 'icon', 4) === 0) {
 			return TL_ASSETS_URL . 'assets/contao/images/' . $icon;
 		}
 		return TL_FILES_URL . 'system/themes/' . $widget->_getTheme() . '/images/' . $icon;
