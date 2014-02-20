@@ -98,9 +98,13 @@ class SelectriTableDataFactory extends SelectriAbstractDataFactory {
 
 	public static function getIconPath(SelectriWidget $widget, $icon = null) {
 		strlen($icon) || $icon = self::DEFAULT_ICON;
-		return strpos($icon, '/') === false
-			? 'system/themes/' . $widget->_getTheme() . '/images/' . $icon
-			: $icon;
+		if(strpos($icon, '/') !== false) {
+			return $icon;
+		}
+		if(version_compare(VERSION, '3.1', '>=') && strncmp($icon, 'icon', 4)) {
+			return TL_ASSETS_URL . 'assets/contao/images/' . $icon;
+		}
+		return TL_FILES_URL . 'system/themes/' . $widget->_getTheme() . '/images/' . $icon;
 	}
 
 }
