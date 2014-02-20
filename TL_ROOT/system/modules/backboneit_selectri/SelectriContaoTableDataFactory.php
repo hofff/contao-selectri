@@ -141,7 +141,7 @@ class SelectriContaoTableDataFactory extends SelectriTableDataFactory {
 				$cfg->setItemIconCallback(array(__CLASS__, 'itemIconCallback'));
 			}
 		}
-		parent::prepareTreeConfig($cfg);
+		parent::prepareItemConfig($cfg);
 	}
 
 	protected function createLabelFormatter($table, $keyColumn) {
