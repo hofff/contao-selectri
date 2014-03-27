@@ -2,17 +2,20 @@
 
 class SelectriLabelFormatter {
 
-	public static function create($format, array $fields) {
+	public static function create($format, array $fields, $htmlOutput = false) {
 		$clazz = get_called_class();
 		$formatter = new $clazz();
 		$formatter->setFormat($format);
 		$formatter->setFields($fields);
+		$formatter->setHTMLOutput($htmlOutput);
 		return $formatter;
 	}
 
 	private $format;
 
 	private $fields;
+
+	private $htmlOutput;
 
 	public function __construct() {
 	}
@@ -35,6 +38,14 @@ class SelectriLabelFormatter {
 		return $this;
 	}
 
+	public function isHTMLOutput() {
+		return $this->htmlOutput;
+	}
+
+	public function setHTMLOutput($htmlOutput) {
+		$this->htmlOutput = (bool) $htmlOutput;
+	}
+
 	public function getCallback() {
 		return array($this, 'format');
 	}
@@ -44,7 +55,8 @@ class SelectriLabelFormatter {
 		foreach($fields as &$field) {
 			$field = $data[$field];
 		}
-		return vsprintf($this->getFormat(), $fields);
+		$label = vsprintf($this->getFormat(), $fields);
+		return $this->isHTMLOutput() ? $label : specialchars($label);
 	}
 
 }

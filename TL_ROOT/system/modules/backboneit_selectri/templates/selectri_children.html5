@@ -15,7 +15,7 @@
         <div class="striLabel">
           <a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['pathTitle']; ?>">
             <img class="striIcon" src="<?php echo specialchars($pathNode->getIcon()); ?>" alt="" />
-            <?php echo specialchars($pathNode->getLabel()); ?>
+            <?php echo $pathNode->getLabel(); ?>
           </a>
         </div>
       </li>
@@ -29,7 +29,7 @@
       <a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggleTitle']; ?>">
 <?php endif; ?>
         <img class="striIcon" src="<?php echo specialchars($node->getIcon()); ?>" alt="" />
-        <?php echo specialchars($node->getLabel()); ?>
+        <?php echo $node->getLabel(); ?>
 <?php if($hasSelectableDescendants): ?>
       </a>
 <?php endif; ?>
