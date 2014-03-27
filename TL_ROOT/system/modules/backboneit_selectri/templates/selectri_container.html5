@@ -52,8 +52,7 @@ $options['openPathTitle'] = $GLOBALS['TL_LANG']['stri']['openPathTitle'];
 </div>
 
 <div class="striTools">
-  <div class="striSearch"><input type="text" placeholder="<?php echo $GLOBALS['TL_LANG']['stri']['search']; ?>" /></div>
-  <div class="striClearSearch"><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['clearSearchTitle']; ?>"><?php echo $GLOBALS['TL_LANG']['stri']['clearSearch']; ?></a></div>
+  <div class="striSearch"><input type="text" placeholder="<?php echo $GLOBALS['TL_LANG']['stri']['search']; ?>" /><a class="striClearSearch" href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['clearSearchTitle']; ?>"><?php echo $GLOBALS['TL_LANG']['stri']['clearSearch']; ?></a></div>
   <div class="striClearSelection"><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['clearSelectionTitle']; ?>"><?php echo $GLOBALS['TL_LANG']['stri']['clearSelection']; ?></a></div>
   <div class="striToggle"><a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['treeTitle']; ?>"><?php echo $GLOBALS['TL_LANG']['stri']['tree']; ?></a></div>
 </div>

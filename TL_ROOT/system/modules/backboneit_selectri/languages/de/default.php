@@ -9,13 +9,13 @@ $GLOBALS['TL_LANG']['stri']['selectTitle']             = 'Click to add this node
 $GLOBALS['TL_LANG']['stri']['deselect']                = 'Deselect';
 $GLOBALS['TL_LANG']['stri']['deselectTitle']           = 'Click to remove this node from selection';
 
-$GLOBALS['TL_LANG']['stri']['search']                  = 'Search...';
-$GLOBALS['TL_LANG']['stri']['searchEmpty']             = 'No results found for "%s"';
+$GLOBALS['TL_LANG']['stri']['search']                  = 'Suche ...';
+$GLOBALS['TL_LANG']['stri']['searchEmpty']             = 'Keine Suchergebnisse für "%s" gefunden';
 $GLOBALS['TL_LANG']['stri']['clearSearch']             = 'x';
-$GLOBALS['TL_LANG']['stri']['clearSearchTitle']        = 'Click to clear search';
-$GLOBALS['TL_LANG']['stri']['clearSelection']          = 'Clear selection';
+$GLOBALS['TL_LANG']['stri']['clearSearchTitle']        = 'Suchergebnisse zurücksetzen';
+$GLOBALS['TL_LANG']['stri']['clearSelection']          = 'Zurücksetzen';
 $GLOBALS['TL_LANG']['stri']['clearSelectionTitle']     = 'Click while holding down the shift key to clear all selected options';
-$GLOBALS['TL_LANG']['stri']['tree']                    = 'Browse options';
+$GLOBALS['TL_LANG']['stri']['tree']                    = 'Durchsuchen';
 $GLOBALS['TL_LANG']['stri']['treeTitle']               = 'Click to toggle';
 
 $GLOBALS['TL_LANG']['stri']['noOptions']               = 'No selectable options available';
