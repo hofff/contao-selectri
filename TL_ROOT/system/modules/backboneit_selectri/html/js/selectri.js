@@ -168,7 +168,7 @@ events = {
 	"click:relay(.striTree .striSelect > .striHandle)":					"onTreeSelectClick",
 	"click:relay(.striTree .striDeselect > .striHandle)":				"onTreeDeselectClick",
 	"click:relay(.striPathNode > .striLabel > .striHandle)":			"onPathClick",
-	"click:relay(.striClearSearch > .striHandle)":						"onClearSearchClick",
+	"click:relay(.striClearSearch.striHandle)":							"onClearSearchClick",
 	"click:relay(.striClearSelection > .striHandle)":					"onClearSelectionClick",
 	"click:relay(.striToggle > .striHandle)":							"onToggleClick",
 	"keydown:relay(.striSearch > input):pause(250)":					"onSearchKeyDown"
