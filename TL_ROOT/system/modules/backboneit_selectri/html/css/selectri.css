@@ -174,7 +174,7 @@ parents children container */
 	height: 22px;
 	display: none;
 	float: left;
-	background: url(drag.gif) 50% 50% no-repeat;
+	background: url(drag.gif) no-repeat center center;
 	text-indent: -10000px;
 	cursor: move;
 }
