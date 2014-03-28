@@ -59,6 +59,7 @@ Selectri.initialize = function(container, options, detached) {
 
 		url = window.location.href + (window.location.href.indexOf("?") > -1 ? "&" : "?");
 		url += "striID=" + encodeURIComponent(self.id);
+		if(self.options.qs) url += "&" + Object.toQueryString(self.options.qs);
 		url += "&striAction=";
 		self.toggleRequest = new Request.JSON({ url: url + "toggle", method: "post", link: "chain" });
 		delete self.toggleRequest.headers["X-Requested-With"]; // fuck contao...
