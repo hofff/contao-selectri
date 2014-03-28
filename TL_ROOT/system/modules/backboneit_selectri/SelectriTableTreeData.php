@@ -31,27 +31,41 @@ class SelectriTableTreeData implements SelectriData {
 	}
 
 	public function filter(array $selection) {
+		return $this->_filter($selection);
+	}
+
+	protected function _filter(array $selection, array &$children = null) {
 		foreach($this->fetchTreeNodes($selection) as $key => $node) if($node['_isSelectable']) {
 			$nodes[] = $key;
 		}
-		return $nodes ? array_intersect($selection, $nodes) : array();
+		if(!$nodes) {
+			return array();
+		}
+		$selection = array_intersect($selection, $nodes);
+
+		$roots = $this->cfg->getRoots();
+		$children = $this->fetchAncestorOrSelfTree(array_merge($roots, $selection));
+		$descendants = $this->getDescendantsPreorder($roots, $children, true);
+		$selection = array_intersect($selection, $descendants);
+
+		return $selection;
 	}
 
 	public function getSelectionIterator(array $selection) {
+		$selection = $this->_filter($selection, $children);
 		if(!$selection) {
 			return new EmptyIterator();
 		}
-		$roots = $this->cfg->getRoots();
-		$selection = $this->filter($selection);
+
 		$tree = new stdClass();
-		$tree->children = $this->fetchAncestorOrSelfTree(array_merge($roots, $selection));
+		$tree->children = $children;
 		$tree->parents = $this->getParentsFromTree($tree->children);
 		$tree->nodes = $this->fetchTreeNodes(array_keys($tree->parents));
-		$selection = array_intersect($selection, $this->getDescendantsPreorder($roots, $tree->children, true));
-		$nodes = array();
+
 		foreach($selection as $key) {
 			$nodes[] = new SelectriTableTreeDataNode($this, $tree, $key);
 		}
+
 		return new ArrayIterator($nodes);
 	}
 
