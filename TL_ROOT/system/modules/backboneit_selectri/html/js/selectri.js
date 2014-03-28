@@ -144,6 +144,8 @@ Selectri.onSearchComplete			= function() { this.container.removeClass("striSearc
 Selectri.onSearchSuccess			= function(json) {
 	var self = this;
 
+	if(self.query != json.search) return;
+	
 	self.setMessages(json.messages);
 
 	self.result.set("html", json.result);
@@ -368,6 +370,7 @@ Selectri.highlight = function(node) {
 Selectri.search = function(query) {
 	var self = this;
 	if(!query || !query.length) return self.clearSearch();
+	self.input.addClass("striQuery");
 	if(self.query == query) return;
 	self.query = query;
 	self.closeTree();
@@ -380,6 +383,7 @@ Selectri.clearSearch = function() {
 	self.query = undef;
 	self.setMessages(undef);
 	self.input.set("value");
+	self.input.removeClass("striQuery");
 	self.container.removeClass("striNotFound");
 	self.result.removeClass("striOpen");
 };

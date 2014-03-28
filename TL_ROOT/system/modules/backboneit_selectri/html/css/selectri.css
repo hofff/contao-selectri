@@ -314,11 +314,16 @@ parents children container */
 }
 
 .striTools .striClearSearch {
-	position:absolute;
-	right:0;
-	top:0;
-	padding:2px 9px 3px;
-	font-size:12px;
+	display: none;
+	position: absolute;
+	right: 0;
+	top: 0;
+	padding: 2px 9px 3px;
+	font-size: 12px;
+}
+
+.striTools .striQuery + .striClearSearch {
+	display: block;
 }
 
 .striTools .striClearSelection a,
@@ -340,20 +345,17 @@ parents children container */
 	background-image:linear-gradient(to top, #ccc 0%, #eee 60%);
 }
 
-.striTools .striClearSearch a:hover,
 .striTools .striClearSelection a:hover,
 .striTools .striToggle a:hover {
 	box-shadow: 0 0 3px #aaa;
 }
 
-.striTools .striClearSearch a:active,
 .striTools .striClearSelection a:active,
 .striTools .striToggle a:active {
 	color: #bbb;
 	box-shadow: 0 0 6px #999;
 }
 
-.ie9 .striTools .striClearSearch a,
 .ie9 .striTools .striClearSelection a,
 .ie9 .striTools .striToggle a {
 	filter: none;
