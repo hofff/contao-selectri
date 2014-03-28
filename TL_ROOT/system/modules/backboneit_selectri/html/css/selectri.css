@@ -194,13 +194,13 @@ parents children container */
 
 .striTree .striNode > .striLabel > .striHandle {
 	display: block;
-	background: url(folPlus.gif) no-repeat 1px 2px;
+	background: url(open.gif) no-repeat 1px 2px;
 	margin-left: -18px;
 	padding-left: 18px;
 }
 
 .striTree .striOpen > .striNode > .striLabel > .striHandle {
-	background-image: url(folMinus.gif);
+	background-image: url(close.gif);
 }
 
 .striSelect,
@@ -215,7 +215,7 @@ parents children container */
 }
 
 .striSelect {
-	background: url(copy.gif) no-repeat center center;
+	background: url(add.gif) no-repeat center center;
 	display: block;
 }
 
@@ -231,7 +231,7 @@ parents children container */
 }
 
 .striDeselect {
-	background: url(delete.gif) no-repeat center 2px;
+	background: url(remove.gif) no-repeat center 2px;
 	display: none;
 }
 
