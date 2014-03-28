@@ -233,20 +233,20 @@ Selectri.select = function(node, adjustScroll) {
 };
 
 Selectri.deselect = function(node, adjustScroll) {
-	var self = this, removed;
+	var self = this, selectedNode, removed;
 
-	node = self.getNode(self.selection, node);
-	if(!node) return;
+	selectedNode = self.getNode(self.selection, node);
+	if(!selectedNode) return;
 
 	adjustScroll = self.getScrollAdjust(adjustScroll);
-	removed = self.sortables.removeItems(node.getParent("li")).dispose();
+	removed = self.sortables.removeItems(selectedNode.getParent("li")).dispose();
 	if(!self.selection.getChildren().length) self.selection.getParent().removeClass("striHasSelection");
 	adjustScroll();
 
-	node = self.getNode(self.tree, node);
+	node = self.getNode(self.tree, selectedNode);
 	if(node) node.getParent("li").removeClass("striSelected");
 
-	node = self.getNode(self.result, node);
+	node = self.getNode(self.result, selectedNode);
 	if(node) node.getParent("li").removeClass("striSelected");
 	
 	removed.destroy();
