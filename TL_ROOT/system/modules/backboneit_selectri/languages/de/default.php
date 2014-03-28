@@ -14,7 +14,7 @@ $GLOBALS['TL_LANG']['stri']['searchEmpty']             = 'Keine Suchergebnisse f
 $GLOBALS['TL_LANG']['stri']['clearSearch']             = 'x';
 $GLOBALS['TL_LANG']['stri']['clearSearchTitle']        = 'Suchergebnisse zurücksetzen';
 $GLOBALS['TL_LANG']['stri']['clearSelection']          = 'Zurücksetzen';
-$GLOBALS['TL_LANG']['stri']['clearSelectionTitle']     = 'Klicken Sie mit gedrückter "Shift-Taste", um alle ausgewählten Elemente zu entfernen';
+$GLOBALS['TL_LANG']['stri']['clearSelectionTitle']     = 'Klicken Sie mit gedrückter &quot;Shift&quot;-Taste, um alle ausgewählten Elemente zu entfernen';
 $GLOBALS['TL_LANG']['stri']['tree']                    = 'Durchsuchen';
 $GLOBALS['TL_LANG']['stri']['treeTitle']               = 'Klicken Sie hier, um den Baum zu durchsuchen';
 
