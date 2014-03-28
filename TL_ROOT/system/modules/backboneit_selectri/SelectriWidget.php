@@ -8,6 +8,7 @@ class SelectriWidget extends Widget {
 	protected $min = 0;
 	protected $max = 1;
 	protected $searchLimit = 20;
+	protected $jsOptions = array();
 	protected $sort = 'list';
 	protected $height;
 
@@ -133,6 +134,7 @@ class SelectriWidget extends Widget {
 		isset($attrs['min']) && $this->setMinSelected($attrs['min']);
 		isset($attrs['max']) && $this->setMaxSelected($attrs['max']);
 		isset($attrs['searchLimit']) && $this->setSearchLimit($attrs['searchLimit']);
+		isset($attrs['jsOptions']) && $this->setJSOptions($attrs['jsOptions']);
 
 		unset(
 			$attrs['mandatory'],
@@ -211,6 +213,7 @@ class SelectriWidget extends Widget {
 			'min' => $this->getMinSelected(),
 			'max' => $this->getMaxSelected()
 		);
+		$options = array_merge($options, $this->getJSOptions());
 
 		ob_start();
 		include $this->getTemplate('selectri_container');
@@ -372,6 +375,15 @@ class SelectriWidget extends Widget {
 
 	public function setMaxSelected($max) {
 		$this->max = max(1, intval($max));
+		return $this;
+	}
+
+	public function getJSOptions() {
+		return $this->jsOptions;
+	}
+
+	public function setJSOptions($jsOptions) {
+		$this->jsOptions = (array) $jsOptions;
 		return $this;
 	}
 
