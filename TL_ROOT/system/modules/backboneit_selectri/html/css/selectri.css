@@ -169,6 +169,20 @@ parents children container */
 	padding: 2px;
 }
 
+.striDrag {
+	width: 22px;
+	height: 22px;
+	display: none;
+	float: left;
+	background: url(drag.gif) 50% 50% no-repeat;
+	text-indent: -10000px;
+	cursor: move;
+}
+
+.striSelection .striDrag {
+	display: block;
+}
+
 .striLabel {
 	float: left;
 	line-height: 22px;

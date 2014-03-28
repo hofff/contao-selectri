@@ -33,6 +33,12 @@ $options['openPathTitle'] = $GLOBALS['TL_LANG']['stri']['openPathTitle'];
       </div>
 <?php endif; ?>
 
+<?php if($this->getSort() == 'list'): ?>
+      <a href="#" class="striHandle striDrag" title="<?php echo $GLOBALS['TL_LANG']['stri']['sortTitle']; ?>">
+        <?php echo $GLOBALS['TL_LANG']['stri']['sort']; ?>
+      </a>
+<?php endif; ?>
+
       <div class="striLabel">
         <a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['openPathTitle']; ?>">
           <img class="striIcon" src="<?php echo specialchars($node->getIcon()); ?>" alt="" />

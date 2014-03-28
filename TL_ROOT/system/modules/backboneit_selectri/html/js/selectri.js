@@ -70,7 +70,7 @@ Selectri.initialize = function(container, options, detached) {
 			self.searchRequest.addEvent(event, self["onSearch" + event.capitalize()]);
 		});
 
-		self.sortables = new Sortables(undef, { opacity: 0.8, onStart: self.onSortStart, onComplete: self.onSortComplete });
+		self.sortables = new Sortables(undef, { opacity: 0.8, onStart: self.onSortStart, onComplete: self.onSortComplete, handle: ".striDrag" });
 		if(self.sortables.options.unDraggableTags) self.sortables.options.unDraggableTags.erase("a");
 		else self.selection.getChildren().each(function(element) { fixSortables(self.sortables, element); });
 		self.sortables.addLists(self.selection).detach();

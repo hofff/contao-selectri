@@ -24,6 +24,12 @@
     </div>
 <?php endif; ?>
 
+<?php if($this->getSort() == 'list'): ?>
+    <a href="#" class="striHandle striDrag" title="<?php echo $GLOBALS['TL_LANG']['stri']['sortTitle']; ?>">
+      <?php echo $GLOBALS['TL_LANG']['stri']['sort']; ?>
+    </a>
+<?php endif; ?>
+
     <div class="striLabel">
 <?php if($hasSelectableDescendants): ?>
       <a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['toggleTitle']; ?>">

@@ -8,6 +8,8 @@ $GLOBALS['TL_LANG']['stri']['select']                  = 'Add';
 $GLOBALS['TL_LANG']['stri']['selectTitle']             = 'Click to add this node to selection';
 $GLOBALS['TL_LANG']['stri']['deselect']                = 'Remove';
 $GLOBALS['TL_LANG']['stri']['deselectTitle']           = 'Click to remove this node from selection';
+$GLOBALS['TL_LANG']['stri']['sort']                    = 'Sort node';
+$GLOBALS['TL_LANG']['stri']['sortTitle']               = 'Drag\'n\'Drop to sort node';
 
 $GLOBALS['TL_LANG']['stri']['search']                  = 'Search...';
 $GLOBALS['TL_LANG']['stri']['searchEmpty']             = 'No results found for "%s"';
