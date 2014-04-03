@@ -24,6 +24,13 @@ class SelectriTableItemDataNode implements SelectriNode {
 		return $this->data->generateItemContent($this->node);
 	}
 
+	public function getAdditionalInputName($key) {
+		$name = $this->data->getWidget()->getAdditionalInputBaseName();
+		$name .= '[' . $this->getKey() . ']';
+		$name .= '[' . $key . ']';
+		return $name;
+	}
+
 	public function getIcon() {
 		return $this->data->generateIcon($this->node);
 	}

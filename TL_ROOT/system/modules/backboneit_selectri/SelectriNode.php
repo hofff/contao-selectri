@@ -8,6 +8,8 @@ interface SelectriNode {
 
 	public function getContent();
 
+	public function getAdditionalInputName($key);
+
 	public function getIcon();
 
 	public function isSelectable();

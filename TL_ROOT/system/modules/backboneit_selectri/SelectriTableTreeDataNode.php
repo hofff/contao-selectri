@@ -26,6 +26,13 @@ class SelectriTableTreeDataNode implements SelectriNode {
 		return $this->data->generateTreeContent($this->node);
 	}
 
+	public function getAdditionalInputName($key) {
+		$name = $this->data->getWidget()->getAdditionalInputBaseName();
+		$name .= '[' . $this->getKey() . ']';
+		$name .= '[' . $key . ']';
+		return $name;
+	}
+
 	public function getIcon() {
 		return $this->data->generateTreeIcon($this->node);
 	}
