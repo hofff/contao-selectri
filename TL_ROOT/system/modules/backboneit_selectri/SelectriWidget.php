@@ -9,6 +9,7 @@ class SelectriWidget extends Widget {
 	protected $max = 1;
 	protected $searchLimit = 20;
 	protected $jsOptions = array();
+	protected $additionalInput = false;
 	protected $sort = 'list';
 	protected $height;
 
@@ -24,11 +25,15 @@ class SelectriWidget extends Widget {
 			case 'value':
 				if($this->getMaxSelected() == 1) {
 					return count($this->varValue) ? reset($this->varValue) : null;
-				} elseif($this->findInSet) {
-					return implode(',', $this->varValue);
-				} else {
-					return $this->varValue;
 				}
+				if($this->findInSet) {
+					return implode(',', $this->hasAdditionalInput() ? array_keys($this->varValue) : $this->varValue);
+				}
+				return $this->varValue;
+				break;
+
+			case 'originValue':
+				return $this->varValue;
 				break;
 
 			case 'table':
@@ -100,76 +105,76 @@ class SelectriWidget extends Widget {
 			return;
 		}
 
-		$data = $attrs['data'];
+		if(isset($attrs['data'])) {
+			$data = $attrs['data'];
 
-		if(is_callable($data)) {
-			$data = call_user_func($data, $this, $attrs);
-		}
+			if(is_callable($data)) {
+				$data = call_user_func($data, $this, $attrs);
+			}
 
-		if(!is_object($data)) {
-			if(!strlen($data)) {
-				$data = new SelectriContaoTableDataFactory();
-			} elseif(is_subclass_of($data, 'SelectriDataFactory')) {
-				$data = new $data();
+			if(!is_object($data)) {
+				if(!strlen($data)) {
+					$data = new SelectriContaoTableDataFactory();
+				} elseif(is_subclass_of($data, 'SelectriDataFactory')) {
+					$data = new $data();
+				} else {
+					throw new Exception('invalid selectri data factory configuration');
+				}
+				$data->setParameters($attrs);
+				$data->setWidget($this);
+				$this->setData($data->createData());
+
+			} elseif($data instanceof SelectriDataFactory) {
+				$data->setWidget($this);
+				$this->setData($data->createData());
+
 			} else {
 				throw new Exception('invalid selectri data factory configuration');
 			}
-			$data->setParameters($attrs);
-			$data->setWidget($this);
-			$this->setData($data->createData());
 
-		} elseif($data instanceof SelectriDataFactory) {
-			$data->setWidget($this);
-			$this->setData($data->createData());
-
-		} else {
-			throw new Exception('invalid selectri data factory configuration');
+			unset($attrs['data']);
 		}
 
 		isset($attrs['mandatory']) && $this->mandatory = $attrs['mandatory'];
 		isset($attrs['multiple']) && $this->multiple = $attrs['multiple'];
+		unset($attrs['mandatory'], $attrs['multiple']);
 
-		isset($attrs['height']) && $this->setHeight($attrs['height']);
-		isset($attrs['sort']) && $this->setSort($attrs['sort']);
-		isset($attrs['min']) && $this->setMinSelected($attrs['min']);
-		isset($attrs['max']) && $this->setMaxSelected($attrs['max']);
-		isset($attrs['searchLimit']) && $this->setSearchLimit($attrs['searchLimit']);
-		isset($attrs['jsOptions']) && $this->setJSOptions($attrs['jsOptions']);
+		foreach(array(
+			'height'			=> 'setHeight',
+			'sort'				=> 'setSort',
+			'min'				=> 'setMinSelected',
+			'max'				=> 'setMaxSelected',
+			'searchLimit'		=> 'setSearchLimit',
+			'jsOptions'			=> 'setJSOptions',
+			'additionalInput'	=> 'setAdditionalInput',
+		) as $key => $method) if(isset($attrs[$key])) {
+			$this->$method($attrs[$key]);
+			unset($attrs[$key]);
+		}
 
-		unset(
-			$attrs['mandatory'],
-			$attrs['multiple'],
-			$attrs['height'],
-			$attrs['sort'],
-			$attrs['mode'],
-			$attrs['min'],
-			$attrs['max'],
-			$attrs['table'],
-			$attrs['data']
-		);
 		parent::addAttributes($attrs);
 	}
 
 	public function validate() {
-		$name = $this->strName;
-		if(preg_match('@^([a-z_][a-z0-9_-]*)((?:\[[a-z_][a-z0-9_-]*\])+)$@i', $name, $match)) {
+		$name = $this->name;
+		if(preg_match('@^([a-z_][a-z0-9_-]*)((?:\[[^\]]+\])+)$@i', $name, $match)) {
 			$name = $match[1];
 			$path = explode('][', trim($match[2], '[]'));
 		}
 
 		$values = $this->Input->postRaw($name);
-		if($path) { $i = 0; $n = count($path); do {
+		if($path) for($i = 0, $n = count($path); $i < $n; $i++) {
 			if(!is_array($values)) {
 				unset($values);
 				break;
 			}
 			$values = $values[$path[$i]];
-		} while(++$i < $n); }
+		}
 
 		$values = (array) $values;
-		$values = $this->getData()->filter($values);
+		$selection = $this->getData()->filter((array) $values['selection']);
 
-		if(count($values) < $this->getMinSelected()) {
+		if(count($selection) < $this->getMinSelected()) {
 			if($this->getMinSelected() > 1) {
 				$this->addError(sprintf($GLOBALS['TL_LANG']['stri']['errMin'],
 					$this->label,
@@ -181,15 +186,23 @@ class SelectriWidget extends Widget {
 				));
 			}
 
-		} elseif(count($values) > $this->getMaxSelected()) {
+		} elseif(count($selection) > $this->getMaxSelected()) {
 			$this->addError(sprintf($GLOBALS['TL_LANG']['stri']['errMax'],
 				$this->label,
 				$this->getMaxSelected()
 			));
 		}
 
+		if($this->hasAdditionalInput()) {
+			$selection = array_combine($selection, $selection);
+			foreach($selection as $key => &$data) {
+				$data = (array) $values['data'][$key];
+				$data['_key'] = $key;
+			}
+		}
+
 		$this->hasErrors() && $this->class = 'error';
-		$this->varValue = $values;
+		$this->varValue = $selection;
 		$this->blnSubmitInput = true;
 	}
 
@@ -327,7 +340,11 @@ class SelectriWidget extends Widget {
 	}
 
 	public function getInputName() {
-		return $this->name . '[]';
+		return $this->name . '[selected][]';
+	}
+
+	public function getAdditionalInputBaseName() {
+		return $this->name . '[data]';
 	}
 
 	public function getHeight() {
@@ -384,6 +401,15 @@ class SelectriWidget extends Widget {
 
 	public function setJSOptions($jsOptions) {
 		$this->jsOptions = (array) $jsOptions;
+		return $this;
+	}
+
+	public function hasAdditionalInput() {
+		return $this->additionalInput;
+	}
+
+	public function setAdditionalInput($additionalInput) {
+		$this->additionalInput = (bool) $additionalInput;
 		return $this;
 	}
 

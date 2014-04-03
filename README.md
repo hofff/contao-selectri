@@ -44,10 +44,21 @@ is not `> 1` already.
 	The max nodes retrieved from searches.
 
 
+*	`additionalInput` - boolean - defaults to `false`
+
+	If set to `true`, the values of this widget are maps from selected nodes'
+	keys to arrays containing additional (input) data. This allows the injection
+	of HTML inputs unrelated to the selection itself into the nodes.
+	For ease of use, each node's key is additionally stored in the data array at
+	the array key `_key`.
+
+
 *	`findInSet` - boolean - defaults to `false`
 
 	The selection is converted to a comma separated list, when retrieving it.
-	Already stored arrays are converted, when saved again.
+	Already stored arrays are converted, when saved again. This overrides the
+	behavior of the `additionalInput` setting. However the unconverted widget
+	value can be retrieved via the widget's `originValue` property.
 
 
 *	`sort` - string, one of `list`, `preorder`, `tree` - defaults to `list`
@@ -125,17 +136,18 @@ $GLOBALS['TL_DCA']['tl_mydca']['fields']['mySelectriField'] = array(
 	...
 	'eval' => array(
     	// all values are the defaults
-		'min'			=> 0,			// the selection can be empty
-		'max'			=> 1,			// let the user select not more than 1 item
-		'searchLimit'	=> 20,			// max search results
-		'findInSet'		=> false,		// dont use csv
-		'sort'			=> 'list',
-		'height'		=> 'auto',		// the height of the tree widget
-		'tl_class'		=> 'clr',		// some css-classes,
-		'class'			=> '',			// use "radio" or "checkbox" to replace the icons
-		'data'			=> 'SelectriContaoTableDataFactory', // the data factory class to use
-		'treeTable'		=> 'tl_page',	// a DB-table containing the tree structure (Contao-like adjacency list)
-		'mode'			=> 'all',		// which nodes are selectable: "all", "leaf", "inner"
+		'min'				=> 0,			// the selection can be empty
+		'max'				=> 1,			// let the user select not more than 1 item
+		'searchLimit'		=> 20,			// max search results
+		'findInSet'			=> false,		// dont use csv
+		'additionalInput'	=> false,		// no additional inputs via node content callback is injected
+		'sort'				=> 'list',
+		'height'			=> 'auto',		// the height of the tree widget
+		'tl_class'			=> 'clr',		// some css-classes,
+		'class'				=> '',			// use "radio" or "checkbox" to replace the icons
+		'data'				=> 'SelectriContaoTableDataFactory', // the data factory class to use
+		'treeTable'			=> 'tl_page',	// a DB-table containing the tree structure (Contao-like adjacency list)
+		'mode'				=> 'all',		// which nodes are selectable: "all", "leaf", "inner"
 	),
 	...
 );
