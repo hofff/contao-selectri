@@ -16,6 +16,7 @@ class SelectriTableDataConfig {
 	private $treeOrderByExpr;
 	private $treeLabelCallback;
 	private $treeIconCallback;
+	private $treeContentCallback;
 
 	private $itemTable;
 	private $itemKeyColumn;
@@ -182,6 +183,15 @@ class SelectriTableDataConfig {
 
 	public function setTreeIconCallback($treeIconCallback) {
 		$this->treeIconCallback = $treeIconCallback;
+		return $this;
+	}
+
+	public function getTreeContentCallback() {
+		return $this->treeContentCallback;
+	}
+
+	public function setTreeContentCallback($treeContentCallback) {
+		$this->treeContentCallback = $treeContentCallback;
 		return $this;
 	}
 
