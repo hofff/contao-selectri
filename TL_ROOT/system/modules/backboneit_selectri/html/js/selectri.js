@@ -30,7 +30,7 @@ var Selectri = {},
 	},
 	events;
 
-Selectri.Implements = [ Options, Class.Occlude ];
+Selectri.Implements = [ Options, Class.Occlude, Events ];
 Selectri.options = {};
 
 Selectri.initialize = function(container, options, detached) {
@@ -184,6 +184,8 @@ Selectri.attach = function() {
 	Object.each(events, function(handler, event) {
 		self.container.addEvent(event, self[handler]);
 	});
+	
+	self.fireEvent("attached");
 };
 
 Selectri.detach = function() {
@@ -193,6 +195,8 @@ Selectri.detach = function() {
 	Object.each(events, function(handler, event) {
 		self.container.removeEvent(event, self[handler]);
 	});
+	
+	self.fireEvent("detached");
 };
 
 Selectri.setMessages = function(messages) {
@@ -233,6 +237,8 @@ Selectri.select = function(node, adjustScroll) {
 
 	if(treeNode) treeNode.getParent("li").addClass("striSelected");
 	if(resultNode) resultNode.getParent("li").addClass("striSelected");
+	
+	self.fireEvent("selected", self.getKey(node));
 };
 
 Selectri.deselect = function(node, adjustScroll) {
@@ -251,6 +257,8 @@ Selectri.deselect = function(node, adjustScroll) {
 
 	node = self.getNode(self.result, selectedNode);
 	if(node) node.getParent("li").removeClass("striSelected");
+	
+	self.fireEvent("deselected", self.getKey(selectedNode));
 	
 	removed.destroy();
 };
