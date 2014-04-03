@@ -33,6 +33,10 @@
     </a>
   </div>
 
+<?php if(strlen($content = trim($node->getContent()))): ?>
+  <div class="striContent"><?php echo $content; ?></div>
+<?php endif; ?>
+
   <div class="striSelect">
     <a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['selectTitle']; ?>"
       ><?php echo $GLOBALS['TL_LANG']['stri']['select']; ?></a>

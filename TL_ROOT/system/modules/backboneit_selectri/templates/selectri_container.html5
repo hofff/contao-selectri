@@ -46,6 +46,10 @@ $options['openPathTitle'] = $GLOBALS['TL_LANG']['stri']['openPathTitle'];
         </a>
       </div>
 
+<?php if(strlen($content = trim($node->getContent()))): ?>
+      <div class="striContent"><?php echo $content; ?></div>
+<?php endif; ?>
+
       <div class="striDeselect">
         <a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['deselectTitle']; ?>"
           ><?php echo $GLOBALS['TL_LANG']['stri']['deselect']; ?></a>
