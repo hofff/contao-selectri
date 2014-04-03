@@ -217,7 +217,7 @@ class SelectriTableTreeData implements SelectriData {
 
 	public function generateTreeContent(array $node) {
 		$callback = $this->cfg->getTreeContentCallback();
-		return $callback ? call_user_func($callback, $node, $this, $this->cfg) : null;
+		return $callback ? call_user_func($callback, $node, $this, $this->cfg) : '';
 	}
 
 	protected function buildTreeSelectExpr() {
