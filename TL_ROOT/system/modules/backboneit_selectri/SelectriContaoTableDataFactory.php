@@ -161,15 +161,16 @@ class SelectriContaoTableDataFactory extends SelectriTableDataFactory {
 		return SelectriLabelFormatter::create($format, $fields);
 	}
 
-	public static function treeIconCallback(array $node, SelectriData $data, SelectriTableDataConfig $cfg) {
+	public static function treeIconCallback(SelectriNode $node, SelectriData $data, SelectriTableDataConfig $cfg) {
 		return self::getIconPath($data->getWidget(), self::getIcon($cfg->getTreeTable()));
 	}
 
-	public static function itemIconCallback(array $node, SelectriData $data, SelectriTableDataConfig $cfg) {
+	public static function itemIconCallback(SelectriNode $node, SelectriData $data, SelectriTableDataConfig $cfg) {
 		return self::getIconPath($data->getWidget(), self::getIcon($cfg->getItemTable()));
 	}
 
-	public static function pageIconCallback(array $node, SelectriData $data, SelectriTableDataConfig $cfg) {
+	public static function pageIconCallback(SelectriNode $node, SelectriData $data, SelectriTableDataConfig $cfg) {
+		$node = $node->getData();
 		if(!$node['published'] || ($node['start'] && $node['start'] > time()) || ($node['stop'] && $node['stop'] < time())) {
 			$sub += 1;
 		}

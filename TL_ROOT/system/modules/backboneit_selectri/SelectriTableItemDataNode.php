@@ -16,12 +16,16 @@ class SelectriTableItemDataNode implements SelectriNode {
 		return $this->key;
 	}
 
+	public function getData() {
+		return $this->node;
+	}
+
 	public function getLabel() {
-		return $this->data->generateLabel($this->node);
+		return $this->data->generateLabel($this);
 	}
 
 	public function getContent() {
-		return $this->data->generateItemContent($this->node);
+		return $this->data->generateContent($this);
 	}
 
 	public function getAdditionalInputName($key) {
@@ -32,7 +36,7 @@ class SelectriTableItemDataNode implements SelectriNode {
 	}
 
 	public function getIcon() {
-		return $this->data->generateIcon($this->node);
+		return $this->data->generateIcon($this);
 	}
 
 	public function isSelectable() {

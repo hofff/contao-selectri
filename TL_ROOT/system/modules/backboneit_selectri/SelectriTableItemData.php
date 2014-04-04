@@ -87,12 +87,18 @@ class SelectriTableItemData implements SelectriData {
 		return $this->widget;
 	}
 
-	public function generateLabel(array $node) {
+	public function generateLabel(SelectriNode $node) {
 		return call_user_func($this->cfg->getItemLabelCallback(), $node, $this, $this->cfg);
 	}
 
-	public function generateIcon(array $node) {
+	public function generateIcon(SelectriNode $node) {
 		return call_user_func($this->cfg->getItemIconCallback(), $node, $this, $this->cfg);
+	}
+
+	public function generateContent(SelectriNode $node) {
+		return '';
+// 		$callback = $this->cfg->getItemContentCallback();
+// 		return $callback ? call_user_func($callback, $node, $this, $this->cfg) : '';
 	}
 
 	protected function buildItemSelectExpr() {

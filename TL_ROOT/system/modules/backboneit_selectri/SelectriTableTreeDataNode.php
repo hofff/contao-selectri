@@ -18,12 +18,16 @@ class SelectriTableTreeDataNode implements SelectriNode {
 		return $this->key;
 	}
 
+	public function getData() {
+		return $this->node;
+	}
+
 	public function getLabel() {
-		return $this->data->generateTreeLabel($this->node);
+		return $this->data->generateTreeLabel($this);
 	}
 
 	public function getContent() {
-		return $this->data->generateTreeContent($this->node);
+		return $this->data->generateTreeContent($this);
 	}
 
 	public function getAdditionalInputName($key) {
@@ -34,7 +38,7 @@ class SelectriTableTreeDataNode implements SelectriNode {
 	}
 
 	public function getIcon() {
-		return $this->data->generateTreeIcon($this->node);
+		return $this->data->generateTreeIcon($this);
 	}
 
 	public function isSelectable() {

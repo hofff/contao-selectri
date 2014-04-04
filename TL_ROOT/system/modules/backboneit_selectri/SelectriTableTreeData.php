@@ -207,15 +207,15 @@ class SelectriTableTreeData implements SelectriData {
 		return $this->widget;
 	}
 
-	public function generateTreeLabel(array $node) {
+	public function generateTreeLabel(SelectriNode $node) {
 		return call_user_func($this->cfg->getTreeLabelCallback(), $node, $this, $this->cfg);
 	}
 
-	public function generateTreeIcon(array $node) {
+	public function generateTreeIcon(SelectriNode $node) {
 		return call_user_func($this->cfg->getTreeIconCallback(), $node, $this, $this->cfg);
 	}
 
-	public function generateTreeContent(array $node) {
+	public function generateTreeContent(SelectriNode $node) {
 		$callback = $this->cfg->getTreeContentCallback();
 		return $callback ? call_user_func($callback, $node, $this, $this->cfg) : '';
 	}

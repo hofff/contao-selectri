@@ -84,15 +84,15 @@ class SelectriTableDataFactory extends SelectriAbstractDataFactory {
 		}
 	}
 
-	public static function defaultTreeLabelCallback(array $node, SelectriData $data, SelectriTableDataConfig $cfg) {
+	public static function defaultTreeLabelCallback(SelectriNode $node, SelectriData $data, SelectriTableDataConfig $cfg) {
 		return $node[$cfg->getTreeKeyColumn()];
 	}
 
-	public static function defaultItemLabelCallback(array $node, SelectriData $data, SelectriTableDataConfig $cfg) {
+	public static function defaultItemLabelCallback(SelectriNode $node, SelectriData $data, SelectriTableDataConfig $cfg) {
 		return $node[$cfg->getItemKeyColumn()];
 	}
 
-	public static function defaultIconCallback(array $node, SelectriData $data) {
+	public static function defaultIconCallback(SelectriNode $node, SelectriData $data) {
 		return self::getIconPath($data->getWidget());
 	}
 

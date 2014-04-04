@@ -4,6 +4,8 @@ interface SelectriNode {
 
 	public function getKey();
 
+	public function getData();
+
 	public function getLabel();
 
 	public function getContent();

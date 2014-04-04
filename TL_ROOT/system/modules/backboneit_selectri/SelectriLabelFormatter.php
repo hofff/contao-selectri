@@ -50,7 +50,8 @@ class SelectriLabelFormatter {
 		return array($this, 'format');
 	}
 
-	public function format(array $data) {
+	public function format(SelectriNode $node) {
+		$data = $node->getData();
 		$fields = $this->getFields();
 		foreach($fields as &$field) {
 			$field = $data[$field];
