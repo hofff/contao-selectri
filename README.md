@@ -8,6 +8,41 @@ Input type token: `selectri`
 
 ### eval Parameters
 
+**Value retrieval**
+
+The widgets canonical representation of selection values are arrays that map
+selected nodes' keys to arrays containing the selected nodes' key at the array
+key `_key` as well as additional data associated with this selected node.
+
+If you work with the widget directly, it is strongly recommended that you use
+the getValue/setValue methods, which will always return values in this canonical
+representation form.
+
+If you however use this widget in DCAs, it is desired that the widget's `value`
+*property* (which is used by the DCA) is converted to - on retrieval - or
+converted from - on set - a specific format. To avoid the registration of
+load/save callbacks, the `value` property maintains an array of selected
+options' keys or, if `max` is set to `1`, a single selected option's key. For
+commonly used conversions there exist the following eval properties to further
+modify the `value`'s property content: 
+
+*	`findInSet` - boolean - defaults to `false`
+
+	- get: Returns a comma-separated list of the selected options' keys. This
+behavior takes precedence over the `canonical` setting.
+	
+	- set: Strings are handled as comma-separated lists of selected options'
+keys and gets split at `,`. A normalization to the canonical form is done after.
+	
+	
+*	`canonical` - boolean - defaults to `false`
+
+	- get: Returns the canonical form of the selection or, if `max` is set to
+`1`, only the selected option's data array.
+	
+	- set: A normalization to the canonical form is done.
+
+
 **Basic widget configuration**
 
 *	`min` - integer, non-negative - defaults to `0`
@@ -42,23 +77,6 @@ is not `> 1` already.
 *	`searchLimit` - integer, positive - defaults to `20`
 
 	The max nodes retrieved from searches.
-
-
-*	`additionalInput` - boolean - defaults to `false`
-
-	If set to `true`, the values of this widget are maps from selected nodes'
-	keys to arrays containing additional (input) data. This allows the injection
-	of HTML inputs unrelated to the selection itself into the nodes.
-	For ease of use, each node's key is additionally stored in the data array at
-	the array key `_key`.
-
-
-*	`findInSet` - boolean - defaults to `false`
-
-	The selection is converted to a comma separated list, when retrieving it.
-	Already stored arrays are converted, when saved again. This overrides the
-	behavior of the `additionalInput` setting. However the unconverted widget
-	value can be retrieved via the widget's `originValue` property.
 
 
 *	`sort` - string, one of `list`, `preorder`, `tree` - defaults to `list`

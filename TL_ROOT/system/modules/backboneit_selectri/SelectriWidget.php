@@ -9,7 +9,6 @@ class SelectriWidget extends Widget {
 	protected $max = 1;
 	protected $searchLimit = 20;
 	protected $jsOptions = array();
-	protected $additionalInput = false;
 	protected $sort = 'list';
 	protected $height;
 
@@ -23,17 +22,21 @@ class SelectriWidget extends Widget {
 	public function __get($key) {
 		switch($key) {
 			case 'value':
+				$value = $this->getValue();
 				if($this->getMaxSelected() == 1) {
-					return count($this->varValue) ? reset($this->varValue) : null;
+					if(!count($value)) {
+						return null;
+					}
+					$value = reset($value);
+					return $this->hasAdditionalInput() ? $value : $value['_key'];
 				}
 				if($this->findInSet) {
-					return implode(',', $this->hasAdditionalInput() ? array_keys($this->varValue) : $this->varValue);
+					return implode(',', array_keys($value));
 				}
-				return $this->varValue;
-				break;
-
-			case 'originValue':
-				return $this->varValue;
+				if($this->hasAdditionalInput()) {
+					return $value;
+				}
+				return array_keys($value);
 				break;
 
 			case 'table':
@@ -65,7 +68,25 @@ class SelectriWidget extends Widget {
 			case 'value':
 				// convert previous values stored as an array
 				$value = deserialize($value);
-				$this->varValue = $this->findInSet && !is_array($value) ? explode(',', $value) : (array) $value;
+				if(!is_array($value)) {
+					$value = $this->findInSet ? explode(',', $value) : (array) $value;
+				}
+				$converted = array();
+				if($this->additionalInput) {
+					foreach($value as $key => $row) {
+						if(!is_array($row)) {
+							$converted[$row] = array('_key' => $key);
+						} else {
+							isset($row['_key']) ? $key = $row['_key'] : $row['_key'] = $key;
+							$converted[$key] = $row;
+						}
+					}
+				} else {
+					foreach($value as $key) {
+						$converted[$key] = array('_key' => $key);
+					}
+				}
+				$this->setValue($converted);
 				break;
 
 			case 'table':
@@ -146,7 +167,6 @@ class SelectriWidget extends Widget {
 			'max'				=> 'setMaxSelected',
 			'searchLimit'		=> 'setSearchLimit',
 			'jsOptions'			=> 'setJSOptions',
-			'additionalInput'	=> 'setAdditionalInput',
 		) as $key => $method) if(isset($attrs[$key])) {
 			$this->$method($attrs[$key]);
 			unset($attrs[$key]);
@@ -193,16 +213,14 @@ class SelectriWidget extends Widget {
 			));
 		}
 
-		if($this->hasAdditionalInput()) {
-			$selection = array_combine($selection, $selection);
-			foreach($selection as $key => &$data) {
-				$data = (array) $values['data'][$key];
-				$data['_key'] = $key;
-			}
+		$selection = array_combine($selection, $selection);
+		foreach($selection as $key => &$data) {
+			$data = (array) $values['data'][$key];
+			$data['_key'] = $key;
 		}
 
 		$this->hasErrors() && $this->class = 'error';
-		$this->varValue = $selection;
+		$this->setValue($selection);
 		$this->blnSubmitInput = true;
 	}
 
@@ -333,6 +351,15 @@ class SelectriWidget extends Widget {
 
 	public function setData(SelectriData $data) {
 		$this->data = $data;
+	}
+
+	public function getValue() {
+		return $this->varValue;
+	}
+
+	public function setValue($value) {
+		$this->varValue = $value;
+		return $this;
 	}
 
 	public function isOpen() {

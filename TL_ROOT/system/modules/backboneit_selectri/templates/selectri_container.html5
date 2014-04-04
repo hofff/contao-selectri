@@ -7,7 +7,7 @@ $options['openPathTitle'] = $GLOBALS['TL_LANG']['stri']['openPathTitle'];
 <fieldset class="<?php echo $class; ?>" id="<?php echo $this->strId; ?>"
     data-stri-options="<?php echo specialchars(json_encode($options)); ?>">
 
-<?php $selection = $this->getData()->getSelectionIterator($this->varValue); $selection->rewind(); ?>
+<?php $selection = $this->getData()->getSelectionIterator(array_keys($this->getValue())); $selection->rewind(); ?>
 <div class="striSelection<?php if($selection->valid()) echo ' striHasSelection'; ?>">
   <ol>
 <?php foreach($selection as $node): ?>
