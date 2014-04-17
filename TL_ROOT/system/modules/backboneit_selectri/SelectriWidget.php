@@ -75,7 +75,7 @@ class SelectriWidget extends Widget {
 				if($this->canonical) {
 					foreach($value as $key => $row) {
 						if(!is_array($row)) {
-							$converted[$row] = array('_key' => $key);
+							$converted[$row] = array('_key' => $row);
 						} else {
 							isset($row['_key']) ? $key = $row['_key'] : $row['_key'] = $key;
 							$converted[$key] = $row;
@@ -367,7 +367,7 @@ class SelectriWidget extends Widget {
 	}
 
 	public function getInputName() {
-		return $this->name . '[selected][]';
+		return $this->name . '[selection][]';
 	}
 
 	public function getAdditionalInputBaseName() {
