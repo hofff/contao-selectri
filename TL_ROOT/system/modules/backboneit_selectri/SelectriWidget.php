@@ -28,12 +28,12 @@ class SelectriWidget extends Widget {
 						return null;
 					}
 					$value = reset($value);
-					return $this->hasAdditionalInput() ? $value : $value['_key'];
+					return $this->canonical ? $value : $value['_key'];
 				}
 				if($this->findInSet) {
 					return implode(',', array_keys($value));
 				}
-				if($this->hasAdditionalInput()) {
+				if($this->canonical) {
 					return $value;
 				}
 				return array_keys($value);
@@ -72,7 +72,7 @@ class SelectriWidget extends Widget {
 					$value = $this->findInSet ? explode(',', $value) : (array) $value;
 				}
 				$converted = array();
-				if($this->additionalInput) {
+				if($this->canonical) {
 					foreach($value as $key => $row) {
 						if(!is_array($row)) {
 							$converted[$row] = array('_key' => $key);
@@ -428,15 +428,6 @@ class SelectriWidget extends Widget {
 
 	public function setJSOptions($jsOptions) {
 		$this->jsOptions = (array) $jsOptions;
-		return $this;
-	}
-
-	public function hasAdditionalInput() {
-		return $this->additionalInput;
-	}
-
-	public function setAdditionalInput($additionalInput) {
-		$this->additionalInput = (bool) $additionalInput;
 		return $this;
 	}
 
