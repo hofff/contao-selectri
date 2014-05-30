@@ -232,7 +232,7 @@ class SelectriWidget extends Widget {
 		$data->validate();
 
 		if($this->Input->get('striID') == $this->strId) {
-			$action = $this->Input->get('striAction');
+			$action = $this->Input->post('striAction') ?: $this->Input->get('striAction');
 			return $action ? $this->generateAjax($action) : '';
 		}
 
@@ -255,21 +255,21 @@ class SelectriWidget extends Widget {
 		while(ob_end_clean());
 		switch($action) {
 			case 'levels':
-				$key = $this->Input->get('striKey');
+				$key = $this->Input->post('striKey');
 				strlen($key) || $key = null;
 				list($level, $start) = $this->getData()->getTreeIterator($key);
 				$response = $this->generateLevels($level, $start);
 				$response['key'] = $key;
 				break;
 			case 'path':
-				$key = $this->Input->get('striKey');
+				$key = $this->Input->post('striKey');
 				strlen($key) || $key = null;
 				$level = $this->getData()->getPathIterator($key);
 				$response = $this->generateLevels($level);
 				$response['key'] = $key;
 				break;
 			case 'search':
-				$search = $this->Input->get('striSearch');
+				$search = $this->Input->post('striSearch');
 				$response = $this->generateSearch($search);
 				$response['search'] = $search;
 				break;
