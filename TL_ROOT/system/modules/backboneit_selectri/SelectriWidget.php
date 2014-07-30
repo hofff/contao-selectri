@@ -71,9 +71,6 @@ class SelectriWidget extends Widget {
 				if(!is_array($value)) {
 					$value = $this->findInSet ? explode(',', $value) : (array) $value;
 				}
-				if (isset($value['selected'])) {
-					$value = $value['selected'];
-				}
 				$converted = array();
 				if($this->additionalInput) {
 					foreach($value as $key => $row) {
