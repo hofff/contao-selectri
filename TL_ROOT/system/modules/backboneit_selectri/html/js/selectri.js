@@ -116,6 +116,8 @@ Selectri.onLevelsSuccess			= function(json) {
 	var self = this, node = undef;
 	if(!json) return;
 
+	if(json.token) this.updateRequestToken(json.token);
+
 	self.setMessages(json.messages);
 
 	if(!self.tree.getChildren().length) {
@@ -149,6 +151,9 @@ Selectri.onSearchException			= function() { this.container.removeClass("striSear
 Selectri.onSearchComplete			= function() { this.container.removeClass("striSearching"); };
 Selectri.onSearchSuccess			= function(json) {
 	var self = this;
+	if(!json) return;
+
+	if(json.token) this.updateRequestToken(json.token);
 
 	if(self.query != json.search) return;
 	
