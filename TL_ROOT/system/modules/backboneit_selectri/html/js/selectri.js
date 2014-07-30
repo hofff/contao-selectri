@@ -64,10 +64,15 @@ Selectri.initialize = function(container, options, detached) {
 		self.toggleRequest = new Request.JSON({ url: url + "toggle", method: "post", link: "chain" });
 		delete self.toggleRequest.headers["X-Requested-With"]; // fuck contao...
 		self.toggleRequest.addEvent("success", self.onToggleSuccess);
-		self.levelsRequest = new Request.JSON({ url: url + "levels", method: "get", link: "chain" });
-		self.searchRequest = new Request.JSON({ url: url + "search", method: "get", link: "cancel" });
+		self.levelsRequest = new Request.JSON({ url: url + "levels", method: "post", link: "chain" });
+		delete self.levelsRequest.headers["X-Requested-With"]; // fuck contao...
+		self.pathRequest = new Request.JSON({ url: url + "path", method: "post", link: "chain" });
+		delete self.pathRequest.headers["X-Requested-With"]; // fuck contao...
+		self.searchRequest = new Request.JSON({ url: url + "search", method: "post", link: "cancel" });
+		delete self.searchRequest.headers["X-Requested-With"]; // fuck contao...
 		"request cancel exception complete success".split(" ").each(function(event) {
 			self.levelsRequest.addEvent(event, self["onLevels" + event.capitalize()]);
+			self.pathRequest.addEvent(event, self["onLevels" + event.capitalize()]);
 			self.searchRequest.addEvent(event, self["onSearch" + event.capitalize()]);
 		});
 
@@ -111,6 +116,8 @@ Selectri.onLevelsSuccess			= function(json) {
 	var self = this, node = undef;
 	if(!json) return;
 
+	if(json.token) this.updateRequestToken(json.token);
+
 	self.setMessages(json.messages);
 
 	if(!self.tree.getChildren().length) {
@@ -144,6 +151,9 @@ Selectri.onSearchException			= function() { this.container.removeClass("striSear
 Selectri.onSearchComplete			= function() { this.container.removeClass("striSearching"); };
 Selectri.onSearchSuccess			= function(json) {
 	var self = this;
+	if(!json) return;
+
+	if(json.token) this.updateRequestToken(json.token);
 
 	if(self.query != json.search) return;
 	
@@ -321,7 +331,7 @@ Selectri.openTree = function() {
 	var self = this;
 	self.container.addClass("striOpen");
 	self.clearSearch();
-	self.tree.getChildren().length || self.levelsRequest.isRunning() || self.levelsRequest.send();
+	self.tree.getChildren().length || self.levelsRequest.isRunning() || self.levelsRequest.send({ data: self.collectFormData() });
 };
 
 Selectri.closeTree = function() {
@@ -342,8 +352,8 @@ Selectri.openNode = function(node) {
 	node = self.getChildrenContainer(node);
 	if(!node) return;
 	node.getParent("li").addClass("striOpen");
-	node.getChildren().length || self.levelsRequest.send({ data: { striKey: key } });
-	self.toggleRequest.send({ data: { striKey: key, striOpen: 1, REQUEST_TOKEN: self.getRequestToken() } });
+	node.getChildren().length || self.levelsRequest.send({ data: self.collectFormData({ striKey: key }) });
+	self.toggleRequest.send({ data: self.collectFormData({ striKey: key, striOpen: 1 }) });
 };
 
 Selectri.closeNode = function(node) {
@@ -352,7 +362,7 @@ Selectri.closeNode = function(node) {
 	node = self.getChildrenContainer(node);
 	if(!node) return;
 	node.getParent("li").removeClass("striOpen");
-	self.toggleRequest.send({ data: { striKey: key, striOpen: 0, REQUEST_TOKEN: self.getRequestToken() } });
+	self.toggleRequest.send({ data: self.collectFormData({ striKey: key, striOpen: 0 }) });
 };
 
 Selectri.openPath = function(node) {
@@ -360,7 +370,7 @@ Selectri.openPath = function(node) {
 	if(!key) return;
 	node = self.getNode(self.tree, key);
 	if(!node) {
-		self.levelsRequest.send({ data: { striAction: "path", striKey: key } });
+		self.pathRequest.send({ data: self.collectFormData({ striKey: key }) });
 		return;
 	}
 	node.getParent().getParents().filter(".striTree li").addClass("striOpen");
@@ -384,7 +394,7 @@ Selectri.search = function(query) {
 	self.query = query;
 	self.closeTree();
 	self.container.removeClass("striNotFound");
-	self.searchRequest.send({ data: { striSearch: query } });
+	self.searchRequest.send({ data: self.collectFormData({ striSearch: query }) });
 };
 
 Selectri.clearSearch = function() {
@@ -395,6 +405,23 @@ Selectri.clearSearch = function() {
 	self.input.removeClass("striQuery");
 	self.container.removeClass("striNotFound");
 	self.result.removeClass("striOpen");
+};
+
+Selectri.collectFormData = function(parameters) {
+	var data = {};
+	for (var index in this.container.form.elements) {
+		var element = this.container.form.elements[index];
+		if (element.name) {
+			data[element.name] = element.value;
+		}
+	}
+	if (parameters) {
+		for (var key in parameters) {
+			data[key] = parameters[key];
+		}
+	}
+	data["REQUEST_TOKEN"] = this.getRequestToken();
+	return data;
 };
 
 Selectri.getRequestToken = function() {
