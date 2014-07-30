@@ -331,7 +331,7 @@ Selectri.openTree = function() {
 	var self = this;
 	self.container.addClass("striOpen");
 	self.clearSearch();
-	self.tree.getChildren().length || self.levelsRequest.isRunning() || self.levelsRequest.send({ data: self.buildFormData() });
+	self.tree.getChildren().length || self.levelsRequest.isRunning() || self.levelsRequest.send({ data: self.collectFormData() });
 };
 
 Selectri.closeTree = function() {
