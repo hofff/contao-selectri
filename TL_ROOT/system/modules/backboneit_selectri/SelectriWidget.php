@@ -367,7 +367,7 @@ class SelectriWidget extends Widget {
 	}
 
 	public function getInputName() {
-		return $this->name . '[selection][]';
+		return $this->name . '[selected][]';
 	}
 
 	public function getAdditionalInputBaseName() {
