@@ -232,7 +232,7 @@ class SelectriWidget extends Widget {
 		$data->validate();
 
 		if($this->Input->get('striID') == $this->strId) {
-			$action = $this->Input->post('striAction') ?: $this->Input->get('striAction');
+			$action = $this->Input->get('striAction');
 			return $action ? $this->generateAjax($action) : '';
 		}
 

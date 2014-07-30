@@ -66,10 +66,13 @@ Selectri.initialize = function(container, options, detached) {
 		self.toggleRequest.addEvent("success", self.onToggleSuccess);
 		self.levelsRequest = new Request.JSON({ url: url + "levels", method: "post", link: "chain" });
 		delete self.levelsRequest.headers["X-Requested-With"]; // fuck contao...
+		self.pathRequest = new Request.JSON({ url: url + "path", method: "post", link: "chain" });
+		delete self.pathRequest.headers["X-Requested-With"]; // fuck contao...
 		self.searchRequest = new Request.JSON({ url: url + "search", method: "post", link: "cancel" });
 		delete self.searchRequest.headers["X-Requested-With"]; // fuck contao...
 		"request cancel exception complete success".split(" ").each(function(event) {
 			self.levelsRequest.addEvent(event, self["onLevels" + event.capitalize()]);
+			self.pathRequest.addEvent(event, self["onLevels" + event.capitalize()]);
 			self.searchRequest.addEvent(event, self["onSearch" + event.capitalize()]);
 		});
 
@@ -362,7 +365,7 @@ Selectri.openPath = function(node) {
 	if(!key) return;
 	node = self.getNode(self.tree, key);
 	if(!node) {
-		self.levelsRequest.send({ data: self.buildFormData({ striAction: "path", striKey: key }) });
+		self.pathRequest.send({ data: self.buildFormData({ striKey: key }) });
 		return;
 	}
 	node.getParent().getParents().filter(".striTree li").addClass("striOpen");
