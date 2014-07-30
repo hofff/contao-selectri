@@ -192,7 +192,7 @@ class SelectriWidget extends Widget {
 		}
 
 		$values = (array) $values;
-		$selection = $this->getData()->filter((array) $values['selection']);
+		$selection = $this->getData()->filter((array) $values['selected']);
 
 		if(count($selection) < $this->getMinSelected()) {
 			if($this->getMinSelected() > 1) {
