@@ -420,6 +420,7 @@ Selectri.collectFormData = function(parameters) {
 			data[key] = parameters[key];
 		}
 	}
+	data["REQUEST_TOKEN"] = this.getRequestToken();
 	return data;
 };
 
