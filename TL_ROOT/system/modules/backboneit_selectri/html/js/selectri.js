@@ -347,8 +347,8 @@ Selectri.openNode = function(node) {
 	node = self.getChildrenContainer(node);
 	if(!node) return;
 	node.getParent("li").addClass("striOpen");
-	node.getChildren().length || self.levelsRequest.send({ data: self.buildFormData({ striKey: key }) });
-	self.toggleRequest.send({ data: self.buildFormData({ striKey: key, striOpen: 1 }) });
+	node.getChildren().length || self.levelsRequest.send({ data: self.collectFormData({ striKey: key }) });
+	self.toggleRequest.send({ data: self.collectFormData({ striKey: key, striOpen: 1 }) });
 };
 
 Selectri.closeNode = function(node) {
@@ -357,7 +357,7 @@ Selectri.closeNode = function(node) {
 	node = self.getChildrenContainer(node);
 	if(!node) return;
 	node.getParent("li").removeClass("striOpen");
-	self.toggleRequest.send({ data: self.buildFormData({ striKey: key, striOpen: 0 }) });
+	self.toggleRequest.send({ data: self.collectFormData({ striKey: key, striOpen: 0 }) });
 };
 
 Selectri.openPath = function(node) {
@@ -365,7 +365,7 @@ Selectri.openPath = function(node) {
 	if(!key) return;
 	node = self.getNode(self.tree, key);
 	if(!node) {
-		self.pathRequest.send({ data: self.buildFormData({ striKey: key }) });
+		self.pathRequest.send({ data: self.collectFormData({ striKey: key }) });
 		return;
 	}
 	node.getParent().getParents().filter(".striTree li").addClass("striOpen");
@@ -389,7 +389,7 @@ Selectri.search = function(query) {
 	self.query = query;
 	self.closeTree();
 	self.container.removeClass("striNotFound");
-	self.searchRequest.send({ data: self.buildFormData({ striSearch: query }) });
+	self.searchRequest.send({ data: self.collectFormData({ striSearch: query }) });
 };
 
 Selectri.clearSearch = function() {
@@ -402,7 +402,7 @@ Selectri.clearSearch = function() {
 	self.result.removeClass("striOpen");
 };
 
-Selectri.buildFormData = function(parameters) {
+Selectri.collectFormData = function(parameters) {
 	var data = {};
 	for (var index in this.container.form.elements) {
 		var element = this.container.form.elements[index];
