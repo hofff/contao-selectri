@@ -125,6 +125,7 @@ FROM		%s
 
 WHERE		%%s IN (%%s)
 %s
+%s
 EOT;
 		// select
 		$params[] = $this->cfg->getItemKeyColumn();
@@ -134,6 +135,8 @@ EOT;
 		$params[] = $this->cfg->getItemTable();
 		// where
 		$params[] = $this->cfg->getItemConditionExpr('AND');
+		//order
+		$params[] = $this->cfg->getItemOrderByExpr('ORDER BY');
 
 		$query = vsprintf($query, $params);
 
