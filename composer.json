@@ -8,6 +8,7 @@
 		"contao"
 	],
 	"type" : "contao-module",
+	"homepage" : "https://hofff.com/",
 	"license" : "LGPL-3.0+",
 	"authors" : [{
 			"name" : "Oliver Hoff",
@@ -16,10 +17,24 @@
 			"role" : "Developer"
 		}
 	],
+	"support" : {
+		"email" : "info@hofff.com",
+		"issues" : "https://github.com/hofff/contao-selectri/issues",
+		"source" : "https://github.com/hofff/contao-selectri"
+	},
 	"require" : {
 		"php" : ">=5.4",
 		"contao/core" : "~3.2",
 		"contao-community-alliance/composer-plugin" : "~2.0"
+	},
+	"replace" : {
+		"backboneit/contao-selectri" : "self.version",
+		"contao-legacy/backboneit_selectri" : "self.version"
+	},
+	"autoload" : {
+		"psr-0" : {
+			"Hofff" : "src"
+		}
 	},
 	"extra" : {
 		"contao" : {
