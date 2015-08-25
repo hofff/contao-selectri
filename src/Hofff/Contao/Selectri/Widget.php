@@ -4,7 +4,7 @@ namespace Hofff\Contao\Selectri;
 
 use Hofff\Contao\Selectri\Exception\SelectriException;
 use Hofff\Contao\Selectri\Model\Data;
-use Hofff\Contao\Selectri\Exception\Hofff\Contao\Selectri\Exception;
+use Hofff\Contao\Selectri\Model\DataFactory;
 
 class Widget extends \Widget {
 
@@ -144,18 +144,16 @@ class Widget extends \Widget {
 			if(!is_object($data)) {
 				if(!strlen($data)) {
 					$data = new SelectriContaoTableDataFactory();
-				} elseif(is_subclass_of($data, 'SelectriDataFactory')) {
+				} elseif(is_subclass_of($data, 'Hofff\\Contao\\Selectri\\Model\\DataFactory')) {
 					$data = new $data();
 				} else {
 					throw new SelectriException('invalid selectri data factory configuration');
 				}
 				$data->setParameters($attrs);
-				$data->setWidget($this);
-				$this->setData($data->createData());
+				$this->setData($data->createData($this));
 
-			} elseif($data instanceof SelectriDataFactory) {
-				$data->setWidget($this);
-				$this->setData($data->createData());
+			} elseif($data instanceof DataFactory) {
+				$this->setData($data->createData($this));
 
 			} else {
 				throw new SelectriException('invalid selectri data factory configuration');
@@ -175,6 +173,8 @@ class Widget extends \Widget {
 			'max'				=> 'setMaxSelected',
 			'searchLimit'		=> 'setSearchLimit',
 			'jsOptions'			=> 'setJSOptions',
+			'disableBrowsing'	=> 'setDisableBrowsing',
+			'disableSearching'	=> 'setDisableSearching',
 		) as $key => $method) if(isset($attrs[$key])) {
 			$this->$method($attrs[$key]);
 			unset($attrs[$key]);

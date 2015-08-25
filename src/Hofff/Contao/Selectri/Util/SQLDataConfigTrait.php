@@ -104,7 +104,7 @@ trait SQLDataConfigTrait {
 	 * @return void
 	 */
 	public function addColumns($columns) {
-		return $this->setTreeColumns(array_merge($this->getColumns(), (array) $columns));
+		return $this->setColumns(array_merge($this->getColumns(), (array) $columns));
 	}
 
 	/**
@@ -127,7 +127,7 @@ trait SQLDataConfigTrait {
 	 * @return void
 	 */
 	public function addSearchColumns($columns) {
-		return $this->setTreeSearchColumns(array_merge($this->getSearchColumns(), (array) $columns));
+		return $this->setSearchColumns(array_merge($this->getSearchColumns(), (array) $columns));
 	}
 
 	/**

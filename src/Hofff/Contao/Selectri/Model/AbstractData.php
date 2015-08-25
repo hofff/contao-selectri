@@ -63,7 +63,7 @@ abstract class AbstractData implements Data {
 	/**
 	 * @see \Hofff\Contao\Selectri\Model\Data::search()
 	 */
-	public function search($query) {
+	public function search($query, $limit, $offset = 0) {
 		return new \EmptyIterator;
 	}
 

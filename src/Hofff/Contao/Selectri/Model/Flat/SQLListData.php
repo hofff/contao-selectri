@@ -216,8 +216,8 @@ EOT;
 	 * @return string
 	 */
 	protected function buildSearchExpr($keywordCnt, &$columnCnt) {
-		$columns = $this->cfg->getItemSearchColumns();
-		$keyColumn = $this->cfg->getItemKeyColumn();
+		$columns = $this->cfg->getSearchColumns();
+		$keyColumn = $this->cfg->getKeyColumn();
 		in_array($keyColumn, $columns) || $columns[] = $keyColumn;
 
 		$condition = array();

@@ -80,7 +80,7 @@ class SQLListDataFactory implements DataFactory {
 	protected function prepareConfig(SQLListDataConfig $cfg) {
 		$db = $this->getDatabase();
 
-		if(!$cfg->setOrderByExpr() && $db->fieldExists('sorting', $cfg->getTable())) {
+		if(!$cfg->getOrderByExpr() && $db->fieldExists('sorting', $cfg->getTable())) {
 			$cfg->setOrderByExpr('sorting');
 		}
 
@@ -94,7 +94,7 @@ class SQLListDataFactory implements DataFactory {
 			$fields = $callback[0]->getFields();
 			$cfg->addColumns($fields);
 
-			if(!strlen($cfg->setOrderByExpr())) {
+			if(!strlen($cfg->getOrderByExpr())) {
 				$cfg->setOrderByExpr($fields[0]);
 			}
 		}

@@ -85,7 +85,7 @@ class SQLAdjacencyTreeDataFactory implements DataFactory {
 	protected function prepareConfig(SQLAdjacencyTreeDataConfig $cfg) {
 		$db = $this->getDatabase();
 
-		if(!$cfg->setOrderByExpr() && $db->fieldExists('sorting', $cfg->getTable())) {
+		if(!$cfg->getOrderByExpr() && $db->fieldExists('sorting', $cfg->getTable())) {
 			$cfg->setOrderByExpr('sorting');
 		}
 
@@ -99,7 +99,7 @@ class SQLAdjacencyTreeDataFactory implements DataFactory {
 			$fields = $callback[0]->getFields();
 			$cfg->addColumns($fields);
 
-			if(!strlen($cfg->setOrderByExpr())) {
+			if(!strlen($cfg->getOrderByExpr())) {
 				$cfg->setOrderByExpr($fields[0]);
 			}
 		}
