@@ -1,10 +1,9 @@
 /*
 !/.gitignore
 !/composer.json
-!/TL_ROOT/
+!/README.md
+!/contao-module/
 !/dev/
-!/ext/
 !/publish/
 !/test/
-!/build.xml
-!/README.md
+!/src/
