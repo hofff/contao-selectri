@@ -76,7 +76,7 @@ class SQLListData extends AbstractData {
 
 		$nodes = array();
 		while($result->next()) {
-			$nodes[] = $this->createNode($result->row());
+			$nodes[strval($result->_key)] = $this->createNode($result->row());
 		}
 
 		// maintain key order
