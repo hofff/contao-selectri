@@ -14,8 +14,10 @@ class Widget extends \Widget {
 	protected $min = 0;
 	protected $max = 1;
 	protected $searchLimit = 20;
+	protected $suggestLimit = 20;
 	protected $disableBrowsing = false;
 	protected $disableSearching = false;
+	protected $disableSuggestions = false;
 	protected $jsOptions = array();
 	protected $sort = 'list';
 	protected $height;
@@ -167,14 +169,16 @@ class Widget extends \Widget {
 		unset($attrs['mandatory'], $attrs['multiple']);
 
 		foreach(array(
-			'height'			=> 'setHeight',
-			'sort'				=> 'setSort',
-			'min'				=> 'setMinSelected',
-			'max'				=> 'setMaxSelected',
-			'searchLimit'		=> 'setSearchLimit',
-			'jsOptions'			=> 'setJSOptions',
-			'disableBrowsing'	=> 'setDisableBrowsing',
-			'disableSearching'	=> 'setDisableSearching',
+			'height'				=> 'setHeight',
+			'sort'					=> 'setSort',
+			'min'					=> 'setMinSelected',
+			'max'					=> 'setMaxSelected',
+			'searchLimit'			=> 'setSearchLimit',
+			'suggestLimit'			=> 'setSuggestLimit',
+			'jsOptions'				=> 'setJSOptions',
+			'disableBrowsing'		=> 'setDisableBrowsing',
+			'disableSearching'		=> 'setDisableSearching',
+			'disableSuggestions'	=> 'setDisableSuggestions',
 		) as $key => $method) if(isset($attrs[$key])) {
 			$this->$method($attrs[$key]);
 			unset($attrs[$key]);
@@ -436,13 +440,13 @@ class Widget extends \Widget {
 	}
 
 	public function setSort($sort) {
-		switch($sort) {
-			case true: $sort = 'list'; break;
-			case 'list': break;
-			case 'tree': throw new SelectriException('tree sortable not implemented'); break;
-			default: $sort = 'preorder'; break;
+		if($sort === 'tree') {
+			throw new SelectriException('tree sortable not implemented');
+		} elseif($sort === true || $sort === 'list') {
+			$this->sort = 'list';
+		} else {
+			$this->sort = 'preorder';
 		}
-		$this->sort = $sort;
 		return $this;
 	}
 
@@ -477,8 +481,17 @@ class Widget extends \Widget {
 		return $this->searchLimit;
 	}
 
-	public function setSearchLimit($searchLimit) {
-		$this->searchLimit = max(1, intval($searchLimit));
+	public function setSearchLimit($limit) {
+		$this->searchLimit = max(1, intval($limit));
+		return $this;
+	}
+
+	public function getSuggestLimit() {
+		return $this->suggestLimit;
+	}
+
+	public function setSuggestLimit($limit) {
+		$this->suggestLimit = max(1, intval($limit));
 		return $this;
 	}
 
@@ -504,6 +517,18 @@ class Widget extends \Widget {
 
 	public function setDisableSearching($disable) {
 		$this->disableSearching = (bool) $disable;
+	}
+
+	public function hasSuggestions() {
+		return $this->data->hasSuggestions() && !$this->isDisableSuggestions();
+	}
+
+	public function isDisableSuggestions() {
+		return $this->disableSuggestions;
+	}
+
+	public function setDisableSuggestions($disable) {
+		$this->disableSuggestions = (bool) $disable;
 	}
 
 	public function isDataContainerDriven() {

@@ -67,4 +67,19 @@ abstract class AbstractData implements Data {
 		return new \EmptyIterator;
 	}
 
+
+	/**
+	 * @see \Hofff\Contao\Selectri\Model\Data::hasSuggestions()
+	 */
+	public function hasSuggestions() {
+		return false;
+	}
+
+	/**
+	 * @see \Hofff\Contao\Selectri\Model\Data::suggest()
+	 */
+	public function suggest($limit, $offset = 0) {
+		return new \EmptyIterator;
+	}
+
 }

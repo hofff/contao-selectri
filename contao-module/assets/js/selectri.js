@@ -52,9 +52,11 @@ Selectri.initialize = function(container, options, detached) {
 		self.setOptions(options);
 		self.selection = self.container.getElement(".striSelection > ol");
 		self.input = self.container.getElement(".striTools .striSearch input");
-		self.query = self.input.get("value");
+		if(self.input) self.query = self.input.get("value");
 		self.result = self.container.getElement(".striResult");
+		self.suggestions = self.container.getElement(".striSuggestions");
 		self.tree = self.container.getElement(".striTree");
+		self.sources = $$([ self.result, self.suggestions, self.tree ].clean());
 		self.messages = self.container.getElement(".striMessages");
 
 		url = window.location.href + (window.location.href.indexOf("?") > -1 ? "&" : "?");
@@ -81,8 +83,15 @@ Selectri.initialize = function(container, options, detached) {
 		else self.selection.getChildren().each(function(element) { fixSortables(self.sortables, element); });
 		self.sortables.addLists(self.selection).detach();
 
-		if(self.container.hasClass("striOpen")) self.openTree();
-		else self.closeTree();
+		if(self.suggestions) {
+			self.selection.getChildren().each(function(node) {
+				node = self.getNode(self.suggestions, node);
+				if(node) node.getParent("li").addClass("striSelected");
+			});
+		}
+		
+		if(self.isTreeOpen()) self.openTree();
+		else { self.openSuggestions(); self.closeTree(); }
 
 		if(!detached) self.attach();
 	}
@@ -97,14 +106,21 @@ Selectri.onSelectionDeselectClick	= function(event, target) { this.deselect(targ
 Selectri.onResultLabelClick			= function(event, target) { this.openPath(target); this.openTree(); };
 Selectri.onResultSelectClick		= function(event, target) { this.select(target, TRUE); };
 Selectri.onResultDeselectClick		= function(event, target) { this.deselect(target, TRUE); };
+Selectri.onSuggestionsLabelClick	= function(event, target) { this.toggleNode(target); };
+Selectri.onSuggestionsSelectClick	= function(event, target) { this.select(target, TRUE); };
+Selectri.onSuggestionsDeselectClick	= function(event, target) { this.deselect(target, TRUE); };
 Selectri.onTreeLabelClick			= function(event, target) { this.toggleNode(target); };
 Selectri.onTreeSelectClick			= function(event, target) { this.select(target, TRUE); };
 Selectri.onTreeDeselectClick		= function(event, target) { this.deselect(target, TRUE); };
 Selectri.onPathClick				= function(event, target) { this.openPath(target); this.openTree(); };
-Selectri.onClearSearchClick			= function(event, target) { this.clearSearch(); };
+Selectri.onClearSearchClick			= function(event, target) { this.clearSearch(); this.openSuggestions(); };
 Selectri.onClearSelectionClick		= function(event, target) { if(event.shift) this.deselectAll(); };
-Selectri.onToggleClick				= function(event, target) { this.toggleTree(); };
-Selectri.onSearchKeyDown			= function(event, target) { this.search(target.get("value")); };
+Selectri.onToggleClick				= function(event, target) { this.toggleTree(); if(!this.isTreeOpen()) this.openSuggestions(); };
+Selectri.onSearchKeyDown			= function(event, target) {
+	target = target.get("value");
+	if(target && target.length) this.search(target);
+	else this.openSuggestions();
+};
 Selectri.onSortStart				= function() { this.container.addClass("striSorting"); };
 Selectri.onSortComplete				= function() { this.container.removeClass("striSorting"); };
 Selectri.onToggleSuccess			= function(json) { if(json && json.token) this.updateRequestToken(json.token); };
@@ -122,7 +138,7 @@ Selectri.onLevelsSuccess			= function(json) {
 
 	if(!self.tree.getChildren().length) {
 		if(json.empty) {
-			self.container.addClass("striEmpty");
+			self.tree.addClass("striEmpty");
 			return;
 		} else {
 			self.tree.set("html", json.first);
@@ -170,21 +186,24 @@ Selectri.onSearchSuccess			= function(json) {
 };
 
 events = {
-	"click:relay(.striHandle)":											"onHandleClick",
-	"mousedown:relay(.striSelection)":									"onSelectionMouseDown",
-	"click:relay(.striSelection .striNode > .striLabel > .striHandle)":	"onSelectionLabelClick",
-	"click:relay(.striSelection .striDeselect > .striHandle)":			"onSelectionDeselectClick",
-	"click:relay(.striResult .striNode > .striLabel > .striHandle)":	"onResultLabelClick",
-	"click:relay(.striResult .striSelect > .striHandle)":				"onResultSelectClick",
-	"click:relay(.striResult .striDeselect > .striHandle)":				"onResultDeselectClick",
-	"click:relay(.striTree .striNode > .striLabel > .striHandle)":		"onTreeLabelClick",
-	"click:relay(.striTree .striSelect > .striHandle)":					"onTreeSelectClick",
-	"click:relay(.striTree .striDeselect > .striHandle)":				"onTreeDeselectClick",
-	"click:relay(.striPathNode > .striLabel > .striHandle)":			"onPathClick",
-	"click:relay(.striClearSearch.striHandle)":							"onClearSearchClick",
-	"click:relay(.striClearSelection > .striHandle)":					"onClearSelectionClick",
-	"click:relay(.striToggle > .striHandle)":							"onToggleClick",
-	"keydown:relay(.striSearch > input):pause(250)":					"onSearchKeyDown"
+	"click:relay(.striHandle)":												"onHandleClick",
+	"mousedown:relay(.striSelection)":										"onSelectionMouseDown",
+	"click:relay(.striSelection .striNode > .striLabel > .striHandle)":		"onSelectionLabelClick",
+	"click:relay(.striSelection .striDeselect > .striHandle)":				"onSelectionDeselectClick",
+	"click:relay(.striResult .striNode > .striLabel > .striHandle)":		"onResultLabelClick",
+	"click:relay(.striResult .striSelect > .striHandle)":					"onResultSelectClick",
+	"click:relay(.striResult .striDeselect > .striHandle)":					"onResultDeselectClick",
+	"click:relay(.striSuggestions .striNode > .striLabel > .striHandle)":	"onSuggestionsLabelClick",
+	"click:relay(.striSuggestions .striSelect > .striHandle)":				"onSuggestionsSelectClick",
+	"click:relay(.striSuggestions .striDeselect > .striHandle)":			"onSuggestionsDeselectClick",
+	"click:relay(.striTree .striNode > .striLabel > .striHandle)":			"onTreeLabelClick",
+	"click:relay(.striTree .striSelect > .striHandle)":						"onTreeSelectClick",
+	"click:relay(.striTree .striDeselect > .striHandle)":					"onTreeDeselectClick",
+	"click:relay(.striPathNode > .striLabel > .striHandle)":				"onPathClick",
+	"click:relay(.striClearSearch.striHandle)":								"onClearSearchClick",
+	"click:relay(.striClearSelection > .striHandle)":						"onClearSelectionClick",
+	"click:relay(.striToggle > .striHandle)":								"onToggleClick",
+	"keydown:relay(.striSearch > input):pause(250)":						"onSearchKeyDown"
 };
 
 Selectri.attach = function() {
@@ -225,11 +244,10 @@ Selectri.setMessages = function(messages) {
 Selectri.select = function(node, adjustScroll) {
 	var self = this;
 	if(self.isSelected(node)) return;
-
-	treeNode = self.getNode(self.tree, node);
-	resultNode = self.getNode(self.result, node);
-	node = treeNode || resultNode;
-	if(!node) return;
+	
+	nodes = $$(self.getNode(self.sources, node).clean());
+	if(!nodes.length) return;
+	node = nodes[0];
 
 	node = node.clone();
 	node.getFirst("input").set("name", self.options.name);
@@ -245,8 +263,7 @@ Selectri.select = function(node, adjustScroll) {
 	self.selection.getParent().addClass("striHasSelection");
 	adjustScroll();
 
-	if(treeNode) treeNode.getParent("li").addClass("striSelected");
-	if(resultNode) resultNode.getParent("li").addClass("striSelected");
+	nodes.getParent("li").addClass("striSelected");
 	
 	self.fireEvent("selected", self.getKey(node));
 };
@@ -262,11 +279,7 @@ Selectri.deselect = function(node, adjustScroll) {
 	if(!self.selection.getChildren().length) self.selection.getParent().removeClass("striHasSelection");
 	adjustScroll();
 
-	node = self.getNode(self.tree, selectedNode);
-	if(node) node.getParent("li").removeClass("striSelected");
-
-	node = self.getNode(self.result, selectedNode);
-	if(node) node.getParent("li").removeClass("striSelected");
+	$$(self.getNode(self.sources, node).clean()).getParent("li").removeClass("striSelected");
 	
 	self.fireEvent("deselected", self.getKey(selectedNode));
 	
@@ -316,30 +329,36 @@ Selectri.getNode = function(element, key) {
 
 Selectri.getChildrenContainer = function(node) {
 	var self = this;
+	if(!self.tree) return;
 	node = self.getNode(self.tree, node);
 	if(!node) return;
 	return node.getParent("li").getChildren(".striChildren")[0];
 };
 
+Selectri.isTreeOpen = function() {
+	return this.tree && this.tree.hasClass("striOpen");
+};
+
 Selectri.toggleTree = function() {
-	var self = this;
-	if(self.container.hasClass("striOpen")) self.closeTree();
-	else self.openTree();
+	this.isTreeOpen() ? this.closeTree() : this.openTree();
 };
 
 Selectri.openTree = function() {
 	var self = this;
-	self.container.addClass("striOpen");
+	if(!self.tree) return;
+	self.tree.addClass("striOpen");
 	self.clearSearch();
+	self.closeSuggestions();
 	self.tree.getChildren().length || self.levelsRequest.isRunning() || self.levelsRequest.send({ data: self.collectFormData() });
 };
 
 Selectri.closeTree = function() {
-	this.container.removeClass("striOpen");
+	if(this.tree) this.tree.removeClass("striOpen");
 };
 
 Selectri.toggleNode = function(node) {
 	var self = this;
+	if(!self.tree) return;
 	node = self.getNode(self.tree, node);
 	if(!node) return;
 	if(node.getParent("li").hasClass("striOpen")) return self.closeNode(node);
@@ -348,7 +367,7 @@ Selectri.toggleNode = function(node) {
 
 Selectri.openNode = function(node) {
 	var self = this, key = self.getKey(node);
-	if(!key) return;
+	if(!self.tree || !key) return;
 	node = self.getChildrenContainer(node);
 	if(!node) return;
 	node.getParent("li").addClass("striOpen");
@@ -358,7 +377,7 @@ Selectri.openNode = function(node) {
 
 Selectri.closeNode = function(node) {
 	var self = this, key = self.getKey(node);
-	if(!key) return;
+	if(!self.tree || !key) return;
 	node = self.getChildrenContainer(node);
 	if(!node) return;
 	node.getParent("li").removeClass("striOpen");
@@ -367,7 +386,7 @@ Selectri.closeNode = function(node) {
 
 Selectri.openPath = function(node) {
 	var self = this, key = self.getKey(node);
-	if(!key) return;
+	if(!self.tree || !key) return;
 	node = self.getNode(self.tree, key);
 	if(!node) {
 		self.pathRequest.send({ data: self.collectFormData({ striKey: key }) });
@@ -378,6 +397,7 @@ Selectri.openPath = function(node) {
 };
 
 Selectri.highlight = function(node) {
+	if(!this.tree) return;
 	node = this.getNode(this.tree, node);
 	if(!node) return;
 	clearTimeout(node.retrieve(FN_HL));
@@ -388,17 +408,19 @@ Selectri.highlight = function(node) {
 
 Selectri.search = function(query) {
 	var self = this;
-	if(!query || !query.length) return self.clearSearch();
+	if(!self.result || !query || !query.length) return self.clearSearch();
 	self.input.addClass("striQuery");
 	if(self.query == query) return;
 	self.query = query;
 	self.closeTree();
+	self.closeSuggestions();
 	self.container.removeClass("striNotFound");
 	self.searchRequest.send({ data: self.collectFormData({ striSearch: query }) });
 };
 
 Selectri.clearSearch = function() {
 	var self = this;
+	if(!self.result) return;
 	self.query = undef;
 	self.setMessages(undef);
 	self.input.set("value");
@@ -407,6 +429,19 @@ Selectri.clearSearch = function() {
 	self.result.removeClass("striOpen");
 };
 
+Selectri.openSuggestions = function() {
+	var self = this;
+	if(!self.suggestions || !self.suggestions.getElement("li")) return;
+	self.closeTree();
+	self.clearSearch();
+	self.suggestions.addClass("striOpen");
+};
+
+Selectri.closeSuggestions = function() {
+	if(this.suggestions) this.suggestions.removeClass("striOpen");
+};
+
+// FIXME buggy implementation not respecting valid inputs and fails on inputs with same name
 Selectri.collectFormData = function(parameters) {
 	var data = {};
 	for (var index in this.container.form.elements) {

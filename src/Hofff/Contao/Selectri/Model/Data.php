@@ -99,4 +99,21 @@ interface Data {
 	 */
 	public function search($query, $limit, $offset = 0);
 
+	/**
+	 * @return boolean
+	 */
+	public function hasSuggestions();
+
+	/**
+	 * Return an iterator over nodes that are being suggest to select.
+	 *
+	 * The returned nodes should NOT be traversed recursivly through the node's
+	 * getChildrenIterator method.
+	 *
+	 * @param integer $limit
+	 * @param integer $offset
+	 * @return Iterator<Node> An iterator over suggested nodes
+	 */
+	public function suggest($limit, $offset = 0);
+
 }

@@ -1,4 +1,4 @@
-<ul>
+<ol>
 <?php foreach($result as $node): if($node->isSelectable()): ?>
 <li><div class="striNode" data-stri-key="<?php echo specialchars($node->getKey()); ?>">
   <input type="hidden" value="<?php echo specialchars($node->getKey()); ?>" />
@@ -48,4 +48,4 @@
 
 </div></li>
 <?php endif; endforeach; ?>
-</ul>
+</ol>

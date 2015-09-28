@@ -1,6 +1,5 @@
 <?php
 $class = 'striWidget striAuto';
-$this->isOpen() && $class .= ' striOpen';
 $this->strClass && $class .= ' ' . $this->strClass;
 $options['openPathTitle'] = $GLOBALS['TL_LANG']['stri']['openPathTitle'];
 ?>
@@ -78,8 +77,71 @@ $options['openPathTitle'] = $GLOBALS['TL_LANG']['stri']['openPathTitle'];
 
 <div class="striMessages"></div>
 
-<div class="striResult"></div>
+<?php if($this->isSearchable()): ?>
+  <div class="striResult"></div>
+<?php endif; ?>
 
-<div class="striTree" style="height: <?php echo $this->getHeight(); ?>;"></div>
+<?php if($this->hasSuggestions()): ?>
+  <div class="striSuggestions">
+    <ol>
+<?php foreach($this->getData()->suggest($this->getSuggestLimit()) as $node): ?>
+    <li>
+      <div class="striNode" data-stri-key="<?php echo specialchars($node->getKey()); ?>">
+        <input type="hidden" name="<?php echo $this->getInputName(); ?>"
+            value="<?php echo specialchars($node->getKey()); ?>" />
+
+<?php if($node->hasPath()): ?>
+        <div class="striPath">
+          <ol>
+<?php foreach($node->getPathIterator() as $pathNode): ?>
+          <li class="striPathNode" data-stri-key="<?php echo specialchars($pathNode->getKey()); ?>">
+            <div class="striLabel">
+              <a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['pathTitle']; ?>">
+                <img class="striIcon" src="<?php echo specialchars($pathNode->getIcon()); ?>" alt="" />
+                <?php echo $pathNode->getLabel(); ?>
+              </a>
+            </div>
+          </li>
+<?php endforeach; ?>
+          </ol>
+        </div>
+<?php endif; ?>
+
+<?php if($this->getSort() == 'list'): ?>
+        <a href="#" class="striHandle striDrag" title="<?php echo $GLOBALS['TL_LANG']['stri']['sortTitle']; ?>">
+          <?php echo $GLOBALS['TL_LANG']['stri']['sort']; ?>
+        </a>
+<?php endif; ?>
+
+        <div class="striLabel">
+          <a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['openPathTitle']; ?>">
+            <img class="striIcon" src="<?php echo specialchars($node->getIcon()); ?>" alt="" />
+            <?php echo $node->getLabel(); ?>
+          </a>
+        </div>
+
+<?php if(strlen($content = trim($node->getContent()))): ?>
+        <div class="striContent"><?php echo $content; ?></div>
+<?php endif; ?>
+
+        <div class="striSelect">
+          <a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['selectTitle']; ?>"
+            ><?php echo $GLOBALS['TL_LANG']['stri']['select']; ?></a>
+        </div>
+        <div class="striDeselect">
+          <a href="#" class="striHandle" title="<?php echo $GLOBALS['TL_LANG']['stri']['deselectTitle']; ?>"
+            ><?php echo $GLOBALS['TL_LANG']['stri']['deselect']; ?></a>
+        </div>
+
+      </div>
+    </li>
+<?php endforeach; ?>
+    </ol>
+  </div>
+<?php endif; ?>
+
+<?php if($this->isBrowsable()): ?>
+  <div class="striTree<?php if($this->isOpen()) echo ' striOpen'; ?>" style="height: <?php echo $this->getHeight(); ?>;"></div>
+<?php endif; ?>
 
 </fieldset>

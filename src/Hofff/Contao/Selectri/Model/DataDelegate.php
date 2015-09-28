@@ -4,7 +4,7 @@ namespace Hofff\Contao\Selectri\Model;
 
 use Hofff\Contao\Selectri\Widget;
 
-class DataDelegate implements Data {
+abstract class DataDelegate implements Data {
 
 	/**
 	 * @var Data
@@ -14,7 +14,7 @@ class DataDelegate implements Data {
 	/**
 	 * @param Data $delegate
 	 */
-	public function __construct(Data $delegate = null) {
+	protected function __construct(Data $delegate = null) {
 		$this->delegate = $delegate;
 	}
 
@@ -94,6 +94,20 @@ class DataDelegate implements Data {
 	 */
 	public function search($query, $limit, $offset = 0) {
 		return $this->delegate->search($query, $limit, $offset);
+	}
+
+	/**
+	 * @see \Hofff\Contao\Selectri\Model\Data::hasSuggestions()
+	 */
+	public function hasSuggestions() {
+		return $this->delegate->hasSuggestions();
+	}
+
+	/**
+	 * @see \Hofff\Contao\Selectri\Model\Data::suggest()
+	 */
+	public function suggest($limit, $offset = 0) {
+		return $this->delegate->suggest($limit, $offset);
 	}
 
 }
