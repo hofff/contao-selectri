@@ -266,6 +266,7 @@ class SQLAdjacencyTreeData extends AbstractData {
 		$descendants = $tree->getDescendantsPreorder($roots, true);
 		$keys = array_intersect($keys, $descendants);
 
+		$children = $tree->children;
 		return $keys;
 	}
 
