@@ -31,7 +31,7 @@ class SQLAdjacencyTreeNode implements Node {
 	 * @param \stdClass $tree
 	 * @param string $key
 	 */
-	public function __construct(SQLAdjacencyTreeData $data, \stdClass $tree, $key) {
+	public function __construct(SQLAdjacencyTreeData $data, Tree $tree, $key) {
 		$this->data = $data;
 		$this->tree = $tree;
 		$this->key = $key;
