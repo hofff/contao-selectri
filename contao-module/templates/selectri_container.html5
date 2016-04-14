@@ -87,8 +87,7 @@ $options['openPathTitle'] = $GLOBALS['TL_LANG']['stri']['openPathTitle'];
 <?php foreach($this->getData()->suggest($this->getSuggestLimit()) as $node): ?>
     <li>
       <div class="striNode" data-stri-key="<?php echo specialchars($node->getKey()); ?>">
-        <input type="hidden" name="<?php echo $this->getInputName(); ?>"
-            value="<?php echo specialchars($node->getKey()); ?>" />
+        <input type="hidden" value="<?php echo specialchars($node->getKey()); ?>" />
 
 <?php if($node->hasPath()): ?>
         <div class="striPath">
