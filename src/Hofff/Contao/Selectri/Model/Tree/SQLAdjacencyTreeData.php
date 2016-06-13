@@ -416,16 +416,17 @@ EOT;
 			return;
 		}
 
-		$unfolded = array_keys($unfolded);
-		$this->getWidget()->setUnfolded($unfolded); // cleaned out inexistant values to avoid longterm leaking...
-
 		$unfoldedTree = new Tree($this->cfg->getRootValue());
 		foreach($unfolded as $key => $node) {
 			$unfoldedTree->children[strval($node['_parentKey'])][$key] = true;
 		}
 
+		$unfolded = array_keys($unfolded);
+
 		$unfolded = $unfoldedTree->getDescendantsPreorder(array_intersect($roots, $unfolded), true);
 		$this->fetchLevels($tree, $unfolded);
+
+		$this->getWidget()->setUnfolded($unfolded); // cleaned out inexistant values to avoid longterm leaking...
 	}
 
 	/**
