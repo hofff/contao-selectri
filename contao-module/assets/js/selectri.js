@@ -89,7 +89,7 @@ Selectri.initialize = function(container, options, detached) {
 				if(node) node.getParent("li").addClass("striSelected");
 			});
 		}
-		
+
 		if(self.isTreeOpen()) self.openTree();
 		else { self.openSuggestions(); self.closeTree(); }
 
@@ -172,7 +172,7 @@ Selectri.onSearchSuccess			= function(json) {
 	if(json.token) this.updateRequestToken(json.token);
 
 	if(self.query != json.search) return;
-	
+
 	self.setMessages(json.messages);
 
 	self.result.set("html", json.result);
@@ -213,7 +213,7 @@ Selectri.attach = function() {
 	Object.each(events, function(handler, event) {
 		self.container.addEvent(event, self[handler]);
 	});
-	
+
 	self.fireEvent("attached");
 };
 
@@ -224,7 +224,7 @@ Selectri.detach = function() {
 	Object.each(events, function(handler, event) {
 		self.container.removeEvent(event, self[handler]);
 	});
-	
+
 	self.fireEvent("detached");
 };
 
@@ -244,7 +244,7 @@ Selectri.setMessages = function(messages) {
 Selectri.select = function(node, adjustScroll) {
 	var self = this;
 	if(self.isSelected(node)) return;
-	
+
 	nodes = $$(self.getNode(self.sources, node).clean());
 	if(!nodes.length) return;
 	node = nodes[0];
@@ -264,7 +264,7 @@ Selectri.select = function(node, adjustScroll) {
 	adjustScroll();
 
 	nodes.getParent("li").addClass("striSelected");
-	
+
 	self.fireEvent("selected", self.getKey(node));
 };
 
@@ -280,9 +280,9 @@ Selectri.deselect = function(node, adjustScroll) {
 	adjustScroll();
 
 	$$(self.getNode(self.sources, node).clean()).getParent("li").removeClass("striSelected");
-	
+
 	self.fireEvent("deselected", self.getKey(selectedNode));
-	
+
 	removed.destroy();
 };
 
