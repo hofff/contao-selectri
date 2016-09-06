@@ -100,7 +100,6 @@ Selectri.initialize = function(container, options, detached) {
 };
 
 Selectri.onHandleClick				= function(event, target) { event.preventDefault(); };
-Selectri.onSelectionMouseDown		= function(event, target) { event.preventDefault(); };
 Selectri.onSelectionLabelClick		= function(event, target) { this.openPath(target); this.openTree(); };
 Selectri.onSelectionDeselectClick	= function(event, target) { this.deselect(target); };
 Selectri.onResultLabelClick			= function(event, target) { this.openPath(target); this.openTree(); };
@@ -187,7 +186,6 @@ Selectri.onSearchSuccess			= function(json) {
 
 events = {
 	"click:relay(.striHandle)":												"onHandleClick",
-	"mousedown:relay(.striSelection)":										"onSelectionMouseDown",
 	"click:relay(.striSelection .striNode > .striLabel > .striHandle)":		"onSelectionLabelClick",
 	"click:relay(.striSelection .striDeselect > .striHandle)":				"onSelectionDeselectClick",
 	"click:relay(.striResult .striNode > .striLabel > .striHandle)":		"onResultLabelClick",
