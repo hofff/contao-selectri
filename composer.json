@@ -36,8 +36,8 @@
 		"contao-legacy/backboneit_selectri": "self.version"
 	},
 	"autoload": {
-		"psr-0": {
-			"Hofff": "src"
+		"psr-4": {
+			"Hofff\\Contao\\Selectri\\": "src/"
 		}
 	},
 	"extra": {
