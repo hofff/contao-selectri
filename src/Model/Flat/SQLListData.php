@@ -2,16 +2,17 @@
 
 namespace Hofff\Contao\Selectri\Model\Flat;
 
+use Contao\Database;
+use Hofff\Contao\Selectri\Exception\SelectriException;
+use Hofff\Contao\Selectri\Model\AbstractData;
 use Hofff\Contao\Selectri\Util\SearchUtil;
 use Hofff\Contao\Selectri\Util\SQLUtil;
-use Hofff\Contao\Selectri\Model\AbstractData;
 use Hofff\Contao\Selectri\Widget;
-use Hofff\Contao\Selectri\Exception\SelectriException;
 
 class SQLListData extends AbstractData {
 
 	/**
-	 * @var \Database
+	 * @var Database
 	 */
 	protected $db;
 
@@ -22,10 +23,10 @@ class SQLListData extends AbstractData {
 
 	/**
 	 * @param Widget $widget
-	 * @param \Database $db
+	 * @param Database $db
 	 * @param SQLListDataConfig $cfg
 	 */
-	public function __construct(Widget $widget, \Database $db, SQLListDataConfig $cfg) {
+	public function __construct(Widget $widget, Database $db, SQLListDataConfig $cfg) {
 		parent::__construct($widget);
 		$this->db = $db;
 		$this->cfg = $cfg;

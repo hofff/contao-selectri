@@ -2,11 +2,13 @@
 
 namespace Hofff\Contao\Selectri;
 
+use Contao\Input;
+use Contao\Widget as BaseWidget;
 use Hofff\Contao\Selectri\Exception\SelectriException;
 use Hofff\Contao\Selectri\Model\Data;
 use Hofff\Contao\Selectri\Model\DataFactory;
 
-class Widget extends \Widget {
+class Widget extends BaseWidget {
 
 	protected $strTemplate = 'be_widget';
 
@@ -197,7 +199,7 @@ class Widget extends \Widget {
 			$path = explode('][', trim($match[2], '[]'));
 		}
 
-		$values = \Input::postRaw($name);
+		$values = Input::postRaw($name);
 		if($path) for($i = 0, $n = count($path); $i < $n; $i++) {
 			if(!is_array($values)) {
 				unset($values);
@@ -247,8 +249,8 @@ class Widget extends \Widget {
 		}
 		$data->validate();
 
-		if(\Input::get('striID') == $this->strId) {
-			$action = \Input::get('striAction');
+		if(Input::get('striID') == $this->strId) {
+			$action = Input::get('striAction');
 			return $action ? $this->generateAjax($action) : '';
 		}
 
@@ -275,7 +277,7 @@ class Widget extends \Widget {
 					throw new SelectriException('data not browsable');
 				}
 
-				$key = \Input::post('striKey');
+				$key = Input::post('striKey');
 				strlen($key) || $key = null;
 				list($level, $start) = $this->getData()->browseFrom($key);
 
@@ -288,7 +290,7 @@ class Widget extends \Widget {
 					throw new SelectriException('data not browsable');
 				}
 
-				$key = \Input::post('striKey');
+				$key = Input::post('striKey');
 				strlen($key) || $key = null;
 				$level = $this->getData()->browseTo($key);
 
@@ -301,9 +303,9 @@ class Widget extends \Widget {
 					throw new SelectriException('data not browsable');
 				}
 
-				$key = \Input::post('striKey');
+				$key = Input::post('striKey');
 				$unfolded = $this->getUnfolded();
-				if(\Input::post('striOpen')) {
+				if(Input::post('striOpen')) {
 					$unfolded[] = $key;
 				} else {
 					$unfolded = array_diff($unfolded, array($key));
@@ -319,7 +321,7 @@ class Widget extends \Widget {
 					throw new SelectriException('data not searchable');
 				}
 
-				$search = \Input::post('striSearch');
+				$search = Input::post('striSearch');
 				$response = $this->generateSearch($search);
 				$response['search'] = $search;
 				break;

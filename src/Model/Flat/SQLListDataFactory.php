@@ -2,19 +2,20 @@
 
 namespace Hofff\Contao\Selectri\Model\Flat;
 
-use Hofff\Contao\Selectri\Model\DataFactory;
+use Contao\Database;
 use Hofff\Contao\Selectri\Exception\SelectriException;
-use Hofff\Contao\Selectri\Widget;
-use Hofff\Contao\Selectri\Util\SQLUtil;
-use Hofff\Contao\Selectri\Util\LabelFormatter;
-use Hofff\Contao\Selectri\Util\Icons;
-use Hofff\Contao\Selectri\Model\Node;
 use Hofff\Contao\Selectri\Model\Data;
+use Hofff\Contao\Selectri\Model\DataFactory;
+use Hofff\Contao\Selectri\Model\Node;
+use Hofff\Contao\Selectri\Util\Icons;
+use Hofff\Contao\Selectri\Util\LabelFormatter;
+use Hofff\Contao\Selectri\Util\SQLUtil;
+use Hofff\Contao\Selectri\Widget;
 
 class SQLListDataFactory implements DataFactory {
 
 	/**
-	 * @var \Database
+	 * @var Database
 	 */
 	private $db;
 
@@ -26,7 +27,7 @@ class SQLListDataFactory implements DataFactory {
 	/**
 	 */
 	public function __construct() {
-		$this->db = \Database::getInstance();
+		$this->db = Database::getInstance();
 		$this->cfg = new SQLListDataConfig;
 		$this->cfg->setKeyColumn('id');
 	}
@@ -60,7 +61,7 @@ class SQLListDataFactory implements DataFactory {
 	}
 
 	/**
-	 * @return \Database
+	 * @return Database
 	 */
 	public function getDatabase() {
 		return $this->db;

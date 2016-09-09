@@ -2,8 +2,10 @@
 
 namespace Hofff\Contao\Selectri\Util;
 
-use Hofff\Contao\Selectri\Model\Node;
+use Contao\Backend;
+use Contao\Controller;
 use Hofff\Contao\Selectri\Model\Data;
+use Hofff\Contao\Selectri\Model\Node;
 
 class Icons {
 
@@ -109,7 +111,7 @@ class Icons {
 			return TL_ASSETS_URL . 'assets/contao/images/' . $icon;
 		}
 
-		return TL_FILES_URL . 'system/themes/' . \Backend::getTheme() . '/images/' . $icon;
+		return TL_FILES_URL . 'system/themes/' . Backend::getTheme() . '/images/' . $icon;
 	}
 
 	/**
@@ -118,7 +120,7 @@ class Icons {
 	 * @return string
 	 */
 	public static function getPageIcon(Node $node, Data $data) {
-		return self::getIconPath(\Controller::getPageStatusIcon((object) $node->getData()));
+		return self::getIconPath(Controller::getPageStatusIcon((object) $node->getData()));
 	}
 
 }

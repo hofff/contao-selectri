@@ -2,6 +2,8 @@
 
 namespace Hofff\Contao\Selectri\Util;
 
+use Contao\Database;
+
 class SQLUtil {
 
 	/**
@@ -13,12 +15,12 @@ class SQLUtil {
 	}
 
 	/**
-	 * @param \Database $db
+	 * @param Database $db
 	 * @param string $table
 	 * @param string $keyColumn
 	 * @return LabelFormatter
 	 */
-	public static function createLabelFormatter(\Database $db, $table, $keyColumn) {
+	public static function createLabelFormatter(Database $db, $table, $keyColumn) {
 		$fields = array();
 		if($db->fieldExists('name', $table)) {
 			$fields[] = 'name';

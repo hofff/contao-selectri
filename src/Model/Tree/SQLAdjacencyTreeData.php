@@ -2,16 +2,17 @@
 
 namespace Hofff\Contao\Selectri\Model\Tree;
 
+use Contao\Database;
 use Hofff\Contao\Selectri\Exception\SelectriException;
-use Hofff\Contao\Selectri\Widget;
-use Hofff\Contao\Selectri\Util\SQLUtil;
 use Hofff\Contao\Selectri\Model\AbstractData;
 use Hofff\Contao\Selectri\Util\SearchUtil;
+use Hofff\Contao\Selectri\Util\SQLUtil;
+use Hofff\Contao\Selectri\Widget;
 
 class SQLAdjacencyTreeData extends AbstractData {
 
 	/**
-	 * @var \Database
+	 * @var Database
 	 */
 	protected $db;
 
@@ -27,10 +28,10 @@ class SQLAdjacencyTreeData extends AbstractData {
 
 	/**
 	 * @param Widget $widget
-	 * @param \Database $db
+	 * @param Database $db
 	 * @param SQLAdjacencyTreeDataConfig $cfg
 	 */
-	public function __construct(Widget $widget, \Database $db, SQLAdjacencyTreeDataConfig $cfg) {
+	public function __construct(Widget $widget, Database $db, SQLAdjacencyTreeDataConfig $cfg) {
 		parent::__construct($widget);
 		$this->db = $db;
 		$this->cfg = $cfg;
