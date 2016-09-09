@@ -1,45 +1,49 @@
 {
-	"name" : "hofff/contao-selectri",
-	"description" : "A selection widget for large structured option sets.",
-	"keywords" : [
+	"name": "hofff/contao-selectri",
+	"description": "A selection widget for large structured option sets.",
+	"keywords": [
 		"widget",
 		"select",
 		"tree",
 		"contao"
 	],
-	"type" : "contao-module",
-	"homepage" : "https://hofff.com/",
-	"license" : "LGPL-3.0+",
-	"authors" : [{
-			"name" : "Oliver Hoff",
-			"email" : "oliver@hofff.com",
-			"homepage" : "https://hofff.com/",
-			"role" : "Developer"
+	"type": "contao-module",
+	"homepage": "https://hofff.com/",
+	"license": "LGPL-3.0+",
+	"authors": [
+		{
+			"name": "Oliver Hoff",
+			"email": "oliver@hofff.com",
+			"homepage": "https://hofff.com/",
+			"role": "Developer"
 		}
 	],
 	"support" : {
-		"email" : "info@hofff.com",
-		"issues" : "https://github.com/hofff/contao-selectri/issues",
-		"source" : "https://github.com/hofff/contao-selectri"
+		"email": "info@hofff.com",
+		"issues": "https://github.com/hofff/contao-selectri/issues",
+		"source": "https://github.com/hofff/contao-selectri"
 	},
-	"require" : {
-		"php" : ">=5.4",
-		"contao/core" : "~3.2",
-		"contao-community-alliance/composer-plugin" : "~2.0"
+	"config": {
+		"preferred-install": "dist"
 	},
-	"replace" : {
-		"backboneit/contao-selectri" : "self.version",
-		"contao-legacy/backboneit_selectri" : "self.version"
+	"require": {
+		"php": "^5.6 || ^7.0",
+		"contao/core": "^3.5",
+		"contao-community-alliance/composer-plugin": "^2.0"
 	},
-	"autoload" : {
-		"psr-0" : {
-			"Hofff" : "src"
+	"replace": {
+		"backboneit/contao-selectri": "self.version",
+		"contao-legacy/backboneit_selectri": "self.version"
+	},
+	"autoload": {
+		"psr-0": {
+			"Hofff": "src"
 		}
 	},
-	"extra" : {
-		"contao" : {
-			"sources" : {
-				"contao-module" : "system/modules/hofff_selectri"
+	"extra": {
+		"contao": {
+			"sources": {
+				"contao-module": "system/modules/hofff_selectri"
 			}
 		}
 	}
