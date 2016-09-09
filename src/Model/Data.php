@@ -2,8 +2,8 @@
 
 namespace Hofff\Contao\Selectri\Model;
 
-use Hofff\Contao\Selectri\Widget;
 use Hofff\Contao\Selectri\Exception\SelectriException;
+use Hofff\Contao\Selectri\Widget;
 
 interface Data {
 

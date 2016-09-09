@@ -2,8 +2,6 @@
 
 namespace Hofff\Contao\Selectri\Model;
 
-use Hofff\Contao\Selectri\Widget;
-
 abstract class DataDelegate implements Data {
 
 	/**
