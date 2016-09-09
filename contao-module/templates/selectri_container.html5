@@ -83,6 +83,7 @@ $options['openPathTitle'] = $GLOBALS['TL_LANG']['stri']['openPathTitle'];
 
 <?php if($this->hasSuggestions()): ?>
   <div class="striSuggestions">
+    <p><?php echo $this->getSuggestionsLabel(); ?></p>
     <ol>
 <?php foreach($this->getData()->suggest($this->getSuggestLimit()) as $node): ?>
     <li>

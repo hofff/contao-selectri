@@ -15,6 +15,7 @@ class Widget extends \Widget {
 	protected $max = 1;
 	protected $searchLimit = 20;
 	protected $suggestLimit = 20;
+	protected $suggestionsLabel;
 	protected $disableBrowsing = false;
 	protected $disableSearching = false;
 	protected $disableSuggestions = false;
@@ -175,6 +176,7 @@ class Widget extends \Widget {
 			'max'					=> 'setMaxSelected',
 			'searchLimit'			=> 'setSearchLimit',
 			'suggestLimit'			=> 'setSuggestLimit',
+			'suggestionsLabel'		=> 'setSuggestionsLabel',
 			'jsOptions'				=> 'setJSOptions',
 			'disableBrowsing'		=> 'setDisableBrowsing',
 			'disableSearching'		=> 'setDisableSearching',
@@ -493,6 +495,16 @@ class Widget extends \Widget {
 	public function setSuggestLimit($limit) {
 		$this->suggestLimit = max(1, intval($limit));
 		return $this;
+	}
+
+	public function getSuggestionsLabel() {
+		return strlen($this->suggestionsLabel)
+			? $this->suggestionsLabel
+			: $GLOBALS['TL_LANG']['stri']['suggestions'];
+	}
+
+	public function setSuggestionsLabel($label) {
+		$this->suggestionsLabel = (string) $label;
 	}
 
 	public function isBrowsable() {

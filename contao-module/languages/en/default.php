@@ -20,4 +20,6 @@ $GLOBALS['TL_LANG']['stri']['clearSelectionTitle']     = 'Click while holding do
 $GLOBALS['TL_LANG']['stri']['tree']                    = 'Browse options';
 $GLOBALS['TL_LANG']['stri']['treeTitle']               = 'Click to toggle';
 
+$GLOBALS['TL_LANG']['stri']['suggestions']             = 'Suggestions';
+
 $GLOBALS['TL_LANG']['stri']['noOptions']               = 'No selectable options available';

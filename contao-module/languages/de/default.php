@@ -18,4 +18,6 @@ $GLOBALS['TL_LANG']['stri']['clearSelectionTitle']     = 'Klicken Sie mit gedrü
 $GLOBALS['TL_LANG']['stri']['tree']                    = 'Durchsuchen';
 $GLOBALS['TL_LANG']['stri']['treeTitle']               = 'Klicken Sie hier, um den Baum zu durchsuchen';
 
+$GLOBALS['TL_LANG']['stri']['suggestions']             = 'Vorschläge';
+
 $GLOBALS['TL_LANG']['stri']['noOptions']               = 'Keine auswählbaren Optionen vorhanden.';

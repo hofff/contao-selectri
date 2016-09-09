@@ -261,6 +261,10 @@ parents children container */
 	height: 100%;
 }
 
+.striSuggestions > p {
+	margin: 0 0 3px;
+}
+
 .striMessages {
 
 }
