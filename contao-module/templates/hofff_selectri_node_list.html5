@@ -18,7 +18,7 @@
               <?php foreach($node->getPathIterator() as $pathNode): ?>
                 <li class="striPathNode" data-stri-key="<?= specialchars($pathNode->getKey()) ?>">
                   <div class="striLabel">
-                    <a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['stri']['pathTitle'] ?>">
+                    <a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['path_title'] ?>">
                       <img class="striIcon" src="<?= specialchars($pathNode->getIcon()) ?>" alt="" />
                       <?= $pathNode->getLabel() ?>
                     </a>
@@ -30,19 +30,19 @@
         <?php endif; ?>
 
         <?php if($this->widget->getSort() == 'list'): ?>
-          <a href="#" class="striHandle striDrag" title="<?= $GLOBALS['TL_LANG']['stri']['sortTitle'] ?>">
-            <?= $GLOBALS['TL_LANG']['stri']['sort'] ?>
+          <a href="#" class="striHandle striDrag" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['sort_title'] ?>">
+            <?= $GLOBALS['TL_LANG']['hofff_selectri']['sort'] ?>
           </a>
         <?php endif; ?>
 
         <div class="striLabel">
           <?php if(!$this->children): ?>
-            <a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['stri']['openPathTitle'] ?>">
+            <a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['open_path_title'] ?>">
               <img class="striIcon" src="<?= specialchars($node->getIcon()) ?>" alt="" />
               <?= $node->getLabel() ?>
             </a>
           <?php elseif($children): ?>
-            <a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['stri']['toggleTitle'] ?>">
+            <a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['toggle_title'] ?>">
               <img class="striIcon" src="<?= specialchars($node->getIcon()) ?>" alt="" />
               <?= $node->getLabel() ?>
             </a>
@@ -58,10 +58,10 @@
 
         <?php if($selectable): ?>
           <div class="striSelect">
-            <a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['stri']['selectTitle'] ?>"><?= $GLOBALS['TL_LANG']['stri']['select'] ?></a>
+            <a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['select_title'] ?>"><?= $GLOBALS['TL_LANG']['hofff_selectri']['select'] ?></a>
           </div>
           <div class="striDeselect">
-            <a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['stri']['deselectTitle'] ?>"><?= $GLOBALS['TL_LANG']['stri']['deselect'] ?></a>
+            <a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['deselect_title'] ?>"><?= $GLOBALS['TL_LANG']['hofff_selectri']['deselect'] ?></a>
           </div>
         <?php endif; ?>
 

@@ -7,7 +7,7 @@ $options = [];
 $options['name']			= $this->getInputName();
 $options['min']				= $this->getMinSelected();
 $options['max']				= $this->getMaxSelected();
-$options['openPathTitle']	= $GLOBALS['TL_LANG']['stri']['openPathTitle'];
+$options['openPathTitle']	= $GLOBALS['TL_LANG']['hofff_selectri']['open_path_title'];
 $options = array_merge($options, $this->getJSOptions());
 
 ?>
@@ -30,15 +30,15 @@ $options = array_merge($options, $this->getJSOptions());
   <div class="striTools">
     <?php if($this->isSearchable()): ?>
       <div class="striSearch">
-        <input type="text" placeholder="<?= $GLOBALS['TL_LANG']['stri']['search'] ?>" />
+        <input type="text" placeholder="<?= $GLOBALS['TL_LANG']['hofff_selectri']['search'] ?>" />
         <a class="striClearSearch striHandle" href="#"
-            title="<?= $GLOBALS['TL_LANG']['stri']['clearSearchTitle'] ?>"
-        ><?= $GLOBALS['TL_LANG']['stri']['clearSearch'] ?></a>
+            title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['clear_search_title'] ?>"
+        ><?= $GLOBALS['TL_LANG']['hofff_selectri']['clear_search'] ?></a>
       </div>
     <?php endif; ?>
-    <div class="striClearSelection"><a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['stri']['clearSelectionTitle']; ?>"><?php echo $GLOBALS['TL_LANG']['stri']['clearSelection'] ?></a></div>
+    <div class="striClearSelection"><a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['clear_selection_title']; ?>"><?php echo $GLOBALS['TL_LANG']['hofff_selectri']['clear_selection'] ?></a></div>
     <?php if($this->isBrowsable()): ?>
-      <div class="striToggle"><a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['stri']['treeTitle']; ?>"><?php echo $GLOBALS['TL_LANG']['stri']['tree'] ?></a></div>
+      <div class="striToggle"><a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['tree_title']; ?>"><?php echo $GLOBALS['TL_LANG']['hofff_selectri']['tree'] ?></a></div>
     <?php endif; ?>
   </div>
 

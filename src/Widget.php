@@ -3,6 +3,7 @@
 namespace Hofff\Contao\Selectri;
 
 use Contao\Input;
+use Contao\System;
 use Contao\Widget as BaseWidget;
 use Hofff\Contao\Selectri\Exception\SelectriException;
 use Hofff\Contao\Selectri\Model\Data;
@@ -267,7 +268,7 @@ class Widget extends BaseWidget {
 
 		if(count($selection) < $this->getMinSelected()) {
 			if($this->getMinSelected() > 1) {
-				$this->addError(sprintf($GLOBALS['TL_LANG']['stri']['errMin'],
+				$this->addError(sprintf($GLOBALS['TL_LANG']['hofff_selectri']['err_min'],
 					$this->label,
 					$this->getMinSelected()
 				));
@@ -278,7 +279,7 @@ class Widget extends BaseWidget {
 			}
 
 		} elseif(count($selection) > $this->getMaxSelected()) {
-			$this->addError(sprintf($GLOBALS['TL_LANG']['stri']['errMax'],
+			$this->addError(sprintf($GLOBALS['TL_LANG']['hofff_selectri']['err_max'],
 				$this->label,
 				$this->getMaxSelected()
 			));
@@ -300,6 +301,8 @@ class Widget extends BaseWidget {
 	 * @see \Contao\Widget::parse()
 	 */
 	public function parse($attrs = null) {
+		System::loadLanguageFile('hofff_selectri');
+		
 		if(!is_array($attrs) || empty($attrs['noAjax'])) {
 			$this->generateAjax();
 		}
@@ -361,7 +364,7 @@ class Widget extends BaseWidget {
 		$response['action'] = 'levels';
 		$response['key'] = $key;
 		$response['empty'] = !$nodes;
-		$response['empty'] && $response['messages'][] = $GLOBALS['TL_LANG']['stri']['noOptions'];
+		$response['empty'] && $response['messages'][] = $GLOBALS['TL_LANG']['hofff_selectri']['no_options'];
 		$this->renderLevels($response, $nodes, $start);
 
 		return $response;
@@ -387,7 +390,7 @@ class Widget extends BaseWidget {
 		$response['action'] = 'path';
 		$response['key'] = $key;
 		$response['empty'] = !$nodes;
-		$response['empty'] && $response['messages'][] = $GLOBALS['TL_LANG']['stri']['noOptions'];
+		$response['empty'] && $response['messages'][] = $GLOBALS['TL_LANG']['hofff_selectri']['no_options'];
 		$this->renderLevels($response, $nodes, null);
 
 		return $response;
@@ -453,7 +456,7 @@ class Widget extends BaseWidget {
 			]);
 
 		} else {
-			$response['messages'][] = sprintf($GLOBALS['TL_LANG']['stri']['searchEmpty'], $search);
+			$response['messages'][] = sprintf($GLOBALS['TL_LANG']['hofff_selectri']['search_empty'], $search);
 		}
 
 		return $response;
@@ -728,7 +731,7 @@ class Widget extends BaseWidget {
 	public function getSuggestionsLabel() {
 		return strlen($this->suggestionsLabel)
 			? $this->suggestionsLabel
-			: $GLOBALS['TL_LANG']['stri']['suggestions'];
+			: $GLOBALS['TL_LANG']['hofff_selectri']['suggestions'];
 	}
 
 	/**
