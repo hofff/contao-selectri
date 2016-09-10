@@ -1,7 +1,7 @@
 <?php
 
-$GLOBALS['TL_JAVASCRIPT'][]	= 'system/modules/hofff_selectri/assets/js/selectri.js';
-$GLOBALS['TL_CSS'][]		= 'system/modules/hofff_selectri/assets/css/selectri.css';
+$GLOBALS['TL_JAVASCRIPT'][]	= 'system/modules/hofff_selectri/assets/js/hofff_selectri.js';
+$GLOBALS['TL_CSS'][]		= 'system/modules/hofff_selectri/assets/css/hofff_selectri.css';
 
 $options = [];
 $options['name']			= $this->getInputName();
