@@ -15,7 +15,7 @@ $options = array_merge($options, $this->getJSOptions());
 
 <fieldset id="<?= $this->id ?>"
     class="striWidget striAuto <?= $this->class ?>"
-    data-stri-options="<?= specialchars(json_encode($options)) ?>"
+    data-hofff-selectri-options="<?= specialchars(json_encode($options)) ?>"
 >
 
   <?php $selectedNodes = $this->getSelectedNodes(); ?>

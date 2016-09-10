@@ -12,7 +12,7 @@ var Selectri = {},
 	OCCLUDE = "bbit.mt.cto.Selectri",
 	FN_HL = "bbit.mt.cto.Selectri.hl",
 	FN_FADE = "bbit.mt.cto.Selectri.fade",
-	ATTR_KEY = "data-stri-key",
+	ATTR_KEY = "data-hofff-selectri-key",
 	reservedAttributeSelectorValueChars = /(["\]])/g,
 	escapeAttributeSelectorValue = function(value) { return value.replace(reservedAttributeSelectorValueChars, "\\$1"); },
 	fixSortables = new Sortables([], {}).options.unDraggableTags
@@ -48,7 +48,7 @@ Selectri.initialize = function(container, options, detached) {
 	if(occluded) {
 		self.setOptions(options);
 	} else {
-		if(options === TRUE) options = JSON.decode(self.container.get("data-stri-options"));
+		if(options === TRUE) options = JSON.decode(self.container.get("data-hofff-selectri-options"));
 		self.setOptions(options);
 		self.selection = self.container.getElement(".striSelection > ol");
 		self.input = self.container.getElement(".striTools .striSearch input");

@@ -5,7 +5,7 @@
 
     <li class="<?php if($this->selected) echo 'striSelected'; if($children) echo ' striHasChildren'; ?>">
 
-      <div class="striNode" data-stri-key="<?= specialchars($node->getKey()) ?>">
+      <div class="striNode" data-hofff-selectri-key="<?= specialchars($node->getKey()) ?>">
         <?php if($this->selected): ?>
           <input type="hidden" value="<?= specialchars($node->getKey()) ?>" name="<?= $this->widget->getInputName() ?>" />
         <?php elseif($selectable): ?>
@@ -16,7 +16,7 @@
           <div class="striPath">
             <ol>
               <?php foreach($node->getPathIterator() as $pathNode): ?>
-                <li class="striPathNode" data-stri-key="<?= specialchars($pathNode->getKey()) ?>">
+                <li class="striPathNode" data-hofff-selectri-key="<?= specialchars($pathNode->getKey()) ?>">
                   <div class="striLabel">
                     <a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['path_title'] ?>">
                       <img class="striIcon" src="<?= specialchars($pathNode->getIcon()) ?>" alt="" />
