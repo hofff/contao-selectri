@@ -1,0 +1,70 @@
+<?php
+
+$GLOBALS['TL_JAVASCRIPT'][]	= 'system/modules/hofff_selectri/assets/js/selectri.js';
+$GLOBALS['TL_CSS'][]		= 'system/modules/hofff_selectri/assets/css/selectri.css';
+
+$options = [];
+$options['name']			= $this->getInputName();
+$options['min']				= $this->getMinSelected();
+$options['max']				= $this->getMaxSelected();
+$options['openPathTitle']	= $GLOBALS['TL_LANG']['stri']['openPathTitle'];
+$options = array_merge($options, $this->getJSOptions());
+
+?>
+<h3><?= $this->generateLabel(), $this->xlabel ?></h3>
+
+<fieldset id="<?= $this->id ?>"
+    class="striWidget striAuto <?= $this->class ?>"
+    data-stri-options="<?= specialchars(json_encode($options)) ?>"
+>
+
+  <?php $selectedNodes = $this->getSelectedNodes(); ?>
+  <div class="striSelection<?php if($selectedNodes) echo ' striHasSelection'; ?>">
+    <?php $this->insert('hofff_selectri_node_list', [
+      'widget' => $this,
+      'nodes' => $selectedNodes,
+      'selected' => true,
+    ]); ?>
+  </div>
+
+  <div class="striTools">
+    <?php if($this->isSearchable()): ?>
+      <div class="striSearch">
+        <input type="text" placeholder="<?= $GLOBALS['TL_LANG']['stri']['search'] ?>" />
+        <a class="striClearSearch striHandle" href="#"
+            title="<?= $GLOBALS['TL_LANG']['stri']['clearSearchTitle'] ?>"
+        ><?= $GLOBALS['TL_LANG']['stri']['clearSearch'] ?></a>
+      </div>
+    <?php endif; ?>
+    <div class="striClearSelection"><a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['stri']['clearSelectionTitle']; ?>"><?php echo $GLOBALS['TL_LANG']['stri']['clearSelection'] ?></a></div>
+    <?php if($this->isBrowsable()): ?>
+      <div class="striToggle"><a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['stri']['treeTitle']; ?>"><?php echo $GLOBALS['TL_LANG']['stri']['tree'] ?></a></div>
+    <?php endif; ?>
+  </div>
+
+  <div class="striMessages"></div>
+
+  <?php if($this->isSearchable()): ?>
+    <div class="striResult"></div>
+  <?php endif; ?>
+
+  <?php $suggestedNodes = $this->getSuggestedNodes(); ?>
+  <?php if($suggestedNodes): ?>
+    <div class="striSuggestions">
+      <p><?= $this->getSuggestionsLabel() ?></p>
+      <?php $this->insert('hofff_selectri_node_list', [
+        'widget' => $this,
+        'nodes' => $suggestedNodes,
+      ]); ?>
+    </div>
+  <?php endif; ?>
+
+  <?php if($this->isBrowsable()): ?>
+    <div class="striTree<?php if($this->isOpen()) echo ' striOpen'; ?>"
+        style="height:<?= $this->getHeight() ?>;"
+    ></div>
+  <?php endif; ?>
+
+</fieldset>
+
+<?= $this->getErrorAsHTML() ?>

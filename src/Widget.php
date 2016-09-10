@@ -7,31 +7,95 @@ use Contao\Widget as BaseWidget;
 use Hofff\Contao\Selectri\Exception\SelectriException;
 use Hofff\Contao\Selectri\Model\Data;
 use Hofff\Contao\Selectri\Model\DataFactory;
+use Hofff\Contao\Selectri\Model\Node;
+use Hofff\Contao\Selectri\Util\ContaoUtil;
 
+/**
+ * @author Oliver Hoff <oliver@hofff.com>
+ */
 class Widget extends BaseWidget {
 
-	protected $strTemplate = 'be_widget';
-
+	/**
+	 * @var Data
+	 */
 	protected $data;
+
+	/**
+	 * @var integer
+	 */
 	protected $min = 0;
+
+	/**
+	 * @var integer
+	 */
 	protected $max = 1;
+
+	/**
+	 * @var integer
+	 */
 	protected $searchLimit = 20;
+
+	/**
+	 * @var integer
+	 */
 	protected $suggestLimit = 20;
+
+	/**
+	 * @var string
+	 */
 	protected $suggestionsLabel;
+
+	/**
+	 * @var boolean
+	 */
 	protected $disableBrowsing = false;
+
+	/**
+	 * @var boolean
+	 */
 	protected $disableSearching = false;
+
+	/**
+	 * @var boolean
+	 */
 	protected $disableSuggestions = false;
-	protected $jsOptions = array();
+
+	/**
+	 * @var array
+	 */
+	protected $jsOptions = [];
+
+	/**
+	 * @var string
+	 */
 	protected $sort = 'list';
+
+	/**
+	 * @var string
+	 */
 	protected $height;
 
+	/**
+	 * @var string|null
+	 */
 	protected $table;
+
+	/**
+	 * @var string|null
+	 */
 	protected $field;
 
+	/**
+	 * @param array|null|boolean $attrs
+	 */
 	public function __construct($attrs = false) {
 		parent::__construct($attrs);
+		$this->strTemplate = 'hofff_selectri_widget';
 	}
 
+	/**
+	 * @see \Contao\Widget::__get()
+	 */
 	public function __get($key) {
 		switch($key) {
 			case 'value':
@@ -76,6 +140,9 @@ class Widget extends BaseWidget {
 		}
 	}
 
+	/**
+	 * @see \Contao\Widget::__set()
+	 */
 	public function __set($key, $value) {
 		switch ($key) {
 			case 'value':
@@ -84,11 +151,11 @@ class Widget extends BaseWidget {
 				if(!is_array($value)) {
 					$value = $this->findInSet ? explode(',', $value) : (array) $value;
 				}
-				$converted = array();
+				$converted = [];
 				if($this->canonical) {
 					foreach($value as $key => $row) {
 						if(!is_array($row)) {
-							$converted[$row] = array('_key' => $row);
+							$converted[$row] = [ '_key' => $row ];
 						} else {
 							isset($row['_key']) ? $key = $row['_key'] : $row['_key'] = $key;
 							$converted[$key] = $row;
@@ -96,7 +163,7 @@ class Widget extends BaseWidget {
 					}
 				} else {
 					foreach($value as $key) {
-						$converted[$key] = array('_key' => $key);
+						$converted[$key] = [ '_key' => $key ];
 					}
 				}
 				$this->setValue($converted);
@@ -134,44 +201,21 @@ class Widget extends BaseWidget {
 		}
 	}
 
+	/**
+	 * @see \Contao\Widget::addAttributes()
+	 */
 	public function addAttributes($attrs) {
 		if(!is_array($attrs)) {
 			return;
 		}
 
-		if(isset($attrs['data'])) {
-			$data = $attrs['data'];
+		$this->createDataFromAttributes($attrs);
+		unset($attrs['data']);
+		unset($attrs['dataFactory']);
 
-			if(is_callable($data)) {
-				$data = call_user_func($data, $this, $attrs);
-			}
-
-			if(!is_object($data)) {
-				if(!strlen($data)) {
-					$data = new SelectriContaoTableDataFactory();
-				} elseif(is_subclass_of($data, 'Hofff\\Contao\\Selectri\\Model\\DataFactory')) {
-					$data = new $data();
-				} else {
-					throw new SelectriException('invalid selectri data factory configuration');
-				}
-				$data->setParameters($attrs);
-				$this->setData($data->createData($this));
-
-			} elseif($data instanceof DataFactory) {
-				$this->setData($data->createData($this));
-
-			} else {
-				throw new SelectriException('invalid selectri data factory configuration');
-			}
-
-			unset($attrs['data']);
-		}
-
-		isset($attrs['mandatory']) && $this->mandatory = $attrs['mandatory'];
-		isset($attrs['multiple']) && $this->multiple = $attrs['multiple'];
-		unset($attrs['mandatory'], $attrs['multiple']);
-
-		foreach(array(
+		foreach([
+			'mandatory'				=> false,
+			'multiple'				=> false,
 			'height'				=> 'setHeight',
 			'sort'					=> 'setSort',
 			'min'					=> 'setMinSelected',
@@ -183,14 +227,24 @@ class Widget extends BaseWidget {
 			'disableBrowsing'		=> 'setDisableBrowsing',
 			'disableSearching'		=> 'setDisableSearching',
 			'disableSuggestions'	=> 'setDisableSuggestions',
-		) as $key => $method) if(isset($attrs[$key])) {
-			$this->$method($attrs[$key]);
+		] as $key => $method) {
+			if(!isset($attrs[$key])) {
+				continue;
+			}
+			if($method) {
+				$this->$method($attrs[$key]);
+			} else {
+				$this->$key = $attrs[$key];
+			}
 			unset($attrs[$key]);
 		}
 
 		parent::addAttributes($attrs);
 	}
 
+	/**
+	 * @see \Contao\Widget::validate()
+	 */
 	public function validate() {
 		$name = $this->name;
 		$match = null;
@@ -242,150 +296,200 @@ class Widget extends BaseWidget {
 		$this->blnSubmitInput = true;
 	}
 
-	public function generate() {
-		$data = $this->getData();
-		if(!$data) {
-			throw new SelectriException('no selectri data configuration set');
-		}
-		$data->validate();
-
-		if(Input::get('striID') == $this->strId) {
-			$action = Input::get('striAction');
-			return $action ? $this->generateAjax($action) : '';
+	/**
+	 * @see \Contao\Widget::parse()
+	 */
+	public function parse($attrs = null) {
+		if(!is_array($attrs) || empty($attrs['noAjax'])) {
+			$this->generateAjax();
 		}
 
-		$GLOBALS['TL_JAVASCRIPT']['selectri.js'] = 'system/modules/hofff_selectri/assets/js/selectri.js';
-		$GLOBALS['TL_CSS']['selectri.css'] = 'system/modules/hofff_selectri/assets/css/selectri.css';
+		$this->checkData();
 
-		$options = array(
-			'name' => $this->getInputName(),
-			'min' => $this->getMinSelected(),
-			'max' => $this->getMaxSelected()
-		);
-		$options = array_merge($options, $this->getJSOptions());
-
-		ob_start();
-		include $this->getTemplate('selectri_container');
-		return ob_get_clean();
+		return parent::parse($attrs);
 	}
 
-	public function generateAjax($action) {
-		while(ob_end_clean());
-		switch($action) {
-			case 'levels':
-				if(!$this->getData()->isBrowsable()) {
-					throw new SelectriException('data not browsable');
-				}
+	/**
+	 * @see \Contao\Widget::generate()
+	 */
+	public function generate() {
+		return $this->parse([ 'noAjax' => true ]);
+	}
 
-				$key = Input::post('striKey');
-				strlen($key) || $key = null;
-				list($level, $start) = $this->getData()->browseFrom($key);
-
-				$response = $this->generateLevels($level, $start);
-				$response['key'] = $key;
-				break;
-
-			case 'path':
-				if(!$this->getData()->isBrowsable()) {
-					throw new SelectriException('data not browsable');
-				}
-
-				$key = Input::post('striKey');
-				strlen($key) || $key = null;
-				$level = $this->getData()->browseTo($key);
-
-				$response = $this->generateLevels($level);
-				$response['key'] = $key;
-				break;
-
-			case 'toggle':
-				if(!$this->getData()->isBrowsable()) {
-					throw new SelectriException('data not browsable');
-				}
-
-				$key = Input::post('striKey');
-				$unfolded = $this->getUnfolded();
-				if(Input::post('striOpen')) {
-					$unfolded[] = $key;
-				} else {
-					$unfolded = array_diff($unfolded, array($key));
-				}
-				$this->setUnfolded($unfolded);
-
-				$response = array();
-				$response['key'] = $key;
-				break;
-
-			case 'search':
-				if(!$this->getData()->isSearchable()) {
-					throw new SelectriException('data not searchable');
-				}
-
-				$search = Input::post('striSearch');
-				$response = $this->generateSearch($search);
-				$response['search'] = $search;
-				break;
+	/**
+	 * @return void
+	 */
+	public function generateAjax() {
+		if(Input::get('striID') != $this->strId) {
+			return;
 		}
 
-		$response['action'] = $action;
-		$response['token'] = REQUEST_TOKEN;
+		while(ob_end_clean());
 
-		header('Content-Type: application/json');
-		echo json_encode($response);
+		$this->checkData();
+
+		$action = Input::get('striAction');
+		$method = 'generateAjax' . ucfirst($action);
+		$response = method_exists($this, $method) ? $this->$method() : null;
+
+		if($response === null) {
+			header('HTTP/1.1 400 Bad Request');
+
+		} else {
+			header('Content-Type: application/json');
+			echo json_encode($response);
+		}
+
 		exit;
 	}
 
-	protected function renderChildren($level) {
-		ob_start();
-		include $this->getTemplate('selectri_children');
-		return ob_get_clean();
+	/**
+	 * @return array|null
+	 */
+	public function generateAjaxLevels() {
+		if(!$this->getData()->isBrowsable()) {
+			return null;
+		}
+
+		$key = Input::post('striKey');
+		strlen($key) || $key = null;
+
+		list($nodes, $start) = $this->getData()->browseFrom($key);
+		$nodes = iterator_to_array($nodes);
+
+		$response = [];
+		$response['action'] = 'levels';
+		$response['key'] = $key;
+		$response['empty'] = !$nodes;
+		$response['empty'] && $response['messages'][] = $GLOBALS['TL_LANG']['stri']['noOptions'];
+		$this->renderLevels($response, $nodes, $start);
+
+		return $response;
 	}
 
-	public function generateLevels($level, $start = null) {
-		if(!$level) {
-			return array('empty' => true, 'messages' => array($GLOBALS['TL_LANG']['stri']['noOptions']));
+	/**
+	 * @return array|null
+	 */
+	public function generateAjaxPath() {
+		if(!$this->getData()->isBrowsable()) {
+			return null;
 		}
 
-		if($start) {
-			$response['start'] = $start;
-			$insert = &$response['levels'][$start];
+		$key = Input::post('striKey');
+		if(!strlen($key)) {
+			return null;
+		}
+
+		$nodes = $this->getData()->browseTo($key);
+		$nodes = iterator_to_array($nodes);
+
+		$response = [];
+		$response['action'] = 'path';
+		$response['key'] = $key;
+		$response['empty'] = !$nodes;
+		$response['empty'] && $response['messages'][] = $GLOBALS['TL_LANG']['stri']['noOptions'];
+		$this->renderLevels($response, $nodes, null);
+
+		return $response;
+	}
+
+	/**
+	 * @return array|null
+	 */
+	public function generateAjaxToggle() {
+		if(!$this->getData()->isBrowsable()) {
+			return null;
+		}
+
+		$key = Input::post('striKey');
+		if(!strlen($key)) {
+			return null;
+		}
+
+		$open = (bool) Input::post('striOpen');
+
+		$unfolded = $this->getUnfolded();
+		if($open) {
+			$unfolded[] = $key;
 		} else {
-			$insert = &$response['first'];
+			$unfolded = array_diff($unfolded, [ $key ]);
+		}
+		$this->setUnfolded($unfolded);
+
+		$response = [];
+		$response['action']	= 'toggle';
+		$response['key']	= $key;
+		$response['open']	= $open;
+
+		return $response;
+	}
+
+	/**
+	 * @return array|null
+	 */
+	public function generateAjaxSearch() {
+		if(!$this->getData()->isSearchable()) {
+			return null;
 		}
 
-		$iterators = array();
-		for(;;) {
-			$insert = $this->renderChildren($level);
+		$search = Input::post('striSearch');
+		if(!strlen($search)) {
+			return null;
+		}
 
-			// push levels onto stack
-			foreach($level as $node) if($node->isOpen()) {
-				$iterators[] = array($node->getKey(), $node->getChildrenIterator());
-			}
+		$nodes = $this->getData()->search($search, $this->getSearchLimit());
+		$nodes = iterator_to_array($nodes);
+		$nodes = array_filter($nodes, function(Node $node) {
+			return $node->isSelectable();
+		});
 
-			// next non empty level iterator
-			do {
-				list($key, $level) = array_pop($iterators);
-				if(!$level) {
-					break 2;
-				}
-				$level->rewind();
-			} while(!$level->valid());
+		$response = [];
+		$response['action'] = 'search';
+		$response['search'] = $search;
+		if($nodes) {
+			$response['result'] = ContaoUtil::renderTemplate('hofff_selectri_node_list', [
+				'widget'	=> $this,
+				'nodes'		=> $nodes,
+			]);
 
-			$insert = &$response['levels'][strval($key)];
+		} else {
+			$response['messages'][] = sprintf($GLOBALS['TL_LANG']['stri']['searchEmpty'], $search);
 		}
 
 		return $response;
 	}
 
-	public function generateSearch($search) {
-		$result = $this->getData()->search($search, $this->getSearchLimit());
-		$result->rewind();
-		if(!$result->valid()) {
-			return array('messages' => array(sprintf($GLOBALS['TL_LANG']['stri']['searchEmpty'], $search)));
+	/**
+	 * @param array $response
+	 * @param array<Node> $nodes
+	 * @param string|null $key
+	 * @return void
+	 */
+	protected function renderLevels(array &$response, array $nodes, $key) {
+		if(!$nodes) {
+			return;
 		}
-		ob_start();
-		include $this->getTemplate('selectri_search');
-		return array('result' => ob_get_clean());
+
+		$content = ContaoUtil::renderTemplate('hofff_selectri_node_list', [
+			'widget'	=> $this,
+			'nodes'		=> $nodes,
+			'children'	=> true,
+		]);
+
+		if($key === null) {
+			$response['first'] = $content;
+		} else {
+			isset($response['start']) || $response['start'] = $key;
+			$response['levels'][$key] = $content;
+		}
+
+		foreach($nodes as $node) {
+			$node->isOpen() && $this->renderLevels(
+				$response,
+				iterator_to_array($node->getChildrenIterator()),
+				$node->getKey()
+			);
+		}
 	}
 
 	/**
@@ -403,46 +507,136 @@ class Widget extends BaseWidget {
 		$this->data = $data;
 	}
 
+	/**
+	 * @param array $attrs
+	 * @throws SelectriException
+	 * @return void
+	 */
+	protected function createDataFromAttributes(array $attrs) {
+		if(isset($attrs['dataFactory'])) {
+			$factory = $attrs['dataFactory'];
+		} elseif(isset($attrs['data'])) {
+			$factory = $attrs['data'];
+		} else {
+			return;
+		}
+
+		is_callable($factory) && $factory = call_user_func($factory, $this, $attrs);
+
+		if(is_scalar($factory) && is_a($factory, DataFactory::class, true)) {
+			$factory = new $factory;
+			$factory->setParameters($attrs);
+
+		} elseif(!$factory instanceof DataFactory) {
+			throw new SelectriException('invalid selectri data factory configuration');
+		}
+
+		$data = $factory->createData($this);
+		$this->setData($data);
+	}
+
+	/**
+	 * @throws SelectriException
+	 * @return void
+	 */
+	protected function checkData() {
+		$data = $this->getData();
+		if(!$data) {
+			throw new SelectriException('no selectri data set');
+		}
+		$data->validate();
+	}
+
+	/**
+	 * @return array<string, array>
+	 */
 	public function getValue() {
 		return $this->varValue;
 	}
 
+	/**
+	 * @param array<string, array> $value
+	 * @return void
+	 */
 	public function setValue($value) {
 		$this->varValue = $value;
-		return $this;
 	}
 
+	/**
+	 * @return array<Node>
+	 */
+	public function getSelectedNodes() {
+		$selection = $this->getData()->getNodes(array_keys($this->getValue()));
+		return iterator_to_array($selection);
+	}
+
+	/**
+	 * @return array<Node>
+	 */
+	public function getSuggestedNodes() {
+		if($this->isDisableSuggestions() || !$this->getData()->hasSuggestions()) {
+			return [];
+		}
+
+		$suggestions = $this->getData()->suggest($this->getSuggestLimit());
+
+		return iterator_to_array($suggestions);
+	}
+
+	/**
+	 * @return boolean
+	 */
 	public function isOpen() {
 		return $this->isBrowsable() && $this->mandatory && !$this->varValue;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getInputName() {
 		return $this->name . '[selected][]';
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getAdditionalInputBaseName() {
 		return $this->name . '[data]';
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getHeight() {
 		if(!strlen($this->height)) {
 			return 'auto';
 		}
-		if(preg_match('@^[1-9][0-9]*$@', $this->height)) {
+		if(ctype_digit($this->height)) {
 			return $this->height . 'px';
 		}
 		return $this->height;
 	}
 
+	/**
+	 * @param string $height
+	 * @return void
+	 */
 	public function setHeight($height) {
 		$this->height = $height;
-		return $this;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getSort() {
 		return $this->sort;
 	}
 
+	/**
+	 * @param string $sort
+	 * @throws SelectriException
+	 * @return void
+	 */
 	public function setSort($sort) {
 		if($sort === 'tree') {
 			throw new SelectriException('tree sortable not implemented');
@@ -451,134 +645,227 @@ class Widget extends BaseWidget {
 		} else {
 			$this->sort = 'preorder';
 		}
-		return $this;
 	}
 
+	/**
+	 * @return integer
+	 */
 	public function getMinSelected() {
 		return min($this->min, $this->getMaxSelected());
 	}
 
+	/**
+	 * @param integer $limit
+	 * @return void
+	 */
 	public function setMinSelected($min) {
 		$this->min = max(0, intval($min));
-		return $this;
 	}
 
+	/**
+	 * @return integer
+	 */
 	public function getMaxSelected() {
 		return $this->max;
 	}
 
+	/**
+	 * @param integer $limit
+	 * @return void
+	 */
 	public function setMaxSelected($max) {
 		$this->max = max(1, intval($max));
-		return $this;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getJSOptions() {
 		return $this->jsOptions;
 	}
 
+	/**
+	 * @param array $jsOptions
+	 * @return void
+	 */
 	public function setJSOptions($jsOptions) {
 		$this->jsOptions = (array) $jsOptions;
-		return $this;
 	}
 
+	/**
+	 * @return integer
+	 */
 	public function getSearchLimit() {
 		return $this->searchLimit;
 	}
 
+	/**
+	 * @param integer $limit
+	 * @return void
+	 */
 	public function setSearchLimit($limit) {
 		$this->searchLimit = max(1, intval($limit));
-		return $this;
 	}
 
+	/**
+	 * @return integer
+	 */
 	public function getSuggestLimit() {
 		return $this->suggestLimit;
 	}
 
+	/**
+	 * @param integer $limit
+	 * @return void
+	 */
 	public function setSuggestLimit($limit) {
 		$this->suggestLimit = max(1, intval($limit));
-		return $this;
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getSuggestionsLabel() {
 		return strlen($this->suggestionsLabel)
 			? $this->suggestionsLabel
 			: $GLOBALS['TL_LANG']['stri']['suggestions'];
 	}
 
+	/**
+	 * @param string $label
+	 * @return void
+	 */
 	public function setSuggestionsLabel($label) {
 		$this->suggestionsLabel = (string) $label;
 	}
 
+	/**
+	 * @return boolean
+	 */
 	public function isBrowsable() {
 		return $this->data->isBrowsable() && !$this->isDisableBrowsing();
 	}
 
+	/**
+	 * @return boolean
+	 */
 	public function isDisableBrowsing() {
 		return $this->disableBrowsing;
 	}
 
+	/**
+	 * @param boolean $disable
+	 * @return void
+	 */
 	public function setDisableBrowsing($disable) {
 		$this->disableBrowsing = (bool) $disable;
 	}
 
+	/**
+	 * @return boolean
+	 */
 	public function isSearchable() {
 		return $this->data->isSearchable() && !$this->isDisableSearching();
 	}
 
+	/**
+	 * @return boolean
+	 */
 	public function isDisableSearching() {
 		return $this->disableSearching;
 	}
 
+	/**
+	 * @param boolean $disable
+	 * @return void
+	 */
 	public function setDisableSearching($disable) {
 		$this->disableSearching = (bool) $disable;
 	}
 
-	public function hasSuggestions() {
-		return $this->data->hasSuggestions() && !$this->isDisableSuggestions();
-	}
-
+	/**
+	 * @return boolean
+	 */
 	public function isDisableSuggestions() {
 		return $this->disableSuggestions;
 	}
 
+	/**
+	 * @param boolean $disable
+	 * @return void
+	 */
 	public function setDisableSuggestions($disable) {
 		$this->disableSuggestions = (bool) $disable;
 	}
 
+	/**
+	 * @return boolean
+	 */
 	public function isDataContainerDriven() {
 		return strlen($this->table) && strlen($this->field);
 	}
 
+	/**
+	 * @return string|null
+	 */
 	public function getDataContainerTable() {
 		return $this->table;
 	}
 
+	/**
+	 * @return string|null
+	 */
 	public function getDataContainerField() {
 		return $this->field;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getFieldDCA() {
-		return $this->isDataContainerDriven()
-			? $GLOBALS['TL_DCA'][$this->getDataContainerTable()]['fields'][$this->getDataContainerField()]
-			: array();
+		if(!$this->isDataContainerDriven()) {
+			return [];
+		}
+
+		return $GLOBALS['TL_DCA'][$this->getDataContainerTable()]['fields'][$this->getDataContainerField()];
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getUnfolded() {
 		if(!$this->isDataContainerDriven()) {
-			return array();
+			return [];
 		}
-		return array_map('strval', array_keys((array) $this->Session->get($this->getSessionKey())));
+
+		$unfolded = (array) $this->Session->get($this->getSessionKey());
+		$unfolded = array_keys($unfolded);
+		$unfolded = array_map('strval', $unfolded);
+
+		return $unfolded;
 	}
 
+	/**
+	 * @param array $unfolded
+	 * @return void
+	 */
 	public function setUnfolded(array $unfolded) {
 		if(!$this->isDataContainerDriven()) {
 			return;
 		}
-		$this->Session->set($this->getSessionKey(), array_flip(array_map('strval', array_values($unfolded))));
+
+		$unfolded = array_values($unfolded);
+		$unfolded = array_map('strval', $unfolded);
+		$unfolded = array_flip($unfolded);
+
+		$this->Session->set($this->getSessionKey(), $unfolded);
 	}
 
+	/**
+	 * @return string
+	 */
 	public function getSessionKey() {
-		return sprintf('selectri$%s$%s',
+		return sprintf('hofff_selectri$%s$%s',
 			$this->getDataContainerTable(),
 			$this->getDataContainerField()
 		);

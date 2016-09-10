@@ -1,0 +1,79 @@
+<ol>
+  <?php foreach($this->nodes as $node): ?>
+    <?php $selectable = $this->selected || $node->isSelectable(); ?>
+    <?php $children = $this->children && $node->hasSelectableDescendants(); ?>
+
+    <li class="<?php if($this->selected) echo 'striSelected'; if($children) echo ' striHasChildren'; ?>">
+
+      <div class="striNode" data-stri-key="<?= specialchars($node->getKey()) ?>">
+        <?php if($this->selected): ?>
+          <input type="hidden" value="<?= specialchars($node->getKey()) ?>" name="<?= $this->widget->getInputName() ?>" />
+        <?php elseif($selectable): ?>
+          <input type="hidden" value="<?= specialchars($node->getKey()) ?>" />
+        <?php endif; ?>
+
+        <?php if($node->hasPath()): ?>
+          <div class="striPath">
+            <ol>
+              <?php foreach($node->getPathIterator() as $pathNode): ?>
+                <li class="striPathNode" data-stri-key="<?= specialchars($pathNode->getKey()) ?>">
+                  <div class="striLabel">
+                    <a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['stri']['pathTitle'] ?>">
+                      <img class="striIcon" src="<?= specialchars($pathNode->getIcon()) ?>" alt="" />
+                      <?= $pathNode->getLabel() ?>
+                    </a>
+                  </div>
+                </li>
+              <?php endforeach; ?>
+            </ol>
+          </div>
+        <?php endif; ?>
+
+        <?php if($this->widget->getSort() == 'list'): ?>
+          <a href="#" class="striHandle striDrag" title="<?= $GLOBALS['TL_LANG']['stri']['sortTitle'] ?>">
+            <?= $GLOBALS['TL_LANG']['stri']['sort'] ?>
+          </a>
+        <?php endif; ?>
+
+        <div class="striLabel">
+          <?php if(!$this->children): ?>
+            <a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['stri']['openPathTitle'] ?>">
+              <img class="striIcon" src="<?= specialchars($node->getIcon()) ?>" alt="" />
+              <?= $node->getLabel() ?>
+            </a>
+          <?php elseif($children): ?>
+            <a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['stri']['toggleTitle'] ?>">
+              <img class="striIcon" src="<?= specialchars($node->getIcon()) ?>" alt="" />
+              <?= $node->getLabel() ?>
+            </a>
+          <?php else: ?>
+            <img class="striIcon" src="<?= specialchars($node->getIcon()) ?>" alt="" />
+            <?= $node->getLabel() ?>
+          <?php endif; ?>
+        </div>
+
+        <?php if(strlen($content = trim($node->getContent()))): ?>
+          <div class="striContent"><?= $content ?></div>
+        <?php endif; ?>
+
+        <?php if($selectable): ?>
+          <div class="striSelect">
+            <a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['stri']['selectTitle'] ?>"><?= $GLOBALS['TL_LANG']['stri']['select'] ?></a>
+          </div>
+          <div class="striDeselect">
+            <a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['stri']['deselectTitle'] ?>"><?= $GLOBALS['TL_LANG']['stri']['deselect'] ?></a>
+          </div>
+        <?php endif; ?>
+
+      </div>
+
+      <?php if($children && $node->hasItems()): ?>
+      <?php endif; ?>
+
+      <?php if($children): ?>
+        <div class="striChildren"></div>
+      <?php endif; ?>
+
+    </li>
+  <?php endforeach; ?>
+</ol>

@@ -14,7 +14,6 @@
 */
 TemplateLoader::addFiles(array
 (
-	'selectri_children'  => 'system/modules/hofff_selectri/templates',
-	'selectri_container' => 'system/modules/hofff_selectri/templates',
-	'selectri_search'    => 'system/modules/hofff_selectri/templates',
+	'hofff_selectri_node_list' => 'system/modules/hofff_selectri/templates',
+	'hofff_selectri_widget'    => 'system/modules/hofff_selectri/templates',
 ));
