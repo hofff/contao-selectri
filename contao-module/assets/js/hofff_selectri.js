@@ -60,9 +60,9 @@ Selectri.initialize = function(container, options, detached) {
 		self.messages = self.container.getElement(".striMessages");
 
 		url = window.location.href + (window.location.href.indexOf("?") > -1 ? "&" : "?");
-		url += "striID=" + encodeURIComponent(self.id);
+		url += "hofff_selectri_field=" + encodeURIComponent(self.id);
 		if(self.options.qs) url += "&" + Object.toQueryString(self.options.qs);
-		url += "&striAction=";
+		url += "&hofff_selectri_action=";
 		self.toggleRequest = new Request.JSON({ url: url + "toggle", method: "post", link: "chain" });
 		delete self.toggleRequest.headers["X-Requested-With"]; // fuck contao...
 		self.toggleRequest.addEvent("success", self.onToggleSuccess);
@@ -369,8 +369,8 @@ Selectri.openNode = function(node) {
 	node = self.getChildrenContainer(node);
 	if(!node) return;
 	node.getParent("li").addClass("striOpen");
-	node.getChildren().length || self.levelsRequest.send({ data: self.collectFormData({ striKey: key }) });
-	self.toggleRequest.send({ data: self.collectFormData({ striKey: key, striOpen: 1 }) });
+	node.getChildren().length || self.levelsRequest.send({ data: self.collectFormData({ hofff_selectri_key: key }) });
+	self.toggleRequest.send({ data: self.collectFormData({ hofff_selectri_key: key, hofff_selectri_open: 1 }) });
 };
 
 Selectri.closeNode = function(node) {
@@ -379,7 +379,7 @@ Selectri.closeNode = function(node) {
 	node = self.getChildrenContainer(node);
 	if(!node) return;
 	node.getParent("li").removeClass("striOpen");
-	self.toggleRequest.send({ data: self.collectFormData({ striKey: key, striOpen: 0 }) });
+	self.toggleRequest.send({ data: self.collectFormData({ hofff_selectri_key: key, hofff_selectri_open: 0 }) });
 };
 
 Selectri.openPath = function(node) {
@@ -387,7 +387,7 @@ Selectri.openPath = function(node) {
 	if(!self.tree || !key) return;
 	node = self.getNode(self.tree, key);
 	if(!node) {
-		self.pathRequest.send({ data: self.collectFormData({ striKey: key }) });
+		self.pathRequest.send({ data: self.collectFormData({ hofff_selectri_key: key }) });
 		return;
 	}
 	node.getParent().getParents().filter(".striTree li").addClass("striOpen");
@@ -413,7 +413,7 @@ Selectri.search = function(query) {
 	self.closeTree();
 	self.closeSuggestions();
 	self.container.removeClass("striNotFound");
-	self.searchRequest.send({ data: self.collectFormData({ striSearch: query }) });
+	self.searchRequest.send({ data: self.collectFormData({ hofff_selectri_search: query }) });
 };
 
 Selectri.clearSearch = function() {

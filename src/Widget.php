@@ -302,7 +302,7 @@ class Widget extends BaseWidget {
 	 */
 	public function parse($attrs = null) {
 		System::loadLanguageFile('hofff_selectri');
-		
+
 		if(!is_array($attrs) || empty($attrs['noAjax'])) {
 			$this->generateAjax();
 		}
@@ -323,7 +323,7 @@ class Widget extends BaseWidget {
 	 * @return void
 	 */
 	public function generateAjax() {
-		if(Input::get('striID') != $this->strId) {
+		if(Input::get('hofff_selectri_field') != $this->strId) {
 			return;
 		}
 
@@ -331,7 +331,7 @@ class Widget extends BaseWidget {
 
 		$this->checkData();
 
-		$action = Input::get('striAction');
+		$action = Input::get('hofff_selectri_action');
 		$method = 'generateAjax' . ucfirst($action);
 		$response = method_exists($this, $method) ? $this->$method() : null;
 
@@ -354,7 +354,7 @@ class Widget extends BaseWidget {
 			return null;
 		}
 
-		$key = Input::post('striKey');
+		$key = Input::post('hofff_selectri_key');
 		strlen($key) || $key = null;
 
 		list($nodes, $start) = $this->getData()->browseFrom($key);
@@ -378,7 +378,7 @@ class Widget extends BaseWidget {
 			return null;
 		}
 
-		$key = Input::post('striKey');
+		$key = Input::post('hofff_selectri_key');
 		if(!strlen($key)) {
 			return null;
 		}
@@ -404,12 +404,12 @@ class Widget extends BaseWidget {
 			return null;
 		}
 
-		$key = Input::post('striKey');
+		$key = Input::post('hofff_selectri_key');
 		if(!strlen($key)) {
 			return null;
 		}
 
-		$open = (bool) Input::post('striOpen');
+		$open = (bool) Input::post('hofff_selectri_open');
 
 		$unfolded = $this->getUnfolded();
 		if($open) {
@@ -435,7 +435,7 @@ class Widget extends BaseWidget {
 			return null;
 		}
 
-		$search = Input::post('striSearch');
+		$search = Input::post('hofff_selectri_search');
 		if(!strlen($search)) {
 			return null;
 		}
