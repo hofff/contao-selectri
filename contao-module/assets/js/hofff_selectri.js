@@ -2,16 +2,14 @@
 if(!$) return;
 window = $(window);
 
-if(!window.bbit) window.bbit = {};
-if(!bbit.mt) bbit.mt = {};
-if(!bbit.mt.cto) bbit.mt.cto = {};
+if(!window.Hofff) window.Hofff = {};
 
 var Selectri = {},
 	TRUE = true,
 	EMPTY = Function.from(),
-	OCCLUDE = "bbit.mt.cto.Selectri",
-	FN_HL = "bbit.mt.cto.Selectri.hl",
-	FN_FADE = "bbit.mt.cto.Selectri.fade",
+	OCCLUDE = "hofff_selectri",
+	FN_HL = "hofff_selectri_highlight",
+	FN_FADE = "hofff_selectri_fade",
 	ATTR_KEY = "data-hofff-selectri-key",
 	reservedAttributeSelectorValueChars = /(["\]])/g,
 	escapeAttributeSelectorValue = function(value) { return value.replace(reservedAttributeSelectorValueChars, "\\$1"); },
@@ -469,7 +467,7 @@ Selectri.updateRequestToken = function(token) {
 
 Selectri.Binds = Object.keys(Selectri).filter(function(method) { return method.substr(0, 2) == "on"; });
 
-Selectri = bbit.mt.cto.Selectri = new Class(Selectri);
+Selectri = window.Hofff.Selectri = new Class(Selectri);
 Selectri.scan = function() { $$(".hofff-selectri-widget.hofff-selectri-auto").each(function(e) { new Selectri(e, TRUE); }); };
 window.addEvent("domready", Selectri.scan);
 window.addEvent("ajaxready", Selectri.scan);
