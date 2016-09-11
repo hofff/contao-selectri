@@ -3,9 +3,9 @@
     <?php $selectable = $this->selected || $node->isSelectable(); ?>
     <?php $children = $this->children && $node->hasSelectableDescendants(); ?>
 
-    <li class="<?php if($this->selected) echo 'striSelected'; if($children) echo ' striHasChildren'; ?>">
+    <li class="<?php if($this->selected) echo 'hofff-selectri-selected'; if($children) echo ' hofff-selectri-has-children'; ?>">
 
-      <div class="striNode" data-hofff-selectri-key="<?= specialchars($node->getKey()) ?>">
+      <div class="hofff-selectri-node" data-hofff-selectri-key="<?= specialchars($node->getKey()) ?>">
         <?php if($this->selected): ?>
           <input type="hidden" value="<?= specialchars($node->getKey()) ?>" name="<?= $this->widget->getInputName() ?>" />
         <?php elseif($selectable): ?>
@@ -13,13 +13,13 @@
         <?php endif; ?>
 
         <?php if($node->hasPath()): ?>
-          <div class="striPath">
+          <div class="hofff-selectri-path">
             <ol>
               <?php foreach($node->getPathIterator() as $pathNode): ?>
-                <li class="striPathNode" data-hofff-selectri-key="<?= specialchars($pathNode->getKey()) ?>">
-                  <div class="striLabel">
-                    <a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['path_title'] ?>">
-                      <img class="striIcon" src="<?= specialchars($pathNode->getIcon()) ?>" alt="" />
+                <li class="hofff-selectri-path-node" data-hofff-selectri-key="<?= specialchars($pathNode->getKey()) ?>">
+                  <div class="hofff-selectri-label">
+                    <a href="#" class="hofff-selectri-handle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['path_title'] ?>">
+                      <img class="hofff-selectri-icon" src="<?= specialchars($pathNode->getIcon()) ?>" alt="" />
                       <?= $pathNode->getLabel() ?>
                     </a>
                   </div>
@@ -30,38 +30,38 @@
         <?php endif; ?>
 
         <?php if($this->widget->getSort() == 'list'): ?>
-          <a href="#" class="striHandle striDrag" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['sort_title'] ?>">
+          <a href="#" class="hofff-selectri-handle hofff-selectri-drag" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['sort_title'] ?>">
             <?= $GLOBALS['TL_LANG']['hofff_selectri']['sort'] ?>
           </a>
         <?php endif; ?>
 
-        <div class="striLabel">
+        <div class="hofff-selectri-label">
           <?php if(!$this->children): ?>
-            <a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['open_path_title'] ?>">
-              <img class="striIcon" src="<?= specialchars($node->getIcon()) ?>" alt="" />
+            <a href="#" class="hofff-selectri-handle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['open_path_title'] ?>">
+              <img class="hofff-selectri-icon" src="<?= specialchars($node->getIcon()) ?>" alt="" />
               <?= $node->getLabel() ?>
             </a>
           <?php elseif($children): ?>
-            <a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['toggle_title'] ?>">
-              <img class="striIcon" src="<?= specialchars($node->getIcon()) ?>" alt="" />
+            <a href="#" class="hofff-selectri-handle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['toggle_title'] ?>">
+              <img class="hofff-selectri-icon" src="<?= specialchars($node->getIcon()) ?>" alt="" />
               <?= $node->getLabel() ?>
             </a>
           <?php else: ?>
-            <img class="striIcon" src="<?= specialchars($node->getIcon()) ?>" alt="" />
+            <img class="hofff-selectri-icon" src="<?= specialchars($node->getIcon()) ?>" alt="" />
             <?= $node->getLabel() ?>
           <?php endif; ?>
         </div>
 
         <?php if(strlen($content = trim($node->getContent()))): ?>
-          <div class="striContent"><?= $content ?></div>
+          <div class="hofff-selectri-content"><?= $content ?></div>
         <?php endif; ?>
 
         <?php if($selectable): ?>
-          <div class="striSelect">
-            <a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['select_title'] ?>"><?= $GLOBALS['TL_LANG']['hofff_selectri']['select'] ?></a>
+          <div class="hofff-selectri-select">
+            <a href="#" class="hofff-selectri-handle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['select_title'] ?>"><?= $GLOBALS['TL_LANG']['hofff_selectri']['select'] ?></a>
           </div>
-          <div class="striDeselect">
-            <a href="#" class="striHandle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['deselect_title'] ?>"><?= $GLOBALS['TL_LANG']['hofff_selectri']['deselect'] ?></a>
+          <div class="hofff-selectri-deselect">
+            <a href="#" class="hofff-selectri-handle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['deselect_title'] ?>"><?= $GLOBALS['TL_LANG']['hofff_selectri']['deselect'] ?></a>
           </div>
         <?php endif; ?>
 
@@ -71,7 +71,7 @@
       <?php endif; ?>
 
       <?php if($children): ?>
-        <div class="striChildren"></div>
+        <div class="hofff-selectri-children"></div>
       <?php endif; ?>
 
     </li>

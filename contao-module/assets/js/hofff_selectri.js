@@ -24,8 +24,8 @@ var Selectri = {},
 			});
 		},
 	wrapPathHandle = function(self, element) {
-		var handle = element.getFirst(".striHandle");
-		if(!handle) handle = new Element("a.striHandle").set("href", "#").adopt(element.childNodes).inject(element);
+		var handle = element.getFirst(".hofff-selectri-handle");
+		if(!handle) handle = new Element("a.hofff-selectri-handle").set("href", "#").adopt(element.childNodes).inject(element);
 		handle.set("title", self.options.openPathTitle);
 	},
 	events;
@@ -50,14 +50,14 @@ Selectri.initialize = function(container, options, detached) {
 	} else {
 		if(options === TRUE) options = JSON.decode(self.container.get("data-hofff-selectri-options"));
 		self.setOptions(options);
-		self.selection = self.container.getElement(".striSelection > ol");
-		self.input = self.container.getElement(".striTools .striSearch input");
+		self.selection = self.container.getElement(".hofff-selectri-selection > ol");
+		self.input = self.container.getElement(".hofff-selectri-tools .hofff-selectri-search input");
 		if(self.input) self.query = self.input.get("value");
-		self.result = self.container.getElement(".striResult");
-		self.suggestions = self.container.getElement(".striSuggestions");
-		self.tree = self.container.getElement(".striTree");
+		self.result = self.container.getElement(".hofff-selectri-result");
+		self.suggestions = self.container.getElement(".hofff-selectri-suggestions");
+		self.tree = self.container.getElement(".hofff-selectri-tree");
 		self.sources = $$([ self.result, self.suggestions, self.tree ].clean());
-		self.messages = self.container.getElement(".striMessages");
+		self.messages = self.container.getElement(".hofff-selectri-messages");
 
 		url = window.location.href + (window.location.href.indexOf("?") > -1 ? "&" : "?");
 		url += "hofff_selectri_field=" + encodeURIComponent(self.id);
@@ -78,7 +78,7 @@ Selectri.initialize = function(container, options, detached) {
 			self.searchRequest.addEvent(event, self["onSearch" + event.capitalize()]);
 		});
 
-		self.sortables = new Sortables(undef, { opacity: 0.8, onStart: self.onSortStart, onComplete: self.onSortComplete, handle: ".striDrag" });
+		self.sortables = new Sortables(undef, { opacity: 0.8, onStart: self.onSortStart, onComplete: self.onSortComplete, handle: ".hofff-selectri-drag" });
 		if(self.sortables.options.unDraggableTags) self.sortables.options.unDraggableTags.erase("a");
 		else self.selection.getChildren().each(function(element) { fixSortables(self.sortables, element); });
 		self.sortables.addLists(self.selection).detach();
@@ -86,7 +86,7 @@ Selectri.initialize = function(container, options, detached) {
 		if(self.suggestions) {
 			self.selection.getChildren().each(function(node) {
 				node = self.getNode(self.suggestions, node);
-				if(node) node.getParent("li").addClass("striSelected");
+				if(node) node.getParent("li").addClass("hofff-selectri-selected");
 			});
 		}
 
@@ -120,13 +120,13 @@ Selectri.onSearchKeyDown			= function(event, target) {
 	if(target && target.length) this.search(target);
 	else this.openSuggestions();
 };
-Selectri.onSortStart				= function() { this.container.addClass("striSorting"); };
-Selectri.onSortComplete				= function() { this.container.removeClass("striSorting"); };
+Selectri.onSortStart				= function() { this.container.addClass("hofff-selectri-sorting"); };
+Selectri.onSortComplete				= function() { this.container.removeClass("hofff-selectri-sorting"); };
 Selectri.onToggleSuccess			= function(json) { if(json && json.token) this.updateRequestToken(json.token); };
-Selectri.onLevelsRequest			= function() { this.container.addClass("striLoading"); };
-Selectri.onLevelsCancel				= function() { this.container.removeClass("striLoading"); };
-Selectri.onLevelsException			= function() { this.container.removeClass("striLoading").addClass("striError"); };
-Selectri.onLevelsComplete			= function() { this.container.removeClass("striLoading"); };
+Selectri.onLevelsRequest			= function() { this.container.addClass("hofff-selectri-loading"); };
+Selectri.onLevelsCancel				= function() { this.container.removeClass("hofff-selectri-loading"); };
+Selectri.onLevelsException			= function() { this.container.removeClass("hofff-selectri-loading").addClass("hofff-selectri-error"); };
+Selectri.onLevelsComplete			= function() { this.container.removeClass("hofff-selectri-loading"); };
 Selectri.onLevelsSuccess			= function(json) {
 	var self = this, node = undef;
 	if(!json) return;
@@ -137,7 +137,7 @@ Selectri.onLevelsSuccess			= function(json) {
 
 	if(!self.tree.getChildren().length) {
 		if(json.empty) {
-			self.tree.addClass("striEmpty");
+			self.tree.addClass("hofff-selectri-empty");
 			return;
 		} else {
 			self.tree.set("html", json.first);
@@ -148,22 +148,22 @@ Selectri.onLevelsSuccess			= function(json) {
 		node = self.getChildrenContainer(key);
 		if(!node) return;
 		if(!node.getChildren().length) node.set("html", level);
-		node.getParent("li").addClass("striOpen");
+		node.getParent("li").addClass("hofff-selectri-open");
 	});
 
 	self.selection.getChildren().each(function(node) {
 		node = self.getNode(self.tree, node);
-		if(node) node.getParent("li").addClass("striSelected");
+		if(node) node.getParent("li").addClass("hofff-selectri-selected");
 	});
 
 	if(json.action == "path") {
 		self.highlight(json.key);
 	}
 };
-Selectri.onSearchRequest			= function() { this.container.addClass("striSearching"); };
-Selectri.onSearchCancel				= function() { this.container.removeClass("striSearching"); };
-Selectri.onSearchException			= function() { this.container.removeClass("striSearching").addClass("striError"); };
-Selectri.onSearchComplete			= function() { this.container.removeClass("striSearching"); };
+Selectri.onSearchRequest			= function() { this.container.addClass("hofff-selectri-searching"); };
+Selectri.onSearchCancel				= function() { this.container.removeClass("hofff-selectri-searching"); };
+Selectri.onSearchException			= function() { this.container.removeClass("hofff-selectri-searching").addClass("hofff-selectri-error"); };
+Selectri.onSearchComplete			= function() { this.container.removeClass("hofff-selectri-searching"); };
 Selectri.onSearchSuccess			= function(json) {
 	var self = this;
 	if(!json) return;
@@ -175,33 +175,33 @@ Selectri.onSearchSuccess			= function(json) {
 	self.setMessages(json.messages);
 
 	self.result.set("html", json.result);
-	if(self.result.getChildren().length) self.result.addClass("striOpen");
-	else self.result.removeClass("striOpen");
+	if(self.result.getChildren().length) self.result.addClass("hofff-selectri-open");
+	else self.result.removeClass("hofff-selectri-open");
 
 	self.selection.getChildren().each(function(node) {
 		node = self.getNode(self.result, node);
-		if(node) node.getParent("li").addClass("striSelected");
+		if(node) node.getParent("li").addClass("hofff-selectri-selected");
 	});
 };
 
 events = {
-	"click:relay(.striHandle)":												"onHandleClick",
-	"click:relay(.striSelection .striNode > .striLabel > .striHandle)":		"onSelectionLabelClick",
-	"click:relay(.striSelection .striDeselect > .striHandle)":				"onSelectionDeselectClick",
-	"click:relay(.striResult .striNode > .striLabel > .striHandle)":		"onResultLabelClick",
-	"click:relay(.striResult .striSelect > .striHandle)":					"onResultSelectClick",
-	"click:relay(.striResult .striDeselect > .striHandle)":					"onResultDeselectClick",
-	"click:relay(.striSuggestions .striNode > .striLabel > .striHandle)":	"onSuggestionsLabelClick",
-	"click:relay(.striSuggestions .striSelect > .striHandle)":				"onSuggestionsSelectClick",
-	"click:relay(.striSuggestions .striDeselect > .striHandle)":			"onSuggestionsDeselectClick",
-	"click:relay(.striTree .striNode > .striLabel > .striHandle)":			"onTreeLabelClick",
-	"click:relay(.striTree .striSelect > .striHandle)":						"onTreeSelectClick",
-	"click:relay(.striTree .striDeselect > .striHandle)":					"onTreeDeselectClick",
-	"click:relay(.striPathNode > .striLabel > .striHandle)":				"onPathClick",
-	"click:relay(.striClearSearch.striHandle)":								"onClearSearchClick",
-	"click:relay(.striClearSelection > .striHandle)":						"onClearSelectionClick",
-	"click:relay(.striToggle > .striHandle)":								"onToggleClick",
-	"keydown:relay(.striSearch > input):pause(250)":						"onSearchKeyDown"
+	"click:relay(.hofff-selectri-handle)":																				"onHandleClick",
+	"click:relay(.hofff-selectri-selection .hofff-selectri-node > .hofff-selectri-label > .hofff-selectri-handle)":		"onSelectionLabelClick",
+	"click:relay(.hofff-selectri-selection .hofff-selectri-deselect > .hofff-selectri-handle)":							"onSelectionDeselectClick",
+	"click:relay(.hofff-selectri-result .hofff-selectri-node > .hofff-selectri-label > .hofff-selectri-handle)":		"onResultLabelClick",
+	"click:relay(.hofff-selectri-result .hofff-selectri-select > .hofff-selectri-handle)":								"onResultSelectClick",
+	"click:relay(.hofff-selectri-result .hofff-selectri-deselect > .hofff-selectri-handle)":							"onResultDeselectClick",
+	"click:relay(.hofff-selectri-suggestions .hofff-selectri-node > .hofff-selectri-label > .hofff-selectri-handle)":	"onSuggestionsLabelClick",
+	"click:relay(.hofff-selectri-suggestions .hofff-selectri-select > .hofff-selectri-handle)":							"onSuggestionsSelectClick",
+	"click:relay(.hofff-selectri-suggestions .hofff-selectri-deselect > .hofff-selectri-handle)":						"onSuggestionsDeselectClick",
+	"click:relay(.hofff-selectri-tree .hofff-selectri-node > .hofff-selectri-label > .hofff-selectri-handle)":			"onTreeLabelClick",
+	"click:relay(.hofff-selectri-tree .hofff-selectri-select > .hofff-selectri-handle)":								"onTreeSelectClick",
+	"click:relay(.hofff-selectri-tree .hofff-selectri-deselect > .hofff-selectri-handle)":								"onTreeDeselectClick",
+	"click:relay(.hofff-selectri-path-node > .hofff-selectri-label > .hofff-selectri-handle)":							"onPathClick",
+	"click:relay(.hofff-selectri-clear-search.hofff-selectri-handle)":													"onClearSearchClick",
+	"click:relay(.hofff-selectri-clear-selection > .hofff-selectri-handle)":											"onClearSelectionClick",
+	"click:relay(.hofff-selectri-toggle > .hofff-selectri-handle)":														"onToggleClick",
+	"keydown:relay(.hofff-selectri-search > input):pause(250)":															"onSearchKeyDown"
 };
 
 Selectri.attach = function() {
@@ -249,19 +249,19 @@ Selectri.select = function(node, adjustScroll) {
 
 	node = node.clone();
 	node.getFirst("input").set("name", self.options.name);
-	node.getFirst(".striSelect").destroy();
-	wrapPathHandle(self, node.getFirst(".striLabel"));
-	node = new Element("li.striSelected").grab(node);
+	node.getFirst(".hofff-selectri-select").destroy();
+	wrapPathHandle(self, node.getFirst(".hofff-selectri-label"));
+	node = new Element("li.hofff-selectri-selected").grab(node);
 	fixSortables(self.sortables, node);
 
 	adjustScroll = self.getScrollAdjust(adjustScroll);
 	if(self.options.max == 1) self.deselect(self.selection.getFirst());
 	node.inject(self.selection);
 	self.sortables.addItems(node);
-	self.selection.getParent().addClass("striHasSelection");
+	self.selection.getParent().addClass("hofff-selectri-has-selection");
 	adjustScroll();
 
-	nodes.getParent("li").addClass("striSelected");
+	nodes.getParent("li").addClass("hofff-selectri-selected");
 
 	self.fireEvent("selected", self.getKey(node));
 };
@@ -274,10 +274,10 @@ Selectri.deselect = function(node, adjustScroll) {
 
 	adjustScroll = self.getScrollAdjust(adjustScroll);
 	removed = self.sortables.removeItems(selectedNode.getParent("li")).dispose();
-	if(!self.selection.getChildren().length) self.selection.getParent().removeClass("striHasSelection");
+	if(!self.selection.getChildren().length) self.selection.getParent().removeClass("hofff-selectri-has-selection");
 	adjustScroll();
 
-	$$(self.getNode(self.sources, node).clean()).getParent("li").removeClass("striSelected");
+	$$(self.getNode(self.sources, node).clean()).getParent("li").removeClass("hofff-selectri-selected");
 
 	self.fireEvent("deselected", self.getKey(selectedNode));
 
@@ -312,9 +312,9 @@ Selectri.getKey = function(node) {
 	var key = node.get(ATTR_KEY);
 	if(key) return key;
 
-	if(node.get("tag") == "li") key = node.getFirst(".striNode");
-	if(!key) key = node.getParent(".striPathNode");
-	if(!key) key = node.getParent(".striNode");
+	if(node.get("tag") == "li") key = node.getFirst(".hofff-selectri-node");
+	if(!key) key = node.getParent(".hofff-selectri-path-node");
+	if(!key) key = node.getParent(".hofff-selectri-node");
 	if(!key) return undef;
 
 	return key.get(ATTR_KEY);
@@ -322,7 +322,7 @@ Selectri.getKey = function(node) {
 
 Selectri.getNode = function(element, key) {
 	if(typeOf(key) != "string" && !(key = this.getKey(key))) return;
-	return element.getElement(".striNode[" + ATTR_KEY + "=\"" + escapeAttributeSelectorValue(key) + "\"]");
+	return element.getElement(".hofff-selectri-node[" + ATTR_KEY + "=\"" + escapeAttributeSelectorValue(key) + "\"]");
 };
 
 Selectri.getChildrenContainer = function(node) {
@@ -330,11 +330,11 @@ Selectri.getChildrenContainer = function(node) {
 	if(!self.tree) return;
 	node = self.getNode(self.tree, node);
 	if(!node) return;
-	return node.getParent("li").getChildren(".striChildren")[0];
+	return node.getParent("li").getChildren(".hofff-selectri-children")[0];
 };
 
 Selectri.isTreeOpen = function() {
-	return this.tree && this.tree.hasClass("striOpen");
+	return this.tree && this.tree.hasClass("hofff-selectri-open");
 };
 
 Selectri.toggleTree = function() {
@@ -344,14 +344,14 @@ Selectri.toggleTree = function() {
 Selectri.openTree = function() {
 	var self = this;
 	if(!self.tree) return;
-	self.tree.addClass("striOpen");
+	self.tree.addClass("hofff-selectri-open");
 	self.clearSearch();
 	self.closeSuggestions();
 	self.tree.getChildren().length || self.levelsRequest.isRunning() || self.levelsRequest.send({ data: self.collectFormData() });
 };
 
 Selectri.closeTree = function() {
-	if(this.tree) this.tree.removeClass("striOpen");
+	if(this.tree) this.tree.removeClass("hofff-selectri-open");
 };
 
 Selectri.toggleNode = function(node) {
@@ -359,7 +359,7 @@ Selectri.toggleNode = function(node) {
 	if(!self.tree) return;
 	node = self.getNode(self.tree, node);
 	if(!node) return;
-	if(node.getParent("li").hasClass("striOpen")) return self.closeNode(node);
+	if(node.getParent("li").hasClass("hofff-selectri-open")) return self.closeNode(node);
 	else self.openNode(node);
 };
 
@@ -368,7 +368,7 @@ Selectri.openNode = function(node) {
 	if(!self.tree || !key) return;
 	node = self.getChildrenContainer(node);
 	if(!node) return;
-	node.getParent("li").addClass("striOpen");
+	node.getParent("li").addClass("hofff-selectri-open");
 	node.getChildren().length || self.levelsRequest.send({ data: self.collectFormData({ hofff_selectri_key: key }) });
 	self.toggleRequest.send({ data: self.collectFormData({ hofff_selectri_key: key, hofff_selectri_open: 1 }) });
 };
@@ -378,7 +378,7 @@ Selectri.closeNode = function(node) {
 	if(!self.tree || !key) return;
 	node = self.getChildrenContainer(node);
 	if(!node) return;
-	node.getParent("li").removeClass("striOpen");
+	node.getParent("li").removeClass("hofff-selectri-open");
 	self.toggleRequest.send({ data: self.collectFormData({ hofff_selectri_key: key, hofff_selectri_open: 0 }) });
 };
 
@@ -390,7 +390,7 @@ Selectri.openPath = function(node) {
 		self.pathRequest.send({ data: self.collectFormData({ hofff_selectri_key: key }) });
 		return;
 	}
-	node.getParent().getParents().filter(".striTree li").addClass("striOpen");
+	node.getParent().getParents().filter(".hofff-selectri-tree li").addClass("hofff-selectri-open");
 	self.highlight(key);
 };
 
@@ -400,19 +400,19 @@ Selectri.highlight = function(node) {
 	if(!node) return;
 	clearTimeout(node.retrieve(FN_HL));
 	clearTimeout(node.retrieve(FN_FADE));
-	node.store(FN_HL, node.addClass("striHighlight").removeClass.delay(200, node, "striHighlight"));
-	node.store(FN_FADE, node.addClass("striFade").removeClass.delay(3000, node, "striFade"));
+	node.store(FN_HL, node.addClass("hofff-selectri-highlight").removeClass.delay(200, node, "hofff-selectri-highlight"));
+	node.store(FN_FADE, node.addClass("hofff-selectri-fade").removeClass.delay(3000, node, "hofff-selectri-fade"));
 };
 
 Selectri.search = function(query) {
 	var self = this;
 	if(!self.result || !query || !query.length) return self.clearSearch();
-	self.input.addClass("striQuery");
+	self.input.addClass("hofff-selectri-query");
 	if(self.query == query) return;
 	self.query = query;
 	self.closeTree();
 	self.closeSuggestions();
-	self.container.removeClass("striNotFound");
+	self.container.removeClass("hofff-selectri-not-found");
 	self.searchRequest.send({ data: self.collectFormData({ hofff_selectri_search: query }) });
 };
 
@@ -422,9 +422,9 @@ Selectri.clearSearch = function() {
 	self.query = undef;
 	self.setMessages(undef);
 	self.input.set("value");
-	self.input.removeClass("striQuery");
-	self.container.removeClass("striNotFound");
-	self.result.removeClass("striOpen");
+	self.input.removeClass("hofff-selectri-query");
+	self.container.removeClass("hofff-selectri-not-found");
+	self.result.removeClass("hofff-selectri-open");
 };
 
 Selectri.openSuggestions = function() {
@@ -432,11 +432,11 @@ Selectri.openSuggestions = function() {
 	if(!self.suggestions || !self.suggestions.getElement("li")) return;
 	self.closeTree();
 	self.clearSearch();
-	self.suggestions.addClass("striOpen");
+	self.suggestions.addClass("hofff-selectri-open");
 };
 
 Selectri.closeSuggestions = function() {
-	if(this.suggestions) this.suggestions.removeClass("striOpen");
+	if(this.suggestions) this.suggestions.removeClass("hofff-selectri-open");
 };
 
 // FIXME buggy implementation not respecting valid inputs and fails on inputs with same name
@@ -470,7 +470,7 @@ Selectri.updateRequestToken = function(token) {
 Selectri.Binds = Object.keys(Selectri).filter(function(method) { return method.substr(0, 2) == "on"; });
 
 Selectri = bbit.mt.cto.Selectri = new Class(Selectri);
-Selectri.scan = function() { $$(".striWidget.striAuto").each(function(e) { new Selectri(e, TRUE); }); };
+Selectri.scan = function() { $$(".hofff-selectri-widget.hofff-selectri-auto").each(function(e) { new Selectri(e, TRUE); }); };
 window.addEvent("domready", Selectri.scan);
 window.addEvent("ajaxready", Selectri.scan);
 
