@@ -185,7 +185,7 @@ parents children container */
 	height: 22px;
 	display: none;
 	float: left;
-	background: url(drag.gif) no-repeat center center;
+	background: url(../images/drag.gif) no-repeat center center;
 	text-indent: -10000px;
 	cursor: move;
 }
@@ -205,13 +205,13 @@ parents children container */
 
 .hofff-selectri-tree .hofff-selectri-node > .hofff-selectri-label > .hofff-selectri-handle {
 	display: block;
-	background: url(open.gif) no-repeat 1px 2px;
+	background: url(../images/open.gif) no-repeat 1px 2px;
 	margin-left: -18px;
 	padding-left: 18px;
 }
 
 .hofff-selectri-tree .hofff-selectri-open > .hofff-selectri-node > .hofff-selectri-label > .hofff-selectri-handle {
-	background-image: url(close.gif);
+	background-image: url(../images/close.gif);
 }
 
 .hofff-selectri-select,
@@ -226,15 +226,15 @@ parents children container */
 }
 
 .hofff-selectri-select {
-	background: url(add.gif) no-repeat center center;
+	background: url(../images/add.gif) no-repeat center center;
 	display: block;
 }
 
 .checkbox .hofff-selectri-select {
-	background-image: url(checkbox_unchecked.png);
+	background-image: url(../images/checkbox_unchecked.png);
 }
 .radio .hofff-selectri-select {
-	background-image: url(radio_unchecked.png);
+	background-image: url(../images/radio_unchecked.png);
 }
 
 .hofff-selectri-selected > .hofff-selectri-node > .hofff-selectri-select {
@@ -242,16 +242,16 @@ parents children container */
 }
 
 .hofff-selectri-deselect {
-	background: url(remove.gif) no-repeat center 2px;
+	background: url(../images/remove.gif) no-repeat center 2px;
 	display: none;
 }
 
 .checkbox .hofff-selectri-deselect {
-	background-image: url(checkbox_checked.png);
+	background-image: url(../images/checkbox_checked.png);
 }
 
 .radio .hofff-selectri-deselect {
-	background-image: url(radio_checked.png);
+	background-image: url(../images/radio_checked.png);
 }
 
 .hofff-selectri-selected > .hofff-selectri-node > .hofff-selectri-deselect {
