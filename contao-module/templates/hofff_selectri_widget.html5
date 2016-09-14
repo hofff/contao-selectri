@@ -37,6 +37,15 @@ $options = array_merge($options, $this->getJSOptions());
       </div>
     <?php endif; ?>
     <div class="hofff-selectri-clear-selection"><a href="#" class="hofff-selectri-handle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['clear_selection_title']; ?>"><?php echo $GLOBALS['TL_LANG']['hofff_selectri']['clear_selection'] ?></a></div>
+    <?php if($this->isContentToggleable()): ?>
+      <div class="hofff-selectri-toggle-content">
+        <a href="#" class="hofff-selectri-handle"
+            title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['toggle_content_title'] ?>"
+            data-hofff-selectri-show="<?= specialchars($GLOBALS['TL_LANG']['hofff_selectri']['toggle_content_show']) ?>"
+            data-hofff-selectri-hide="<?= specialchars($GLOBALS['TL_LANG']['hofff_selectri']['toggle_content_hide']) ?>"
+        ><?php echo $GLOBALS['TL_LANG']['hofff_selectri']['toggle_content_hide'] ?></a>
+      </div>
+    <?php endif; ?>
     <?php if($this->isBrowsable()): ?>
       <div class="hofff-selectri-toggle"><a href="#" class="hofff-selectri-handle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['tree_title']; ?>"><?php echo $GLOBALS['TL_LANG']['hofff_selectri']['tree'] ?></a></div>
     <?php endif; ?>

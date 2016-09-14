@@ -62,6 +62,11 @@ class Widget extends BaseWidget {
 	protected $disableSuggestions = false;
 
 	/**
+	 * @var boolean
+	 */
+	protected $contentToggleable = false;
+
+	/**
 	 * @var array
 	 */
 	protected $jsOptions = [];
@@ -228,6 +233,7 @@ class Widget extends BaseWidget {
 			'disableBrowsing'		=> 'setDisableBrowsing',
 			'disableSearching'		=> 'setDisableSearching',
 			'disableSuggestions'	=> 'setDisableSuggestions',
+			'contentToggleable'		=> 'setContentToggleable',
 		] as $key => $method) {
 			if(!isset($attrs[$key])) {
 				continue;
@@ -799,6 +805,21 @@ class Widget extends BaseWidget {
 	 */
 	public function setDisableSuggestions($disable) {
 		$this->disableSuggestions = (bool) $disable;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isContentToggleable() {
+		return $this->contentToggleable;
+	}
+
+	/**
+	 * @param boolean $toggleable
+	 * @return void
+	 */
+	public function setContentToggleable($toggleable) {
+		$this->contentToggleable = (bool) $toggleable;
 	}
 
 	/**

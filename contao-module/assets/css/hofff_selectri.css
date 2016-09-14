@@ -22,6 +22,10 @@
 	position: relative;
 }
 
+.hofff-selectri-widget.hofff-selectri-hide-content .hofff-selectri-content {
+	display: none;
+}
+
 /* @end */
 
 /* @group Selection */
@@ -312,7 +316,8 @@ parents children container */
 }
 
 .hofff-selectri-tools .hofff-selectri-clear-selection,
-.hofff-selectri-tools .hofff-selectri-toggle {
+.hofff-selectri-tools .hofff-selectri-toggle,
+.hofff-selectri-tools .hofff-selectri-toggle-content {
 	float: left;
 	padding-left: 1%;
 	-webkit-box-sizing: border-box;
@@ -334,7 +339,8 @@ parents children container */
 }
 
 .hofff-selectri-tools .hofff-selectri-clear-selection a,
-.hofff-selectri-tools .hofff-selectri-toggle a {
+.hofff-selectri-tools .hofff-selectri-toggle a,
+.hofff-selectri-tools .hofff-selectri-toggle-content a {
 	padding:3px 12px 3px 13px;
 	font-family:"Trebuchet MS",Verdana,sans-serif;
 	font-size:12px;
@@ -353,18 +359,21 @@ parents children container */
 }
 
 .hofff-selectri-tools .hofff-selectri-clear-selection a:hover,
-.hofff-selectri-tools .hofff-selectri-toggle a:hover {
+.hofff-selectri-tools .hofff-selectri-toggle a:hover,
+.hofff-selectri-tools .hofff-selectri-toggle-content a:hover {
 	box-shadow: 0 0 3px #aaa;
 }
 
 .hofff-selectri-tools .hofff-selectri-clear-selection a:active,
-.hofff-selectri-tools .hofff-selectri-toggle a:active {
+.hofff-selectri-tools .hofff-selectri-toggle a:active,
+.hofff-selectri-tools .hofff-selectri-toggle-content a:active {
 	color: #bbb;
 	box-shadow: 0 0 6px #999;
 }
 
 .ie9 .hofff-selectri-tools .hofff-selectri-clear-selection a,
-.ie9 .hofff-selectri-tools .hofff-selectri-toggle a {
+.ie9 .hofff-selectri-tools .hofff-selectri-toggle a,
+.ie9 .hofff-selectri-tools .hofff-selectri-toggle-content a {
 	filter: none;
 }
 

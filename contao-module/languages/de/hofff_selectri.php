@@ -33,6 +33,12 @@ $GLOBALS['TL_LANG']['hofff_selectri']['tree']
 	= 'Durchsuchen';
 $GLOBALS['TL_LANG']['hofff_selectri']['tree_title']
 	= 'Klicken Sie hier, um den Baum zu durchsuchen';
+$GLOBALS['TL_LANG']['hofff_selectri']['toggle_content_hide']
+	= 'Details ausblenden';
+$GLOBALS['TL_LANG']['hofff_selectri']['toggle_content_show']
+	= 'Details einblenden';
+$GLOBALS['TL_LANG']['hofff_selectri']['toggle_content_title']
+	= 'Klicken Sie hier, um die Details der Einträge ein- oder auszublenden';
 
 $GLOBALS['TL_LANG']['hofff_selectri']['suggestions']
 	= 'Vorschläge';

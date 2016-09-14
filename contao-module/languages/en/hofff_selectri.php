@@ -37,6 +37,12 @@ $GLOBALS['TL_LANG']['hofff_selectri']['tree']
 	= 'Browse options';
 $GLOBALS['TL_LANG']['hofff_selectri']['tree_title']
 	= 'Click to toggle';
+$GLOBALS['TL_LANG']['hofff_selectri']['toggle_content_hide']
+	= 'Hide details';
+$GLOBALS['TL_LANG']['hofff_selectri']['toggle_content_show']
+	= 'Show details';
+$GLOBALS['TL_LANG']['hofff_selectri']['toggle_content_title']
+	= 'Click to show or hide the details of the entries';
 
 $GLOBALS['TL_LANG']['hofff_selectri']['suggestions']
 	= 'Suggestions';

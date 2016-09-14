@@ -54,6 +54,7 @@ Selectri.initialize = function(container, options, detached) {
 		self.result = self.container.getElement(".hofff-selectri-result");
 		self.suggestions = self.container.getElement(".hofff-selectri-suggestions");
 		self.tree = self.container.getElement(".hofff-selectri-tree");
+		self.toggleContentHandle = self.container.getElement(".hofff-selectri-toggle-content > .hofff-selectri-handle");
 		self.sources = $$([ self.result, self.suggestions, self.tree ].clean());
 		self.messages = self.container.getElement(".hofff-selectri-messages");
 
@@ -113,6 +114,7 @@ Selectri.onPathClick				= function(event, target) { this.openPath(target); this.
 Selectri.onClearSearchClick			= function(event, target) { this.clearSearch(); this.openSuggestions(); };
 Selectri.onClearSelectionClick		= function(event, target) { if(event.shift) this.deselectAll(); };
 Selectri.onToggleClick				= function(event, target) { this.toggleTree(); if(!this.isTreeOpen()) this.openSuggestions(); };
+Selectri.onToggleContentClick		= function(event, target) { this.toggleContent(); };
 Selectri.onSearchKeyDown			= function(event, target) {
 	target = target.get("value");
 	if(target && target.length) this.search(target);
@@ -199,6 +201,7 @@ events = {
 	"click:relay(.hofff-selectri-clear-search.hofff-selectri-handle)":													"onClearSearchClick",
 	"click:relay(.hofff-selectri-clear-selection > .hofff-selectri-handle)":											"onClearSelectionClick",
 	"click:relay(.hofff-selectri-toggle > .hofff-selectri-handle)":														"onToggleClick",
+	"click:relay(.hofff-selectri-toggle-content > .hofff-selectri-handle)":												"onToggleContentClick",
 	"keydown:relay(.hofff-selectri-search > input):pause(250)":															"onSearchKeyDown"
 };
 
@@ -350,6 +353,26 @@ Selectri.openTree = function() {
 
 Selectri.closeTree = function() {
 	if(this.tree) this.tree.removeClass("hofff-selectri-open");
+};
+
+Selectri.isContentVisible = function() {
+	return !this.container.hasClass("hofff-selectri-hide-content");
+};
+
+Selectri.toggleContent = function() {
+	this.isContentVisible() ? this.hideContent() : this.showContent();
+};
+
+Selectri.showContent = function() {
+	this.container.removeClass("hofff-selectri-hide-content");
+	var handle = this.toggleContentHandle;
+	if(handle) handle.set("text", handle.get("data-hofff-selectri-hide"));
+};
+
+Selectri.hideContent = function() {
+	this.container.addClass("hofff-selectri-hide-content");
+	var handle = this.toggleContentHandle;
+	if(handle) handle.set("text", handle.get("data-hofff-selectri-show"));
 };
 
 Selectri.toggleNode = function(node) {
