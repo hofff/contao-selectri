@@ -26,6 +26,22 @@ var Selectri = {},
 		if(!handle) handle = new Element("a.hofff-selectri-handle").set("href", "#").adopt(element.childNodes).inject(element);
 		handle.set("title", self.options.openPathTitle);
 	},
+	createViewportStabilizer = function(subject) {
+		if(!subject) return EMPTY;
+		var scroll = window.getScroll();
+		scroll.y -= subject.getPosition().y;
+		return function() {
+			scroll.y += subject.getPosition().y;
+			window.scrollTo(scroll.x, scroll.y);
+		};
+	},
+	stabilizeViewport = function(handler) {
+		return function(event, target) {
+			var stabilizer = createViewportStabilizer(target.getParent().getParent());
+			handler.apply(this, arguments);
+			stabilizer();
+		};
+	},
 	events;
 
 Selectri.Implements = [ Options, Class.Occlude, Events ];
@@ -102,19 +118,19 @@ Selectri.onHandleClick				= function(event, target) { event.preventDefault(); };
 Selectri.onSelectionLabelClick		= function(event, target) { this.openPath(target); this.openTree(); };
 Selectri.onSelectionDeselectClick	= function(event, target) { this.deselect(target); };
 Selectri.onResultLabelClick			= function(event, target) { this.openPath(target); this.openTree(); };
-Selectri.onResultSelectClick		= function(event, target) { this.select(target, TRUE); };
-Selectri.onResultDeselectClick		= function(event, target) { this.deselect(target, TRUE); };
+Selectri.onResultSelectClick		= stabilizeViewport(function(event, target) { this.select(target); });
+Selectri.onResultDeselectClick		= stabilizeViewport(function(event, target) { this.deselect(target); });
 Selectri.onSuggestionsLabelClick	= function(event, target) { this.openPath(target); this.openTree(); };
-Selectri.onSuggestionsSelectClick	= function(event, target) { this.select(target, TRUE); };
-Selectri.onSuggestionsDeselectClick	= function(event, target) { this.deselect(target, TRUE); };
+Selectri.onSuggestionsSelectClick	= stabilizeViewport(function(event, target) { this.select(target); });
+Selectri.onSuggestionsDeselectClick	= stabilizeViewport(function(event, target) { this.deselect(target); });
 Selectri.onTreeLabelClick			= function(event, target) { this.toggleNode(target); };
-Selectri.onTreeSelectClick			= function(event, target) { this.select(target, TRUE); };
-Selectri.onTreeDeselectClick		= function(event, target) { this.deselect(target, TRUE); };
+Selectri.onTreeSelectClick			= stabilizeViewport(function(event, target) { this.select(target); });
+Selectri.onTreeDeselectClick		= stabilizeViewport(function(event, target) { this.deselect(target); });
 Selectri.onPathClick				= function(event, target) { this.openPath(target); this.openTree(); };
 Selectri.onClearSearchClick			= function(event, target) { this.clearSearch(); this.openSuggestions(); };
-Selectri.onClearSelectionClick		= function(event, target) { if(event.shift) this.deselectAll(); };
+Selectri.onClearSelectionClick		= stabilizeViewport(function(event, target) { if(event.shift) this.deselectAll(); });
 Selectri.onToggleClick				= function(event, target) { this.toggleTree(); if(!this.isTreeOpen()) this.openSuggestions(); };
-Selectri.onToggleContentClick		= function(event, target) { this.toggleContent(); };
+Selectri.onToggleContentClick		= stabilizeViewport(function(event, target) { this.toggleContent(); });
 Selectri.onSearchKeyDown			= function(event, target) {
 	target = target.get("value");
 	if(target && target.length) this.search(target);
@@ -240,7 +256,7 @@ Selectri.setMessages = function(messages) {
 	});
 };
 
-Selectri.select = function(node, adjustScroll) {
+Selectri.select = function(node) {
 	var self = this;
 	if(self.isSelected(node)) return;
 
@@ -255,28 +271,24 @@ Selectri.select = function(node, adjustScroll) {
 	node = new Element("li.hofff-selectri-selected").grab(node);
 	fixSortables(self.sortables, node);
 
-	adjustScroll = self.getScrollAdjust(adjustScroll);
 	if(self.options.max == 1) self.deselect(self.selection.getFirst());
 	node.inject(self.selection);
 	self.sortables.addItems(node);
 	self.selection.getParent().addClass("hofff-selectri-has-selection");
-	adjustScroll();
 
 	nodes.getParent("li").addClass("hofff-selectri-selected");
 
 	self.fireEvent("selected", self.getKey(node));
 };
 
-Selectri.deselect = function(node, adjustScroll) {
+Selectri.deselect = function(node) {
 	var self = this, selectedNode, removed;
 
 	selectedNode = self.getNode(self.selection, node);
 	if(!selectedNode) return;
 
-	adjustScroll = self.getScrollAdjust(adjustScroll);
 	removed = self.sortables.removeItems(selectedNode.getParent("li")).dispose();
 	if(!self.selection.getChildren().length) self.selection.getParent().removeClass("hofff-selectri-has-selection");
-	adjustScroll();
 
 	$$(self.getNode(self.sources, node).clean()).getParent("li").removeClass("hofff-selectri-selected");
 
@@ -285,21 +297,8 @@ Selectri.deselect = function(node, adjustScroll) {
 	removed.destroy();
 };
 
-Selectri.deselectAll = function(adjustScroll) {
-	var self = this;
-	adjustScroll = self.getScrollAdjust(adjustScroll);
-	self.selection.getChildren().each(self.deselect, self);
-	adjustScroll();
-};
-
-Selectri.getScrollAdjust = function(adjust) {
-	if(adjust !== TRUE) return EMPTY;
-	var self = this, scroll = window.getScroll();
-	scroll.y -= self.selection.getParent().getSize().y;
-	return function() {
-		scroll.y += self.selection.getParent().getSize().y;
-		window.scrollTo(scroll.x, scroll.y);
-	};
+Selectri.deselectAll = function() {
+	this.selection.getChildren().each(this.deselect, this);
 };
 
 Selectri.isSelected = function(key) {
