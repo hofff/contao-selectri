@@ -80,7 +80,6 @@ Selectri.initialize = function(container, options, detached) {
 		url += "&hofff_selectri_action=";
 		self.toggleRequest = new Request.JSON({ url: url + "toggle", method: "post", link: "chain" });
 		delete self.toggleRequest.headers["X-Requested-With"]; // fuck contao...
-		self.toggleRequest.addEvent("success", self.onToggleSuccess);
 		self.levelsRequest = new Request.JSON({ url: url + "levels", method: "post", link: "chain" });
 		delete self.levelsRequest.headers["X-Requested-With"]; // fuck contao...
 		self.pathRequest = new Request.JSON({ url: url + "path", method: "post", link: "chain" });
@@ -138,7 +137,6 @@ Selectri.onSearchKeyDown			= function(event, target) {
 };
 Selectri.onSortStart				= function() { this.container.addClass("hofff-selectri-sorting"); };
 Selectri.onSortComplete				= function() { this.container.removeClass("hofff-selectri-sorting"); };
-Selectri.onToggleSuccess			= function(json) { if(json && json.token) this.updateRequestToken(json.token); };
 Selectri.onLevelsRequest			= function() { this.container.addClass("hofff-selectri-loading"); };
 Selectri.onLevelsCancel				= function() { this.container.removeClass("hofff-selectri-loading"); };
 Selectri.onLevelsException			= function() { this.container.removeClass("hofff-selectri-loading").addClass("hofff-selectri-error"); };
@@ -146,8 +144,6 @@ Selectri.onLevelsComplete			= function() { this.container.removeClass("hofff-sel
 Selectri.onLevelsSuccess			= function(json) {
 	var self = this, node = undef;
 	if(!json) return;
-
-	if(json.token) this.updateRequestToken(json.token);
 
 	self.setMessages(json.messages);
 
@@ -183,8 +179,6 @@ Selectri.onSearchComplete			= function() { this.container.removeClass("hofff-sel
 Selectri.onSearchSuccess			= function(json) {
 	var self = this;
 	if(!json) return;
-
-	if(json.token) this.updateRequestToken(json.token);
 
 	if(self.query != json.search) return;
 
@@ -347,7 +341,7 @@ Selectri.openTree = function() {
 	self.tree.addClass("hofff-selectri-open");
 	self.clearSearch();
 	self.closeSuggestions();
-	self.tree.getChildren().length || self.levelsRequest.isRunning() || self.levelsRequest.send({ data: self.collectFormData() });
+	self.tree.getChildren().length || self.levelsRequest.isRunning() || self.levelsRequest.send({ data: self.buildPOSTData() });
 };
 
 Selectri.closeTree = function() {
@@ -389,8 +383,8 @@ Selectri.openNode = function(node) {
 	node = self.getChildrenContainer(node);
 	if(!node) return;
 	node.getParent("li").addClass("hofff-selectri-open");
-	node.getChildren().length || self.levelsRequest.send({ data: self.collectFormData({ hofff_selectri_key: key }) });
-	self.toggleRequest.send({ data: self.collectFormData({ hofff_selectri_key: key, hofff_selectri_open: 1 }) });
+	node.getChildren().length || self.levelsRequest.send({ data: self.buildPOSTData({ hofff_selectri_key: key }) });
+	self.toggleRequest.send({ data: self.buildPOSTData({ hofff_selectri_key: key, hofff_selectri_open: 1 }) });
 };
 
 Selectri.closeNode = function(node) {
@@ -399,7 +393,7 @@ Selectri.closeNode = function(node) {
 	node = self.getChildrenContainer(node);
 	if(!node) return;
 	node.getParent("li").removeClass("hofff-selectri-open");
-	self.toggleRequest.send({ data: self.collectFormData({ hofff_selectri_key: key, hofff_selectri_open: 0 }) });
+	self.toggleRequest.send({ data: self.buildPOSTData({ hofff_selectri_key: key, hofff_selectri_open: 0 }) });
 };
 
 Selectri.openPath = function(node) {
@@ -407,7 +401,7 @@ Selectri.openPath = function(node) {
 	if(!self.tree || !key) return;
 	node = self.getNode(self.tree, key);
 	if(!node) {
-		self.pathRequest.send({ data: self.collectFormData({ hofff_selectri_key: key }) });
+		self.pathRequest.send({ data: self.buildPOSTData({ hofff_selectri_key: key }) });
 		return;
 	}
 	node.getParent().getParents().filter(".hofff-selectri-tree li").addClass("hofff-selectri-open");
@@ -433,7 +427,7 @@ Selectri.search = function(query) {
 	self.closeTree();
 	self.closeSuggestions();
 	self.container.removeClass("hofff-selectri-not-found");
-	self.searchRequest.send({ data: self.collectFormData({ hofff_selectri_search: query }) });
+	self.searchRequest.send({ data: self.buildPOSTData({ hofff_selectri_search: query }) });
 };
 
 Selectri.clearSearch = function() {
@@ -459,32 +453,8 @@ Selectri.closeSuggestions = function() {
 	if(this.suggestions) this.suggestions.removeClass("hofff-selectri-open");
 };
 
-// FIXME buggy implementation not respecting valid inputs and fails on inputs with same name
-Selectri.collectFormData = function(parameters) {
-	var data = {};
-	for (var index in this.container.form.elements) {
-		var element = this.container.form.elements[index];
-		if (element.name) {
-			data[element.name] = element.value;
-		}
-	}
-	if (parameters) {
-		for (var key in parameters) {
-			data[key] = parameters[key];
-		}
-	}
-	data["REQUEST_TOKEN"] = this.getRequestToken();
-	return data;
-};
-
-Selectri.getRequestToken = function() {
-	return window.REQUEST_TOKEN || document.getElements("input[type=\"hidden\"][name=\"REQUEST_TOKEN\"]").get("value")[0];
-};
-
-Selectri.updateRequestToken = function(token) {
-	if(!token) return;
-	window.REQUEST_TOKEN = token;
-	document.getElements("input[type=\"hidden\"][name=\"REQUEST_TOKEN\"]").set("value", token);
+Selectri.buildPOSTData = function(params) {
+	return $(this.container.form).toQueryString() + Object.toQueryString(params);
 };
 
 Selectri.Binds = Object.keys(Selectri).filter(function(method) { return method.substr(0, 2) == "on"; });
