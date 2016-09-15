@@ -117,7 +117,7 @@ class Widget extends BaseWidget {
 					return implode(',', array_keys($value));
 				}
 				if($this->canonical) {
-					return $value;
+					return serialize($value);
 				}
 				return array_keys($value);
 				break;
