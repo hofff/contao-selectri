@@ -454,7 +454,9 @@ Selectri.closeSuggestions = function() {
 };
 
 Selectri.buildPOSTData = function(params) {
-	return $(this.container.form).toQueryString() + Object.toQueryString(params);
+	var qs = $(this.container.form).toQueryString();
+	if(params) qs += "&" + Object.toQueryString(params)
+	return qs;
 };
 
 Selectri.Binds = Object.keys(Selectri).filter(function(method) { return method.substr(0, 2) == "on"; });
