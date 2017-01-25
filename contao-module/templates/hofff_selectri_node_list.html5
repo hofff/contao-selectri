@@ -1,4 +1,4 @@
-<ol>
+<ol class="hofff-selectri-node-list">
   <?php foreach($this->nodes as $node): ?>
     <?php $selectable = $this->selected || $node->isSelectable(); ?>
     <?php $children = $this->children && $node->hasSelectableDescendants(); ?>
