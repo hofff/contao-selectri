@@ -64,6 +64,11 @@ class Widget extends BaseWidget {
 	/**
 	 * @var boolean
 	 */
+	protected $suggestOnlyEmpty = false;
+
+	/**
+	 * @var boolean
+	 */
 	protected $contentToggleable = false;
 
 	/**
@@ -233,6 +238,7 @@ class Widget extends BaseWidget {
 			'disableBrowsing'		=> 'setDisableBrowsing',
 			'disableSearching'		=> 'setDisableSearching',
 			'disableSuggestions'	=> 'setDisableSuggestions',
+			'suggestOnlyEmpty'		=> 'setSuggestOnlyEmpty',
 			'contentToggleable'		=> 'setContentToggleable',
 		] as $key => $method) {
 			if(!isset($attrs[$key])) {
@@ -586,6 +592,9 @@ class Widget extends BaseWidget {
 		if($this->isDisableSuggestions() || !$this->getData()->hasSuggestions()) {
 			return [];
 		}
+		if($this->isSuggestOnlyEmpty() && $this->varValue) {
+			return [];
+		}
 
 		$suggestions = $this->getData()->suggest($this->getSuggestLimit());
 
@@ -805,6 +814,21 @@ class Widget extends BaseWidget {
 	 */
 	public function setDisableSuggestions($disable) {
 		$this->disableSuggestions = (bool) $disable;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isSuggestOnlyEmpty() {
+		return $this->suggestOnlyEmpty;
+	}
+
+	/**
+	 * @param boolean $only
+	 * @return void
+	 */
+	public function setSuggestOnlyEmpty($only) {
+		$this->suggestOnlyEmpty = (bool) $only;
 	}
 
 	/**
