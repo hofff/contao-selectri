@@ -40,6 +40,8 @@ $GLOBALS['TL_LANG']['hofff_selectri']['toggle_content_show']
 $GLOBALS['TL_LANG']['hofff_selectri']['toggle_content_title']
 	= 'Klicken Sie hier, um die Details der Einträge ein- oder auszublenden';
 
+$GLOBALS['TL_LANG']['hofff_selectri']['result']
+	= 'Suchergebnisse';
 $GLOBALS['TL_LANG']['hofff_selectri']['suggestions']
 	= 'Vorschläge';
 

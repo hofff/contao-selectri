@@ -182,10 +182,13 @@ Selectri.onSearchSuccess			= function(json) {
 
 	if(self.query != json.search) return;
 
+	self.closeTree();
+	self.closeSuggestions();
+
 	self.setMessages(json.messages);
 
-	self.result.set("html", json.result);
-	if(self.result.getChildren().length) self.result.addClass("hofff-selectri-open");
+	$$(self.result.getChildren().slice(1)).destroy();
+	if(json.result) self.result.appendHTML(json.result).addClass("hofff-selectri-open");
 	else self.result.removeClass("hofff-selectri-open");
 
 	self.selection.getChildren().each(function(node) {
@@ -424,8 +427,6 @@ Selectri.search = function(query) {
 	self.input.addClass("hofff-selectri-query");
 	if(self.query == query) return;
 	self.query = query;
-	self.closeTree();
-	self.closeSuggestions();
 	self.container.removeClass("hofff-selectri-not-found");
 	self.searchRequest.send({ data: self.buildPOSTData({ hofff_selectri_search: query }) });
 };

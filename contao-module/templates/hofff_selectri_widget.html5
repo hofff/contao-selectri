@@ -54,7 +54,9 @@ $options = array_merge($options, $this->getJSOptions());
   <div class="hofff-selectri-messages"></div>
 
   <?php if($this->isSearchable()): ?>
-    <div class="hofff-selectri-result"></div>
+    <div class="hofff-selectri-result">
+      <p><?= $GLOBALS['TL_LANG']['hofff_selectri']['result'] ?></p>
+    </div>
   <?php endif; ?>
 
   <?php $suggestedNodes = $this->getSuggestedNodes(); ?>

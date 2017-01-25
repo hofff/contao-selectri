@@ -265,6 +265,7 @@ parents children container */
 	height: 100%;
 }
 
+.hofff-selectri-result > p,
 .hofff-selectri-suggestions > p {
 	margin: 0 0 3px;
 }
