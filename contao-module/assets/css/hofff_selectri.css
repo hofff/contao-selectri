@@ -164,7 +164,7 @@ parents children container */
 }
 
 .hofff-selectri-path-node:not(:last-child)::after {
-	content: "»";
+	content: '»';
 	margin-left: 5px;
 	color: #fff;
 	line-height: 22px;
@@ -385,7 +385,7 @@ parents children container */
 
 .hofff-selectri-node:before, .hofff-selectri-node:after,
 .hofff-selectri-tools:before, .hofff-selectri-tools:after {
-	content: " ";
+	content: ' ';
 	display: table;
 }
 
