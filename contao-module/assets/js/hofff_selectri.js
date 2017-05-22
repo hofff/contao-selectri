@@ -93,7 +93,13 @@ Selectri.initialize = function(container, options, detached) {
 		});
 
 		self.sortables = new Sortables(undef, { opacity: 0.8, onStart: self.onSortStart, onComplete: self.onSortComplete, handle: ".hofff-selectri-drag" });
-		if(self.sortables.options.unDraggableTags) self.sortables.options.unDraggableTags.erase("a");
+		if(self.sortables.options.unDraggableTags) {
+			self.sortables.options.unDraggableTags.erase("a");
+			self.sortables.options.dragOptions = Object.merge(
+				self.sortables.options.dragOptions || {},
+				{ unDraggableTags: Array.from(self.sortables.options.unDraggableTags) }
+			);
+		}
 		else self.selection.getChildren().each(function(element) { fixSortables(self.sortables, element); });
 		self.sortables.addLists(self.selection).detach();
 
