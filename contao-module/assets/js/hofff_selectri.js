@@ -461,9 +461,11 @@ Selectri.closeSuggestions = function() {
 };
 
 Selectri.buildPOSTData = function(params) {
-	var qs = $(this.container.form).toQueryString();
-	if(params) qs += "&" + Object.toQueryString(params)
-	return qs;
+	var $form = $(this.container.form), qs = [];
+	if($form) qs.push($form.toQueryString());
+	if(window.Contao && Contao.request_token) (params = params || {}).REQUEST_TOKEN = Contao.request_token;
+	if(params) qs.push(Object.toQueryString(params));
+	return qs.join("&");
 };
 
 Selectri.Binds = Object.keys(Selectri).filter(function(method) { return method.substr(0, 2) == "on"; });
