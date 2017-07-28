@@ -72,6 +72,11 @@ class Widget extends BaseWidget {
 	protected $contentToggleable = false;
 
 	/**
+	 * @var boolean
+	 */
+	protected $forceOpen = false;
+
+	/**
 	 * @var array
 	 */
 	protected $jsOptions = [];
@@ -240,6 +245,7 @@ class Widget extends BaseWidget {
 			'disableSuggestions'	=> 'setDisableSuggestions',
 			'suggestOnlyEmpty'		=> 'setSuggestOnlyEmpty',
 			'contentToggleable'		=> 'setContentToggleable',
+			'forceOpen'				=> 'setForceOpen',
 		] as $key => $method) {
 			if(!isset($attrs[$key])) {
 				continue;
@@ -605,7 +611,15 @@ class Widget extends BaseWidget {
 	 * @return boolean
 	 */
 	public function isOpen() {
-		return $this->isBrowsable() && $this->mandatory && !$this->varValue;
+		if(!$this->isBrowsable()) {
+			return false;
+		}
+
+		if($this->forceOpen) {
+			return true;
+		}
+
+		return $this->mandatory && !$this->varValue;
 	}
 
 	/**
@@ -844,6 +858,21 @@ class Widget extends BaseWidget {
 	 */
 	public function setContentToggleable($toggleable) {
 		$this->contentToggleable = (bool) $toggleable;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isForceOpen() {
+		return $this->forceOpen;
+	}
+
+	/**
+	 * @param boolean $force
+	 * @return void
+	 */
+	public function setForceOpen($force) {
+		$this->forceOpen = (bool) $force;
 	}
 
 	/**
