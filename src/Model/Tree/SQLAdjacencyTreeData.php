@@ -53,7 +53,7 @@ class SQLAdjacencyTreeData extends AbstractData {
 		}
 		try {
 			$this->fetchTreeNodes(array($this->cfg->getRootValue()), true, true, 1);
-		} catch(Exception $e) {
+		} catch(\Exception $e) {
 			throw new SelectriException('invalid tree table configuration: ' . $e->getMessage(), $e->getCode(), $e);
 		}
 	}

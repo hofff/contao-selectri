@@ -52,7 +52,7 @@ class SQLListData extends AbstractData {
 			$sql = sprintf($sql, '1');
 			$this->db->prepare($sql)->limit(1)->execute();
 
-		} catch(Exception $e) {
+		} catch(\Exception $e) {
 			throw new SelectriException('invalid table configuration: ' . $e->getMessage());
 		}
 	}
