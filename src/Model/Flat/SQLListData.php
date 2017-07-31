@@ -61,6 +61,8 @@ class SQLListData extends AbstractData {
 	 * @see \Hofff\Contao\Selectri\Model\Data::getNodes()
 	 */
 	public function getNodes(array $keys, $selectableOnly = true) {
+		$keys = array_filter($keys, 'is_scalar');
+		$keys = array_map('strval', $keys);
 		if(!$keys) {
 			return new \EmptyIterator;
 		}
@@ -89,8 +91,8 @@ class SQLListData extends AbstractData {
 	/**
 	 * @see \Hofff\Contao\Selectri\Model\Data::filter()
 	 */
-	public function filter(array $keys) {
-		return array_keys(iterator_to_array($this->getNodes($keys), true));
+	public function filter(array $keys, $selectableOnly = true) {
+		return array_keys(iterator_to_array($this->getNodes($keys, $selectableOnly), false));
 	}
 
 	/**
