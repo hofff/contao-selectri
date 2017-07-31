@@ -39,9 +39,10 @@ interface Data {
 	 *
 	 * @param string[]|array $keys An array of primary key values in their
 	 * 		string representation
+	 * @param boolean $selectableOnly
 	 * @return string[]|array The input array with all invalid values removed
 	 */
-	public function filter(array $keys);
+	public function filter(array $keys, $selectableOnly = true);
 
 	/**
 	 * @return boolean

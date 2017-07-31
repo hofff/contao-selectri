@@ -55,8 +55,8 @@ abstract class DataDelegate implements Data {
 	/**
 	 * @see \Hofff\Contao\Selectri\Model\Data::filter()
 	 */
-	public function filter(array $keys) {
-		return $this->delegate->filter($keys);
+	public function filter(array $keys, $selectableOnly = true) {
+		return $this->delegate->filter($keys, $selectableOnly);
 	}
 
 	/**
