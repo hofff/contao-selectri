@@ -25,10 +25,10 @@ interface Data {
 	 * The returned nodes should NOT be traversed recursivly through the node's
 	 * getChildrenIterator method.
 	 *
-	 * @param array<string> $keys An array of primary key values in their
+	 * @param string[]|array $keys An array of primary key values in their
 	 * 		string representation
 	 * @param boolean $selectableOnly
-	 * @return Iterator<Node> An iterator over the nodes identified by
+	 * @return \Iterator An iterator over the nodes identified by
 	 * 		the given primary keys
 	 */
 	public function getNodes(array $keys, $selectableOnly = true);
@@ -37,9 +37,9 @@ interface Data {
 	 * Filters the given primary keys for values identifing only existing
 	 * records.
 	 *
-	 * @param array<string> $keys An array of primary key values in their
+	 * @param string[]|array $keys An array of primary key values in their
 	 * 		string representation
-	 * @return array<string> The input array with all invalid values removed
+	 * @return string[]|array The input array with all invalid values removed
 	 */
 	public function filter(array $keys);
 
@@ -63,7 +63,7 @@ interface Data {
 	 *
 	 * @param string|null $key A primary key value in its string
 	 * 		representation or null
-	 * @return Iterator<Node> An iterator over nodes
+	 * @return \Iterator An iterator over nodes
 	 */
 	public function browseFrom($key = null);
 
@@ -76,7 +76,7 @@ interface Data {
 	 *
 	 * @param string $key A primary key value in its string
 	 * 		representation
-	 * @return Iterator<Node> An iterator over the root nodes
+	 * @return \Iterator An iterator over the root nodes
 	 */
 	public function browseTo($key);
 
@@ -94,7 +94,7 @@ interface Data {
 	 * @param string $query The search query to match nodes against
 	 * @param integer $limit
 	 * @param integer $offset
-	 * @return Iterator<Node> An iterator over nodes matched by the given
+	 * @return \Iterator An iterator over nodes matched by the given
 	 * 		search query
 	 */
 	public function search($query, $limit, $offset = 0);
@@ -112,7 +112,7 @@ interface Data {
 	 *
 	 * @param integer $limit
 	 * @param integer $offset
-	 * @return Iterator<Node> An iterator over suggested nodes
+	 * @return \Iterator An iterator over suggested nodes
 	 */
 	public function suggest($limit, $offset = 0);
 
