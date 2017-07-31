@@ -376,7 +376,7 @@ class Widget extends BaseWidget {
 		strlen($key) || $key = null;
 
 		list($nodes, $start) = $this->getData()->browseFrom($key);
-		$nodes = iterator_to_array($nodes);
+		$nodes = iterator_to_array($nodes, false);
 
 		$response = [];
 		$response['action'] = 'levels';
@@ -402,7 +402,7 @@ class Widget extends BaseWidget {
 		}
 
 		$nodes = $this->getData()->browseTo($key);
-		$nodes = iterator_to_array($nodes);
+		$nodes = iterator_to_array($nodes, false);
 
 		$response = [];
 		$response['action'] = 'path';
@@ -459,7 +459,7 @@ class Widget extends BaseWidget {
 		}
 
 		$nodes = $this->getData()->search($search, $this->getSearchLimit());
-		$nodes = iterator_to_array($nodes);
+		$nodes = iterator_to_array($nodes, false);
 		$nodes = array_filter($nodes, function(Node $node) {
 			return $node->isSelectable();
 		});
@@ -507,7 +507,7 @@ class Widget extends BaseWidget {
 		foreach($nodes as $node) {
 			$node->isOpen() && $this->renderLevels(
 				$response,
-				iterator_to_array($node->getChildrenIterator()),
+				iterator_to_array($node->getChildrenIterator(), false),
 				$node->getKey()
 			);
 		}
@@ -588,7 +588,7 @@ class Widget extends BaseWidget {
 	 */
 	public function getSelectedNodes() {
 		$selection = $this->getData()->getNodes(array_keys($this->getValue()));
-		return iterator_to_array($selection);
+		return iterator_to_array($selection, false);
 	}
 
 	/**
@@ -604,7 +604,7 @@ class Widget extends BaseWidget {
 
 		$suggestions = $this->getData()->suggest($this->getSuggestLimit());
 
-		return iterator_to_array($suggestions);
+		return iterator_to_array($suggestions, false);
 	}
 
 	/**
