@@ -63,7 +63,7 @@ class SQLAdjacencyTreeData extends AbstractData {
 	 */
 	public function getNodes(array $keys, $selectableOnly = true) {
 		$children = null;
-		$keys = $this->filterKeys($keys, $children);
+		$keys = $this->filterKeys($keys, $children, $selectableOnly);
 		if(!$keys) {
 			return new \EmptyIterator;
 		}
@@ -84,8 +84,10 @@ class SQLAdjacencyTreeData extends AbstractData {
 	/**
 	 * @see \Hofff\Contao\Selectri\Model\Data::filter()
 	 */
-	public function filter(array $keys) {
-		return $this->filterKeys($keys);
+	public function filter(array $keys, $selectableOnly = true) {
+		$children = null;
+
+		return $this->filterKeys($keys, $children, $selectableOnly);
 	}
 
 	/**
@@ -249,10 +251,10 @@ class SQLAdjacencyTreeData extends AbstractData {
 	 * @param array<string, array<string, string>> $children
 	 * @return array<string>
 	 */
-	protected function filterKeys(array $keys, array &$children = null) {
+	protected function filterKeys(array $keys, array &$children = null, $selectableOnly = true) {
 		$nodes = array();
 		foreach($this->fetchTreeNodes($keys) as $key => $node) {
-			if($node['_isSelectable']) {
+			if(!$selectableOnly || $node['_isSelectable']) {
 				$nodes[] = $key;
 			}
 		}
