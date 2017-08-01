@@ -126,7 +126,7 @@ class SQLAdjacencyTreeData extends AbstractData {
 		if($rootStart) {
 			$roots = $tree->getPreorder($roots, true);
 			if(!$roots) {
-				return new \EmptyIterator;
+				return [ new \EmptyIterator, null ];
 			}
 
 			if($roots[0] === $rootValue) { // implies count($roots) == 1 because unnested
@@ -138,14 +138,14 @@ class SQLAdjacencyTreeData extends AbstractData {
 		} else {
 			// filter start
 			if(!in_array($startKey, $tree->getDescendantsPreorder($roots, true))) {
-				return null;
+				return [ new \EmptyIterator, null ];
 			}
 			$this->fetchLevels($tree, array($startKey));
 		}
 
 		$first = array_keys((array) $tree->nodes);
 		if(!$first) {
-			return null;
+			return [ new \EmptyIterator, null ];
 		}
 
 		$tree->parents = $tree->getParentsFromChildren();
