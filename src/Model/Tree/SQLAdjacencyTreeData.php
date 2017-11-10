@@ -297,24 +297,42 @@ class SQLAdjacencyTreeData extends AbstractData {
 		}
 
 		$query = <<<EOT
-SELECT		%s AS _key,
-			%s AS _parentKey,
-			COUNT(child._key) != 0 AS _hasChildren,
-			COUNT(grandchild._key) != 0 AS _hasGrandChildren,
-			(%s) AS _isSelectable,
+SELECT
+	%s AS _key,
+	%s AS _parentKey,
+	descendants._hasChildren AS _hasChildren,
+	descendants._hasGrandChildren AS _hasGrandChildren,
+	(%s) AS _isSelectable,
+	%s
+FROM
+	%s
+	AS tree
+JOIN
+	(
+		SELECT
+			%s AS _key,
+			COUNT(child1._key) != 0 AS _hasChildren,
+			COUNT(grandchild1._key) != 0 AS _hasGrandChildren
+		FROM
 			%s
-
-FROM		%s AS tree
-
-LEFT JOIN	( SELECT %s AS _key, %s AS _parentKey FROM %s %s
-			) AS child ON child._parentKey = tree.%s
-
-LEFT JOIN	( SELECT %s AS _key, %s AS _parentKey FROM %s %s
-			) AS grandchild ON grandchild._parentKey = child._key
-
-WHERE		%%s IN (%%s)
-%s
-GROUP BY	%s
+			AS tree1
+		LEFT JOIN
+			(SELECT %s AS _key, %s AS _parentKey FROM %s %s)
+			AS child1
+			ON child1._parentKey = tree1.%s
+		LEFT JOIN
+			(SELECT %s AS _key, %s AS _parentKey FROM %s %s)
+			AS grandchild1
+			ON grandchild1._parentKey = child1._key
+		WHERE
+			%%s IN (%%s)
+			%s
+		GROUP BY
+			%s
+		%s
+	)
+	AS descendants
+	ON descendants._key = tree.%s
 EOT;
 
 		$params = array();
@@ -323,6 +341,11 @@ EOT;
 		$params[] = $this->cfg->getParentKeyColumn();
 		$params[] = $this->buildSelectableExpr();
 		$params[] = $this->buildNodeSelectExpr();
+		// from
+		$params[] = $this->cfg->getTable();
+
+		// select
+		$params[] = $this->cfg->getKeyColumn();
 		// from
 		$params[] = $this->cfg->getTable();
 		// child join
@@ -340,12 +363,15 @@ EOT;
 		$params[] = $this->cfg->getConditionExpr('AND');
 		// group by
 		$params[] = $this->cfg->getKeyColumn();
+		// having
+		$params[] = $this->cfg->getSelectionMode() == SQLAdjacencyTreeDataConfig::SELECTION_MODE_INNER
+			? 'HAVING _hasChildren'
+			: '';
+
+		// join
+		$params[] = $this->cfg->getKeyColumn();
 
 		$query = vsprintf($query, $params);
-
-		if($this->cfg->getSelectionMode() == SQLAdjacencyTreeDataConfig::SELECTION_MODE_INNER) {
-			$query .= PHP_EOL . 'HAVING _hasChildren';
-		}
 
 		return $this->nodeQuery = $query;
 	}
