@@ -47,6 +47,9 @@
 		}
 	},
 	"extra": {
+		"branch-alias": {
+			"dev-master": "4.0.x-dev"
+		},
 		"contao": {
 			"sources": {
 				"contao-module": "system/modules/hofff_selectri"
