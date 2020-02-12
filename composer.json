@@ -12,9 +12,15 @@
 	"license": "LGPL-3.0+",
 	"authors": [
 		{
+			"name": "Nicky Hoff",
+			"email": "nick@hofff.com",
+			"homepage": "https://www.hofff.com/",
+			"role": "Maintainer"
+    		},
+		{
 			"name": "Oliver Hoff",
 			"email": "oliver@hofff.com",
-			"homepage": "https://hofff.com/",
+			"homepage": "https://www.hofff.com/",
 			"role": "Developer"
 		}
 	],
@@ -29,7 +35,7 @@
 	"require": {
 		"php": "^5.6 || ^7.0",
 		"contao/core-bundle": "^3.5 || ^4.3",
-		"contao-community-alliance/composer-plugin": "^2.0 || ^3.0"
+		"contao-community-alliance/composer-plugin": "^2.4 || ^3.0"
 	},
 	"replace": {
 		"backboneit/contao-selectri": "self.version",
