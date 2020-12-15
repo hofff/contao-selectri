@@ -15,6 +15,11 @@ use Hofff\Contao\Selectri\Util\ContaoUtil;
  * @author Oliver Hoff <oliver@hofff.com>
  */
 class Widget extends BaseWidget {
+	/**
+	 * Submit user input
+	 * @var boolean
+	 */
+	protected $blnSubmitInput = true;
 
 	/**
 	 * @var Data
