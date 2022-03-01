@@ -5,21 +5,21 @@
 
     <li class="<?php if($this->selected) echo 'hofff-selectri-selected'; if($children) echo ' hofff-selectri-has-children'; ?>">
 
-      <div class="hofff-selectri-node" data-hofff-selectri-key="<?= specialchars($node->getKey()) ?>">
+      <div class="hofff-selectri-node" data-hofff-selectri-key="<?= \Contao\StringUtil::specialchars($node->getKey()) ?>">
         <?php if($this->selected): ?>
-          <input type="hidden" value="<?= specialchars($node->getKey()) ?>" name="<?= $this->widget->getInputName() ?>" />
+          <input type="hidden" value="<?= \Contao\StringUtil::specialchars($node->getKey()) ?>" name="<?= $this->widget->getInputName() ?>" />
         <?php elseif($selectable): ?>
-          <input type="hidden" value="<?= specialchars($node->getKey()) ?>" />
+          <input type="hidden" value="<?= \Contao\StringUtil::specialchars($node->getKey()) ?>" />
         <?php endif; ?>
 
         <?php if($node->hasPath()): ?>
           <div class="hofff-selectri-path">
             <ol>
               <?php foreach($node->getPathIterator() as $pathNode): ?>
-                <li class="hofff-selectri-path-node" data-hofff-selectri-key="<?= specialchars($pathNode->getKey()) ?>">
+                <li class="hofff-selectri-path-node" data-hofff-selectri-key="<?= \Contao\StringUtil::specialchars($pathNode->getKey()) ?>">
                   <div class="hofff-selectri-label">
                     <a href="#" class="hofff-selectri-handle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['path_title'] ?>">
-                      <img class="hofff-selectri-icon" src="<?= specialchars($pathNode->getIcon()) ?>" alt="" />
+                      <img class="hofff-selectri-icon" src="<?= \Contao\StringUtil::specialchars($pathNode->getIcon()) ?>" alt="" />
                       <?= $pathNode->getLabel() ?>
                     </a>
                   </div>
@@ -38,16 +38,16 @@
         <div class="hofff-selectri-label">
           <?php if(!$this->children): ?>
             <a href="#" class="hofff-selectri-handle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['open_path_title'] ?>">
-              <img class="hofff-selectri-icon" src="<?= specialchars($node->getIcon()) ?>" alt="" />
+              <img class="hofff-selectri-icon" src="<?= \Contao\StringUtil::specialchars($node->getIcon()) ?>" alt="" />
               <?= $node->getLabel() ?>
             </a>
           <?php elseif($children): ?>
             <a href="#" class="hofff-selectri-handle" title="<?= $GLOBALS['TL_LANG']['hofff_selectri']['toggle_title'] ?>">
-              <img class="hofff-selectri-icon" src="<?= specialchars($node->getIcon()) ?>" alt="" />
+              <img class="hofff-selectri-icon" src="<?= \Contao\StringUtil::specialchars($node->getIcon()) ?>" alt="" />
               <?= $node->getLabel() ?>
             </a>
           <?php else: ?>
-            <img class="hofff-selectri-icon" src="<?= specialchars($node->getIcon()) ?>" alt="" />
+            <img class="hofff-selectri-icon" src="<?= \Contao\StringUtil::specialchars($node->getIcon()) ?>" alt="" />
             <?= $node->getLabel() ?>
           <?php endif; ?>
         </div>
