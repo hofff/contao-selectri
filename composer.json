@@ -36,7 +36,7 @@
     "source": "https://github.com/hofff/contao-selectri"
   },
   "require": {
-    "php": "^7.1",
+    "php": "^7.1 || ^8.0",
     "ext-ctype": "*",
     "ext-json": "*",
     "ext-pcre": "*",
@@ -74,7 +74,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-develop": "4.1.x-dev",
+      "dev-develop": "6.0.x-dev",
       "dev-master": "4.0.x-dev"
     },
     "contao-mananger-plugin": "Hofff\\Contao\\Selectri\\ContaoManager\\Plugin"
