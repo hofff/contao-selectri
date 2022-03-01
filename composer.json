@@ -77,10 +77,6 @@
       "dev-develop": "4.1.x-dev",
       "dev-master": "4.0.x-dev"
     },
-    "contao": {
-      "sources": {
-        "contao-module": "system/modules/hofff_selectri"
-      }
-    }
+    "contao-mananger-plugin": "Hofff\\Contao\\Selectri\\ContaoManager\\Plugin"
   }
 }
