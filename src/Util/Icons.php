@@ -19,20 +19,19 @@ class Icons
     /** @var array<string,string> */
     protected static $tableIcons = [
         'tl_article'                => 'articles.svg',
-        'tl_calendar'               => 'system/modules/calendar/html/icon.svg',
-        'tl_faq_category'           => 'system/modules/faq/html/icon.svg',
+        'tl_calendar'               => 'bundles/contaocalendar/calendar.svg',
+        'tl_faq_category'           => 'bundles/contaofaq/faq.svg',
         'tl_form'                   => 'form.svg',
         'tl_layout'                 => 'layout.svg',
         'tl_member'                 => 'member.svg',
         'tl_member_group'           => 'mgroup.svg',
         'tl_module'                 => 'modules.svg',
         'tl_news_archive'           => 'news.svg',
-        'tl_newsletter_channel'     => 'system/modules/newsletter/html/icon.svg',
+        'tl_newsletter_channel'     => 'bundles/contaonewsletter/send.svg',
         'tl_newsletter_recipients'  => 'member.svg',
         'tl_search'                 => 'regular.svg',
         'tl_style'                  => 'iconCSS.svg',
         'tl_style_sheet'            => 'css.svg',
-        'tl_task'                   => 'taskcenter.svg',
         'tl_user'                   => 'user.svg',
         'tl_user_group'             => 'group.svg',
     ];

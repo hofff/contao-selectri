@@ -1,7 +1,7 @@
 <?php
 
-$GLOBALS['TL_JAVASCRIPT'][]	= 'system/modules/hofff_selectri/assets/js/hofff_selectri.js';
-$GLOBALS['TL_CSS'][]		= 'system/modules/hofff_selectri/assets/css/hofff_selectri.css';
+$GLOBALS['TL_JAVASCRIPT'][]	= self::getContainer()->get('assets.packages')->get('js/hofff_selectri.js', 'hofff_contao_selectri');
+$GLOBALS['TL_CSS'][]		= self::getContainer()->get('assets.packages')->get('css/hofff_selectri.css', 'hofff_contao_selectri');
 
 $options = [];
 $options['name']			= $this->getInputName();
