@@ -1,144 +1,121 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Hofff\Contao\Selectri\Model\Flat;
 
+use EmptyIterator;
 use Hofff\Contao\Selectri\Model\Node;
+use Iterator;
 
-class SQLListNode implements Node {
+class SQLListNode implements Node
+{
+    /** @var SQLListData */
+    protected $data;
 
-	/**
-	 * @var SQLListData
-	 */
-	protected $data;
+    /** @var string */
+    protected $key;
 
-	/**
-	 * @var string
-	 */
-	protected $key;
+    /** @var array<string,mixed> */
+    protected $node;
 
-	/**
-	 * @var array
-	 */
-	protected $node;
+    /**
+     * @param array<string,mixed> $node
+     */
+    public function __construct(SQLListData $data, array $node)
+    {
+        $this->data = $data;
+        $this->key  = $node['_key'];
+        $this->node = $node;
+    }
 
-	/**
-	 * @param SQLListData $data
-	 * @param array $node
-	 */
-	public function __construct(SQLListData $data, array $node) {
-		$this->data = $data;
-		$this->key  = $node['_key'];
-		$this->node = $node;
-	}
+    public function getKey(): string
+    {
+        return $this->key;
+    }
 
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\Node::getKey()
-	 */
-	public function getKey() {
-		return $this->key;
-	}
+    /** {@inheritDoc} */
+    public function getData(): array
+    {
+        return $this->node;
+    }
 
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\Node::getData()
-	 */
-	public function getData() {
-		return $this->node;
-	}
+    public function getLabel(): string
+    {
+        $data     = $this->data;
+        $config   = $data->getConfig();
+        $callback = $config->getLabelCallback();
 
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\Node::getLabel()
-	 */
-	public function getLabel() {
-		$data = $this->data;
-		$config = $data->getConfig();
-		$callback = $config->getLabelCallback();
-		return call_user_func($callback, $this, $data, $config);
-	}
+        return $callback($this, $data, $config);
+    }
 
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\Node::getContent()
-	 */
-	public function getContent() {
-		$data = $this->data;
-		$config = $data->getConfig();
-		$callback = $config->getContentCallback();
-		return $callback ? call_user_func($callback, $this, $data, $config) : '';
-	}
+    public function getContent(): string
+    {
+        $data     = $this->data;
+        $config   = $data->getConfig();
+        $callback = $config->getContentCallback();
 
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\Node::getIcon()
-	 */
-	public function getIcon() {
-		$data = $this->data;
-		$config = $data->getConfig();
-		$callback = $config->getIconCallback();
-		return call_user_func($callback, $this, $data, $config);
-	}
+        return $callback ? $callback($this, $data, $config) : '';
+    }
 
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\Node::getAdditionalInputName()
-	 */
-	public function getAdditionalInputName($key) {
-		$name = $this->data->getWidget()->getAdditionalInputBaseName();
-		$name .= '[' . $this->getKey() . ']';
-		$name .= '[' . $key . ']';
-		return $name;
-	}
+    public function getIcon(): string
+    {
+        $data     = $this->data;
+        $config   = $data->getConfig();
+        $callback = $config->getIconCallback();
 
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\Node::isSelectable()
-	 */
-	public function isSelectable() {
-		return $this->node['_isSelectable'];
-	}
+        return $callback($this, $data, $config);
+    }
 
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\Node::hasSelectableDescendants()
-	 */
-	public function hasSelectableDescendants() {
-		return false;
-	}
+    public function getAdditionalInputName(string $key): string
+    {
+        $name  = $this->data->getWidget()->getAdditionalInputBaseName();
+        $name .= '[' . $this->getKey() . ']';
+        $name .= '[' . $key . ']';
 
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\Node::isOpen()
-	 */
-	public function isOpen() {
-		return false;
-	}
+        return $name;
+    }
 
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\Node::getChildrenIterator()
-	 */
-	public function getChildrenIterator() {
-		return new \EmptyIterator;
-	}
+    public function isSelectable(): bool
+    {
+        return $this->node['_isSelectable'] ?? false;
+    }
 
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\Node::hasItems()
-	 */
-	public function hasItems() {
-		return false;
-	}
+    public function hasSelectableDescendants(): bool
+    {
+        return false;
+    }
 
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\Node::getItemIterator()
-	 */
-	public function getItemIterator() {
-		return new \EmptyIterator;
-	}
+    public function isOpen(): bool
+    {
+        return false;
+    }
 
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\Node::hasPath()
-	 */
-	public function hasPath() {
-		return false;
-	}
+    /** {@inheritDoc} */
+    public function getChildrenIterator(): Iterator
+    {
+        return new EmptyIterator();
+    }
 
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\Node::getPathIterator()
-	 */
-	public function getPathIterator() {
-		return new \EmptyIterator;
-	}
+    public function hasItems(): bool
+    {
+        return false;
+    }
 
+    /** {@inheritDoc} */
+    public function getItemIterator(): Iterator
+    {
+        return new EmptyIterator();
+    }
+
+    public function hasPath(): bool
+    {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    public function getPathIterator(): Iterator
+    {
+        return new EmptyIterator();
+    }
 }

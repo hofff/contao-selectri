@@ -7,3 +7,8 @@
 !/publish/
 !/test/
 !/src/
+!/.phpcq.yaml.dist
+!/.composer-require-checker.json
+!/psalm.xml
+!/phpcs.xml.dist
+!/.github

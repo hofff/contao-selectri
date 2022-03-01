@@ -1,49 +1,58 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Hofff\Contao\Selectri\Util;
 
 use Contao\Database;
 
-class SQLUtil {
+use function array_filter;
+use function array_map;
+use function array_unique;
+use function array_values;
+use function count;
+use function ltrim;
+use function rtrim;
+use function str_repeat;
 
-	/**
-	 * @param array<mixed> $columns
-	 * @return array<string>
-	 */
-	public static function getCleanedColumns($columns) {
-		return array_unique(array_values(array_filter(array_map('strval', (array) $columns))));
-	}
+class SQLUtil
+{
+    /**
+     * @param array<mixed> $columns
+     *
+     * @return list<string>
+     */
+    public static function getCleanedColumns(array $columns): array
+    {
+        return array_unique(array_values(array_filter(array_map('strval', $columns))));
+    }
 
-	/**
-	 * @param Database $db
-	 * @param string $table
-	 * @param string $keyColumn
-	 * @return LabelFormatter
-	 */
-	public static function createLabelFormatter(Database $db, $table, $keyColumn) {
-		$fields = array();
-		if($db->fieldExists('name', $table)) {
-			$fields[] = 'name';
-		} elseif($db->fieldExists('title', $table)) {
-			$fields[] = 'title';
-		}
-		$fields[] = $keyColumn;
+    public static function createLabelFormatter(Database $database, string $table, string $keyColumn): LabelFormatter
+    {
+        $fields = [];
+        if ($database->fieldExists('name', $table)) {
+            $fields[] = 'name';
+        } elseif ($database->fieldExists('title', $table)) {
+            $fields[] = 'title';
+        }
 
-		$format = '';
-		foreach($fields as $field) {
-			$format .= $field == $keyColumn ? ' (ID %s)' : ', %s';
-		}
-		$format = ltrim($format, ', ');
+        $fields[] = $keyColumn;
 
-		return new LabelFormatter($format, $fields);
-	}
+        $format = '';
+        foreach ($fields as $field) {
+            $format .= $field === $keyColumn ? ' (ID %s)' : ', %s';
+        }
 
-	/**
-	 * @param array $args
-	 * @return string
-	 */
-	public static function generateWildcards(array $args) {
-		return rtrim(str_repeat('?,', count($args)), ',');
-	}
+        $format = ltrim($format, ', ');
 
+        return new LabelFormatter($format, $fields);
+    }
+
+    /**
+     * @param list<mixed> $args
+     */
+    public static function generateWildcards(array $args): string
+    {
+        return rtrim(str_repeat('?,', count($args)), ',');
+    }
 }

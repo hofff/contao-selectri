@@ -1,155 +1,188 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Hofff\Contao\Selectri\Model\Tree;
 
+use ArrayIterator;
+use EmptyIterator;
 use Hofff\Contao\Selectri\Model\Node;
+use Iterator;
+use stdClass;
 
-class SQLAdjacencyTreeNode implements Node {
+use function array_keys;
+use function array_reverse;
+use function call_user_func;
+use function key;
+use function reset;
 
-	/**
-	 * @var SQLAdjacencyTreeData
-	 */
-	protected $data;
+class SQLAdjacencyTreeNode implements Node
+{
+    /** @var SQLAdjacencyTreeData */
+    protected $data;
 
-	/**
-	 * @var \stdClass
-	 */
-	protected $tree;
+    /** @var stdClass */
+    protected $tree;
 
-	/**
-	 * @var string
-	 */
-	protected $key;
+    /** @var string */
+    protected $key;
 
-	/**
-	 * @var array
-	 */
-	protected $node;
+    /** @var array<string,mixed> */
+    protected $node;
 
-	/**
-	 * @param SQLAdjacencyTreeData $data
-	 * @param \stdClass $tree
-	 * @param string $key
-	 */
-	public function __construct(SQLAdjacencyTreeData $data, Tree $tree, $key) {
-		$this->data = $data;
-		$this->tree = $tree;
-		$this->key = $key;
-		$this->node = &$this->tree->nodes[$this->key];
-	}
+    public function __construct(SQLAdjacencyTreeData $data, Tree $tree, string $key)
+    {
+        $this->data = $data;
+        $this->tree = $tree;
+        $this->key  = $key;
+        $this->node = &$this->tree->nodes[$this->key];
+    }
 
-	public function getKey() {
-		return $this->key;
-	}
+    public function getKey(): string
+    {
+        return $this->key;
+    }
 
-	public function getData() {
-		return $this->node;
-	}
+    /** {@inheritDoc} */
+    public function getData(): array
+    {
+        return $this->node;
+    }
 
-	public function getLabel() {
-		$data = $this->data;
-		$config = $data->getConfig();
-		$callback = $config->getLabelCallback();
-		return call_user_func($callback, $this, $data, $config);
-	}
+    public function getLabel(): string
+    {
+        $data     = $this->data;
+        $config   = $data->getConfig();
+        $callback = $config->getLabelCallback();
 
-	public function getContent() {
-		$data = $this->data;
-		$config = $data->getConfig();
-		$callback = $config->getContentCallback();
-		return $callback ? call_user_func($callback, $this, $data, $config) : '';
-	}
+        return call_user_func($callback, $this, $data, $config);
+    }
 
-	public function getAdditionalInputName($key) {
-		$name = $this->data->getWidget()->getAdditionalInputBaseName();
-		$name .= '[' . $this->getKey() . ']';
-		$name .= '[' . $key . ']';
-		return $name;
-	}
+    public function getContent(): string
+    {
+        $data     = $this->data;
+        $config   = $data->getConfig();
+        $callback = $config->getContentCallback();
 
-	public function getIcon() {
-		$data = $this->data;
-		$config = $data->getConfig();
-		$callback = $config->getIconCallback();
-		return call_user_func($callback, $this, $data, $config);
-	}
+        return $callback ? call_user_func($callback, $this, $data, $config) : '';
+    }
 
-	public function isSelectable() {
-		if(!$this->node['_isSelectable']) {
-			return false;
-		}
-		switch($this->data->getConfig()->getSelectionMode()) {
-			case SQLAdjacencyTreeDataConfig::SELECTION_MODE_LEAF:
-				return !$this->node['_hasChildren'];
-				break;
+    public function getAdditionalInputName(string $key): string
+    {
+        $name  = $this->data->getWidget()->getAdditionalInputBaseName();
+        $name .= '[' . $this->getKey() . ']';
+        $name .= '[' . $key . ']';
 
-			case SQLAdjacencyTreeDataConfig::SELECTION_MODE_INNER:
-				return !!$this->node['_hasChildren'];
-				break;
+        return $name;
+    }
 
-			default:
-				return true;
-				break;
-		}
-	}
+    public function getIcon(): string
+    {
+        $data     = $this->data;
+        $config   = $data->getConfig();
+        $callback = $config->getIconCallback();
 
-	public function hasSelectableDescendants() {
-		if($this->data->getConfig()->getSelectionMode() == SQLAdjacencyTreeDataConfig::SELECTION_MODE_INNER) {
-			return $this->node['_hasGrandChildren'] == 1;
-		} else {
-			return $this->node['_hasChildren'] == 1;
-		}
-	}
+        return call_user_func($callback, $this, $data, $config);
+    }
 
-	public function isOpen() {
-		$children = $this->tree->children[$this->key];
-		if(!$children) {
-			return false;
-		}
-		reset($children);
-		return isset($this->tree->nodes[key($children)]);
-	}
+    public function isSelectable(): bool
+    {
+        if (! $this->node['_isSelectable']) {
+            return false;
+        }
 
-	public function getChildrenIterator() {
-		if(!$this->isOpen()) {
-			return new \EmptyIterator;
-		}
-		$children = array();
-		foreach(array_keys($this->tree->children[$this->key]) as $key) {
-			$children[] = new self($this->data, $this->tree, $key);
-		}
-		return new \ArrayIterator($children);
-	}
+        switch ($this->data->getConfig()->getSelectionMode()) {
+            case SQLAdjacencyTreeDataConfig::SELECTION_MODE_LEAF:
+                return ! $this->node['_hasChildren'];
 
-	public function hasItems() {
-		return false;
-	}
+                break;
 
-	public function getItemIterator() {
-		return new \EmptyIterator;
-	}
+            case SQLAdjacencyTreeDataConfig::SELECTION_MODE_INNER:
+                return ! ! $this->node['_hasChildren'];
 
-	public function hasPath() {
-		return isset($this->tree->nodes[$this->tree->parents[$this->key]]);
-	}
+                break;
 
-	public function getPathIterator() {
-		$key = $this->key;
-		$path = array();
-		while($this->tree->nodes[$key = $this->tree->parents[$key]]) {
-			$path[] = new self($this->data, $this->tree, $key);
-		}
-		return new \ArrayIterator(array_reverse($path));
-	}
+            default:
+                return true;
 
-	public function getPathKeys() {
-		$pathKeys = array();
-		$parents = &$this->tree->parents;
-		$key = $this->key;
-		while(isset($parents[$key])) {
-			$pathKeys[] = $key = $parents[$key];
-		}
-		return $pathKeys;
-	}
+                break;
+        }
+    }
 
+    public function hasSelectableDescendants(): bool
+    {
+        if ($this->data->getConfig()->getSelectionMode() === SQLAdjacencyTreeDataConfig::SELECTION_MODE_INNER) {
+            return $this->node['_hasGrandChildren'] === 1;
+        }
+
+        return $this->node['_hasChildren'] === 1;
+    }
+
+    public function isOpen(): bool
+    {
+        $children = $this->tree->children[$this->key];
+        if (! $children) {
+            return false;
+        }
+
+        reset($children);
+
+        return isset($this->tree->nodes[key($children)]);
+    }
+
+    /** {@inheritDoc} */
+    public function getChildrenIterator(): Iterator
+    {
+        if (! $this->isOpen()) {
+            return new EmptyIterator();
+        }
+
+        $children = [];
+        foreach (array_keys($this->tree->children[$this->key]) as $key) {
+            $children[] = new self($this->data, $this->tree, $key);
+        }
+
+        return new ArrayIterator($children);
+    }
+
+    public function hasItems(): bool
+    {
+        return false;
+    }
+
+    /** {@inheritDoc} */
+    public function getItemIterator(): Iterator
+    {
+        return new EmptyIterator();
+    }
+
+    public function hasPath(): bool
+    {
+        return isset($this->tree->nodes[$this->tree->parents[$this->key]]);
+    }
+
+    /** {@inheritDoc} */
+    public function getPathIterator(): Iterator
+    {
+        $key  = $this->key;
+        $path = [];
+        while ($this->tree->nodes[$key = $this->tree->parents[$key]]) {
+            $path[] = new self($this->data, $this->tree, $key);
+        }
+
+        return new ArrayIterator(array_reverse($path));
+    }
+
+    /** {@inheritDoc} */
+    public function getPathKeys(): array
+    {
+        $pathKeys = [];
+        $parents  = &$this->tree->parents;
+        $key      = $this->key;
+        while (isset($parents[$key])) {
+            $pathKeys[] = $key = $parents[$key];
+        }
+
+        return $pathKeys;
+    }
 }

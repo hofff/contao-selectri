@@ -1,151 +1,157 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Hofff\Contao\Selectri\Model\Tree;
 
-class Tree {
+use function array_flip;
+use function array_keys;
+use function array_map;
+use function count;
 
-	/**
-	 * A map of ordered identity maps mapping tree keys to their children lists
-	 * @var array<string, array<string, string>>
-	 */
-	public $children = array();
+class Tree
+{
+    /**
+     * A map of ordered identity maps mapping tree keys to their children lists
+     *
+     * @var array<string, array<string, string>>
+     */
+    public $children = [];
 
-	/**
-	 * A map of tree keys mapping to their parent tree keys
-	 * @var array<string, string>
-	 */
-	public $parents = array();
+    /**
+     * A map of tree keys mapping to their parent tree keys
+     *
+     * @var array<string, string>
+     */
+    public $parents = [];
 
-	/**
-	 * A map of tree keys mapping to arbitrary data assoicated with this node
-	 * @var array<string, mixed>
-	 */
-	public $nodes = array();
+    /**
+     * A map of tree keys mapping to arbitrary data assoicated with this node
+     *
+     * @var array<string, array<string,mixed>>
+     */
+    public $nodes = [];
 
-	/**
-	 * @var string
-	 */
-	private $rootValue;
+    /** @var string */
+    private $rootValue;
 
-	/**
-	 */
-	public function __construct($rootValue) {
-		$this->rootValue = strval($rootValue);
-	}
+    public function __construct(string $rootValue)
+    {
+        $this->rootValue = $rootValue;
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getRootValue() {
-		return $this->rootValue;
-	}
+    public function getRootValue(): string
+    {
+        return $this->rootValue;
+    }
 
-	/**
-	 * Builds a parents map from this tree's children map
-	 * @return array<string, string>
-	 */
-	public function getParentsFromChildren() {
-		$parents = array();
+    /**
+     * Builds a parents map from this tree's children map
+     *
+     * @return array<string, string>
+     */
+    public function getParentsFromChildren(): array
+    {
+        $parents = [];
 
-		foreach($this->children as $parentKey => $children) {
-			foreach($children as $key => $_) {
-				$parents[$key] = $parentKey;
-			}
-		}
+        foreach ($this->children as $parentKey => $children) {
+            foreach (array_keys($children) as $key) {
+                $parents[$key] = $parentKey;
+            }
+        }
 
-		return $parents;
-	}
+        return $parents;
+    }
 
-	/**
-	 * Returns the given node IDs of the given tree in preorder,
-	 * optionally removing nested node IDs.
-	 *
-	 * Removes duplicates.
-	 *
-	 * @param array $keys
-	 * @param boolean $unnest
-	 * @return array
-	 */
-	public function getPreorder(array $keys, $unnest = false) {
-		if(!$keys) {
-			return array();
-		}
+    /**
+     * Returns the given node IDs of the given tree in preorder,
+     * optionally removing nested node IDs.
+     *
+     * Removes duplicates.
+     *
+     * @param list<string> $keys
+     *
+     * @return list<string>
+     */
+    public function getPreorder(array $keys, bool $unnest = false): array
+    {
+        if (! $keys) {
+            return [];
+        }
 
-		$rootValue = $this->getRootValue();
-		$keys = array_flip(array_map('strval', $keys));
-		$preorder = array();
+        $rootValue = $this->getRootValue();
+        $keys      = array_flip(array_map('strval', $keys));
+        $preorder  = [];
 
-		if(isset($keys[$rootValue])) {
-			$preorder[] = $rootValue;
-			if($unnest) {
-				return $preorder;
-			}
-		}
+        if (isset($keys[$rootValue])) {
+            $preorder[] = $rootValue;
+            if ($unnest) {
+                return $preorder;
+            }
+        }
 
-		$this->getPreorderHelper($preorder, $keys, $unnest, $rootValue);
+        $this->getPreorderHelper($preorder, $keys, $unnest, $rootValue);
 
-		return $preorder;
-	}
+        return $preorder;
+    }
 
-	/**
-	 * @param array $preorder
-	 * @param array $keys
-	 * @param boolean $unnest
-	 * @param string $parentKey
-	 * @return void
-	 */
-	private function getPreorderHelper(array &$preorder, array $keys, $unnest, $parentKey) {
-		if(!isset($this->children[$parentKey]) || !count($this->children[$parentKey])) {
-			return;
-		}
+    /**
+     * @param list<string> $preorder
+     * @param list<string> $keys
+     */
+    private function getPreorderHelper(array &$preorder, array $keys, bool $unnest, string $parentKey): void
+    {
+        if (! isset($this->children[$parentKey]) || ! count($this->children[$parentKey])) {
+            return;
+        }
 
-		foreach($this->children[$parentKey] as $key => $_) {
-			if(isset($keys[$key])) {
-				$preorder[] = $key;
-				if($unnest) {
-					continue;
-				}
-			}
-			$this->getPreorderHelper($preorder, $keys, $unnest, $key);
-		}
-	}
+        foreach (array_keys($this->children[$parentKey]) as $key) {
+            if (isset($keys[$key])) {
+                $preorder[] = $key;
+                if ($unnest) {
+                    continue;
+                }
+            }
 
-	/**
-	 * Returns the descendants of each of the given node IDs of the given tree
-	 * in preorder, optionally adding the given node IDs themselves.
-	 * Duplicates are not removed, invalid and nested nodes are not removed. Use
-	 * getPreorder(..) with $unnest set to true before calling this method,
-	 * if this is the desired behavior.
-	 *
-	 * @param array $keys
-	 * @param boolean $andSelf
-	 * @return array<string>
-	 */
-	public function getDescendantsPreorder(array $keys, $andSelf = false) {
-		$preorder = array();
+            $this->getPreorderHelper($preorder, $keys, $unnest, $key);
+        }
+    }
 
-		foreach(array_map('strval', $keys) as $key) {
-			$andSelf && $preorder[] = $key;
-			$this->getDescendantsPreorderHelper($preorder, $key);
-		}
+    /**
+     * Returns the descendants of each of the given node IDs of the given tree
+     * in preorder, optionally adding the given node IDs themselves.
+     * Duplicates are not removed, invalid and nested nodes are not removed. Use
+     * getPreorder(..) with $unnest set to true before calling this method,
+     * if this is the desired behavior.
+     *
+     * @param list<string> $keys
+     *
+     * @return list<string>
+     */
+    public function getDescendantsPreorder(array $keys, bool $andSelf = false): array
+    {
+        $preorder = [];
 
-		return $preorder;
-	}
+        foreach (array_map('strval', $keys) as $key) {
+            $andSelf && $preorder[] = $key;
+            $this->getDescendantsPreorderHelper($preorder, $key);
+        }
 
-	/**
-	 * @param array $preorder
-	 * @param string $parentKey
-	 * @return void
-	 */
-	private function getDescendantsPreorderHelper(array &$preorder, $parentKey) {
-		if(!isset($this->children[$parentKey]) || !count($this->children[$parentKey])) {
-			return;
-		}
+        return $preorder;
+    }
 
-		foreach($this->children[$parentKey] as $key => $_) {
-			$preorder[] = $key;
-			$this->getDescendantsPreorderHelper($preorder, $key);
-		}
-	}
+    /**
+     * @param list<string> $preorder
+     */
+    private function getDescendantsPreorderHelper(array &$preorder, string $parentKey): void
+    {
+        if (! isset($this->children[$parentKey]) || ! count($this->children[$parentKey])) {
+            return;
+        }
 
+        foreach (array_keys($this->children[$parentKey]) as $key) {
+            $preorder[] = $key;
+            $this->getDescendantsPreorderHelper($preorder, $key);
+        }
+    }
 }

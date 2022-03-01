@@ -1,85 +1,64 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Hofff\Contao\Selectri\Model;
 
+use EmptyIterator;
 use Hofff\Contao\Selectri\Widget;
+use Iterator;
 
-abstract class AbstractData implements Data {
+abstract class AbstractData implements Data
+{
+    /** @var Widget */
+    private $widget;
 
-	/**
-	 * @var Widget
-	 */
-	private $widget;
+    public function __construct(Widget $widget)
+    {
+        $this->widget = $widget;
+    }
 
-	/**
-	 * @param Widget $widget
-	 */
-	public function __construct(Widget $widget = null) {
-		$this->widget = $widget;
-	}
+    public function getWidget(): Widget
+    {
+        return $this->widget;
+    }
 
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\Data::getWidget()
-	 */
-	public function getWidget() {
-		return $this->widget;
-	}
+    public function isBrowsable(): bool
+    {
+        return false;
+    }
 
-	/**
-	 * @param Widget $widget
-	 */
-	protected function setWidget(Widget $widget) {
-		$this->widget = $widget;
-	}
+    /** {@inheritDoc} */
+    public function browseFrom(?string $key = null): Iterator
+    {
+        return new EmptyIterator();
+    }
 
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\Data::isBrowsable()
-	 */
-	public function isBrowsable() {
-		return false;
-	}
+    /** {@inheritDoc} */
+    public function browseTo(string $key): Iterator
+    {
+        return new EmptyIterator();
+    }
 
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\Data::browseFrom()
-	 */
-	public function browseFrom($key = null) {
-		return new \EmptyIterator;
-	}
+    public function isSearchable(): bool
+    {
+        return false;
+    }
 
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\Data::browseTo()
-	 */
-	public function browseTo($key) {
-		return new \EmptyIterator;
-	}
+    /** {@inheritDoc} */
+    public function search(string $query, int $limit, int $offset = 0): Iterator
+    {
+        return new EmptyIterator();
+    }
 
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\Data::isSearchable()
-	 */
-	public function isSearchable() {
-		return false;
-	}
+    public function hasSuggestions(): bool
+    {
+        return false;
+    }
 
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\Data::search()
-	 */
-	public function search($query, $limit, $offset = 0) {
-		return new \EmptyIterator;
-	}
-
-
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\Data::hasSuggestions()
-	 */
-	public function hasSuggestions() {
-		return false;
-	}
-
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\Data::suggest()
-	 */
-	public function suggest($limit, $offset = 0) {
-		return new \EmptyIterator;
-	}
-
+    /** {@inheritDoc} */
+    public function suggest(int $limit, int $offset = 0): Iterator
+    {
+        return new EmptyIterator();
+    }
 }

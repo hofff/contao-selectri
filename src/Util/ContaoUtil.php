@@ -1,24 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Hofff\Contao\Selectri\Util;
 
 use Contao\BackendTemplate;
 use Contao\FrontendTemplate;
 use Contao\Template;
 
-class ContaoUtil {
+use function assert;
 
-	/**
-	 * @param string $tpl
-	 * @param array $data
-	 * @return string
-	 */
-	public static function renderTemplate($tpl, array $data = null) {
-		$class = TL_MODE == 'FE' ? FrontendTemplate::class : BackendTemplate::class;
-		/* @var $tpl Template */
-		$tpl = new $class($tpl);
-		$data && $tpl->setData($data);
-		return $tpl->parse();
-	}
+class ContaoUtil
+{
+    /**
+     * @param string                   $tpl
+     * @param array<string,mixed>|null $data
+     */
+    public static function renderTemplate($tpl, ?array $data = null): string
+    {
+        $class    = TL_MODE === 'FE' ? FrontendTemplate::class : BackendTemplate::class;
+        $template = new $class($tpl);
+        assert($template instanceof Template);
+        $data && $template->setData($data);
 
+        return $template->parse();
+    }
 }

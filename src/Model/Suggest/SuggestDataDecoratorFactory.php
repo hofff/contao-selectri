@@ -1,38 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Hofff\Contao\Selectri\Model\Suggest;
 
 use Hofff\Contao\Selectri\Model\AbstractDataDecoratorFactory;
 use Hofff\Contao\Selectri\Model\Data;
 
-class SuggestDataDecoratorFactory extends AbstractDataDecoratorFactory {
+use function call_user_func;
 
-	/**
-	 * @var callable|null
-	 */
-	private $suggestionCallback;
+class SuggestDataDecoratorFactory extends AbstractDataDecoratorFactory
+{
+    /** @var callable<list<string>>|null */
+    private $suggestionCallback;
 
-	/**
-	 * @param callable $suggestionCallback
-	 * @return void
-	 */
-	public function setSuggestionCallback(callable $suggestionCallback) {
-		$this->suggestionCallback = $suggestionCallback;
-	}
+    /** @param callable< list<string>> $suggestionCallback */
+    public function setSuggestionCallback(callable $suggestionCallback): void
+    {
+        $this->suggestionCallback = $suggestionCallback;
+    }
 
-	/**
-	 * @return array
-	 */
-	protected function fetchSuggestions() {
-		return $this->suggestionCallback ? call_user_func($this->suggestionCallback) : null;
-	}
+    /**
+     * @return list<string>|null
+     */
+    protected function fetchSuggestions(): ?array
+    {
+        return $this->suggestionCallback ? call_user_func($this->suggestionCallback) : null;
+    }
 
-	/**
-	 * @see \Hofff\Contao\Selectri\Model\AbstractDataDecoratorFactory::createDecorator()
-	 */
-	public function createDecorator(Data $decoratedData) {
-		$suggestions = $this->fetchSuggestions();
-		return new SuggestDataDecorator($decoratedData, $suggestions);
-	}
+    public function createDecorator(Data $decoratedData): Data
+    {
+        $suggestions = $this->fetchSuggestions();
 
+        return new SuggestDataDecorator($decoratedData, $suggestions);
+    }
 }

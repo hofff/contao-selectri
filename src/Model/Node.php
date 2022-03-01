@@ -1,78 +1,50 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Hofff\Contao\Selectri\Model;
 
-interface Node {
+use Iterator;
 
-	/**
-	 * @return string
-	 */
-	public function getKey();
+interface Node
+{
+    public function getKey(): string;
 
-	/**
-	 * @return array
-	 */
-	public function getData();
+    /**
+     * @return array<string,mixed>
+     */
+    public function getData(): array;
 
-	/**
-	 * @return string
-	 */
-	public function getLabel();
+    public function getLabel(): string;
 
-	/**
-	 * @return string
-	 */
-	public function getContent();
+    public function getContent(): string;
 
-	/**
-	 * @param string $key
-	 * @return string
-	 */
-	public function getAdditionalInputName($key);
+    public function getAdditionalInputName(string $key): string;
 
-	/**
-	 * @return string
-	 */
-	public function getIcon();
+    public function getIcon(): string;
 
-	/**
-	 * @return boolean
-	 */
-	public function isSelectable();
+    public function isSelectable(): bool;
 
-	/**
-	 * @return boolean
-	 */
-	public function hasPath();
+    public function hasPath(): bool;
 
-	/**
-	 * @return \Iterator<Node>
-	 */
-	public function getPathIterator();
+    /**
+     * @return Iterator<Node>
+     */
+    public function getPathIterator(): Iterator;
 
-	/**
-	 * @return boolean
-	 */
-	public function hasItems();
+    public function hasItems(): bool;
 
-	/**
-	 * @return \Iterator<Node>
-	 */
-	public function getItemIterator();
+    /**
+     * @return Iterator<Node>
+     */
+    public function getItemIterator(): Iterator;
 
-	/**
-	 * @return boolean
-	 */
-	public function hasSelectableDescendants();
+    public function hasSelectableDescendants(): bool;
 
-	/**
-	 * @return boolean
-	 */
-	public function isOpen();
+    public function isOpen(): bool;
 
-	/**
-	 * @return \Iterator<Node>
-	 */
-	public function getChildrenIterator();
-
+    /**
+     * @return Iterator<Node>
+     */
+    public function getChildrenIterator(): Iterator;
 }

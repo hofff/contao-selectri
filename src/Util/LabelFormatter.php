@@ -1,101 +1,87 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Hofff\Contao\Selectri\Util;
 
+use Contao\StringUtil;
 use Hofff\Contao\Selectri\Model\Node;
 
-class LabelFormatter {
+use function vsprintf;
 
-	/**
-	 * @var string
-	 */
-	private $format;
+class LabelFormatter
+{
+    /** @var string */
+    private $format;
 
-	/**
-	 * @var array<string>
-	 */
-	private $fields;
+    /** @var list<string> */
+    private $fields;
 
-	/**
-	 * @var boolean
-	 */
-	private $htmlOutput;
+    /** @var bool */
+    private $htmlOutput;
 
-	/**
-	 * @param string $format
-	 * @param array $fields
-	 * @param boolean $htmlOutput
-	 */
-	public function __construct($format = null, array $fields = null, $htmlOutput = false) {
-		$this->setFormat($format);
-		$this->setFields((array) $fields);
-		$this->setHTMLOutput($htmlOutput);
-	}
+    /**
+     * @param list<string> $fields
+     */
+    public function __construct(string $format, ?array $fields = null, bool $htmlOutput = false)
+    {
+        $this->setFormat($format);
+        $this->setFields((array) $fields);
+        $this->setHTMLOutput($htmlOutput);
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getFormat() {
-		return $this->format;
-	}
+    public function getFormat(): string
+    {
+        return $this->format;
+    }
 
-	/**
-	 * @param string $format
-	 * @return void
-	 */
-	public function setFormat($format) {
-		$this->format = $format;
-	}
+    public function setFormat(string $format): void
+    {
+        $this->format = $format;
+    }
 
-	/**
-	 * @return array<string>
-	 */
-	public function getFields() {
-		return $this->fields;
-	}
+    /**
+     * @return array<string>
+     */
+    public function getFields(): array
+    {
+        return $this->fields;
+    }
 
-	/**
-	 * @param array<string> $fields
-	 * @return void
-	 */
-	public function setFields(array $fields) {
-		$this->fields = $fields;
-	}
+    /**
+     * @param array<string> $fields
+     */
+    public function setFields(array $fields): void
+    {
+        $this->fields = $fields;
+    }
 
-	/**
-	 * @return boolean
-	 */
-	public function isHTMLOutput() {
-		return $this->htmlOutput;
-	}
+    public function isHTMLOutput(): bool
+    {
+        return $this->htmlOutput;
+    }
 
-	/**
-	 * @param boolean $htmlOutput
-	 * @return void
-	 */
-	public function setHTMLOutput($htmlOutput) {
-		$this->htmlOutput = (bool) $htmlOutput;
-	}
+    public function setHTMLOutput(bool $htmlOutput): void
+    {
+        $this->htmlOutput = (bool) $htmlOutput;
+    }
 
-	/**
-	 * @return callable
-	 */
-	public function getCallback() {
-		return array($this, 'format');
-	}
+    public function getCallback(): callable
+    {
+        return [$this, 'format'];
+    }
 
-	/**
-	 * @param Node $node
-	 * @return string
-	 */
-	public function format(Node $node) {
-		$data = $node->getData();
-		$fields = $this->getFields();
-		foreach($fields as &$field) {
-			$field = $data[$field];
-		}
-		$label = vsprintf($this->getFormat(), $fields);
-		return $this->isHTMLOutput() ? $label : specialchars($label);
-	}
+    public function format(Node $node): string
+    {
+        $data   = $node->getData();
+        $fields = $this->getFields();
 
+        foreach ($fields as $field) {
+            $fields[$field] = $data[$field];
+        }
+
+        $label = vsprintf($this->getFormat(), $fields);
+
+        return $this->isHTMLOutput() ? $label : StringUtil::specialchars($label);
+    }
 }

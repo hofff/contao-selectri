@@ -1,113 +1,105 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Hofff\Contao\Selectri\Model\Tree;
 
-class SQLAdjacencyTreeDataConfig {
+use Hofff\Contao\Selectri\Util\SQLDataConfigTrait;
 
-	use \Hofff\Contao\Selectri\Util\SQLDataConfigTrait;
+use function array_values;
+use function strval;
 
-	/**
-	 * @var string
-	 */
-	const SELECTION_MODE_INNER = 'inner';
+class SQLAdjacencyTreeDataConfig
+{
+    use SQLDataConfigTrait;
 
-	/**
-	 * @var string
-	 */
-	const SELECTION_MODE_LEAF = 'leaf';
+    public const SELECTION_MODE_INNER = 'inner';
 
-	/**
-	 * @var string
-	 */
-	const SELECTION_MODE_ALL = 'all';
+    public const SELECTION_MODE_LEAF = 'leaf';
 
-	/**
-	 * @var string
-	 */
-	private $parentKeyColumn;
+    public const SELECTION_MODE_ALL = 'all';
 
-	/**
-	 * @var mixed
-	 */
-	private $rootValue;
+    /** @var string */
+    private $parentKeyColumn;
 
-	/**
-	 * @var array<string>
-	 */
-	private $roots;
+    /** @var mixed */
+    private $rootValue;
 
-	/**
-	 * @var string
-	 */
-	private $selectionMode;
+    /** @var array<string> */
+    private $roots;
 
-	/**
-	 */
-	public function __construct() {
-	}
+    /** @var string */
+    private $selectionMode;
 
-	/**
-	 * @return string
-	 */
-	public function getParentKeyColumn() {
-		return $this->parentKeyColumn;
-	}
+    public function __construct()
+    {
+    }
 
-	/**
-	 * @param string $column
-	 * @return void
-	 */
-	public function setParentKeyColumn($column) {
-		$this->parentKeyColumn = strval($column);
-	}
+    public function getParentKeyColumn(): string
+    {
+        return $this->parentKeyColumn;
+    }
 
-	/**
-	 * @return mixed
-	 */
-	public function getRootValue() {
-		return $this->rootValue;
-	}
+    /**
+     * @param string $column
+     */
+    public function setParentKeyColumn($column): void
+    {
+        $this->parentKeyColumn = strval($column);
+    }
 
-	/**
-	 * @param mixed $value
-	 */
-	public function setRootValue($value) {
-		$this->rootValue = $value;
-	}
+    /**
+     * @return mixed
+     */
+    public function getRootValue()
+    {
+        return $this->rootValue;
+    }
 
-	/**
-	 * @return array<string>
-	 */
-	public function getRoots() {
-		return $this->roots ? $this->roots : array($this->getRootValue());
-	}
+    /**
+     * @param mixed $value
+     */
+    public function setRootValue($value): void
+    {
+        $this->rootValue = $value;
+    }
 
-	/**
-	 * @param array<string>|null $roots
-	 * @return void
-	 */
-	public function setRoots($roots) {
-		$this->roots = array_values((array) $roots);
-	}
+    /**
+     * @return array<string>
+     */
+    public function getRoots(): array
+    {
+        return $this->roots ? $this->roots : [$this->getRootValue()];
+    }
 
-	/**
-	 * @return string
-	 */
-	public function getSelectionMode() {
-		return $this->selectionMode;
-	}
+    /**
+     * @param array<string>|null $roots
+     */
+    public function setRoots($roots): void
+    {
+        $this->roots = array_values((array) $roots);
+    }
 
-	/**
-	 * @param string $mode
-	 * @return void
-	 */
-	public function setSelectionMode($mode) {
-		switch($mode) {
-			case self::SELECTION_MODE_LEAF: break;
-			case self::SELECTION_MODE_INNER: break;
-			default: $mode = self::SELECTION_MODE_ALL; break;
-		}
-		$this->selectionMode = $mode;
-	}
+    public function getSelectionMode(): string
+    {
+        return $this->selectionMode;
+    }
 
+    /**
+     * @param string $mode
+     */
+    public function setSelectionMode($mode): void
+    {
+        switch ($mode) {
+            case self::SELECTION_MODE_LEAF:
+                break;
+            case self::SELECTION_MODE_INNER:
+                break;
+            default:
+                $mode = self::SELECTION_MODE_ALL;
+                break;
+        }
+
+        $this->selectionMode = $mode;
+    }
 }

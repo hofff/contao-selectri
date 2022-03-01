@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Hofff\Contao\Selectri\Exception;
 
-/**
- * @author Oliver Hoff <oliver@hofff.com>
- */
-class SelectriException extends \Exception {
+use Exception;
+
+class SelectriException extends Exception
+{
 }
