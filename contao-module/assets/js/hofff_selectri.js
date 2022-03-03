@@ -471,8 +471,18 @@ Selectri.buildPOSTData = function(params) {
 Selectri.Binds = Object.keys(Selectri).filter(function(method) { return method.substr(0, 2) == "on"; });
 
 Selectri = window.Hofff.Selectri = new Class(Selectri);
-Selectri.scan = function() { $$(".hofff-selectri-widget.hofff-selectri-auto").each(function(e) { new Selectri(e, TRUE); }); };
+Selectri.activeElements = [];
+Selectri.scan = function () {
+	$$(".hofff-selectri-widget.hofff-selectri-auto").each(function (e) {
+		if (Selectri.activeElements.indexOf(e) >= 0) {
+			return;
+		}
+		Selectri.activeElements.push(e);
+		new Selectri(e, TRUE);
+	});
+};
 window.addEvent("domready", Selectri.scan);
 window.addEvent("ajaxready", Selectri.scan);
+window.addEvent("ajax_change", Selectri.scan);
 
 })(document.id, window.$$, window);
