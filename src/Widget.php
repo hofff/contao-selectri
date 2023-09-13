@@ -266,6 +266,7 @@ class Widget extends BaseWidget {
 	public function validate() {
 		$name = $this->name;
 		$match = null;
+		$path  = '';
 		if(preg_match('@^([a-z_][a-z0-9_-]*)((?:\[[^\]]+\])+)$@i', $name, $match)) {
 			$name = $match[1];
 			$path = explode('][', trim($match[2], '[]'));
